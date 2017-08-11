@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.aefyr.apheleia.LoginActivity">
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:backgroundTint="@color/colorAccent"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/username"
+        android:inputType="textPersonName"
+        android:textColorHint="@color/colorEditTextHint" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_below="@+id/username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/login_activity_edit_texts_margin"
+        android:backgroundTint="@color/colorAccent"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:textColorHint="@color/colorEditTextHint" />
+
+    <EditText
+        android:id="@+id/domain"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_above="@+id/username"
+        android:layout_alignEnd="@+id/username"
+        android:layout_marginBottom="@dimen/login_activity_edit_texts_margin"
+        android:backgroundTint="@color/colorAccent"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/domain"
+        android:inputType="textPersonName"
+        android:textColorHint="@color/colorEditTextHint" />
+
+    <Button
+        android:id="@+id/singIn"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/password"
+        android:layout_alignStart="@+id/password"
+        android:layout_below="@+id/password"
+        android:layout_marginTop="@dimen/login_activity_edit_texts_margin"
+        android:text="@string/sing_in" />
+
+    <ImageButton
+        android:id="@+id/schoolDomainHelp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignBottom="@+id/domain"
+        android:layout_toEndOf="@+id/domain"
+        android:background="@android:color/transparent"
+        android:tint="@color/colorAccent"
+        app:srcCompat="@drawable/ic_help_outline_black_24dp" />
+
+</RelativeLayout>
