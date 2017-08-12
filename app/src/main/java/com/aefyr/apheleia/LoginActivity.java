@@ -129,6 +129,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loggedIn(){
+        //TODO Get rules and set default student, days, period
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

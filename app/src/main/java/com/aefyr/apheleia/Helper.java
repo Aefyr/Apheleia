@@ -11,7 +11,7 @@ import com.aefyr.journalism.objects.major.Token;
  * Created by Aefyr on 11.08.2017.
  */
 
-class Helper {
+public class Helper {
     private static Helper instance;
     private SharedPreferences preferences;
 
@@ -52,9 +52,13 @@ class Helper {
 
     //Persona
     private EljurPersona persona;
-    EljurPersona getPersona(){
+    public EljurPersona getPersona(){
         if(persona == null)
             persona = new EljurPersona(getToken(), getDomain());
         return persona;
+    }
+
+    public String getCurrentStudentId(){
+        return preferences.getString("current_student", "448");
     }
 }

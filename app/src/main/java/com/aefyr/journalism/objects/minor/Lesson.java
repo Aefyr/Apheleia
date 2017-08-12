@@ -1,5 +1,9 @@
 package com.aefyr.journalism.objects.minor;
 
+import com.aefyr.journalism.exceptions.EljurApiException;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class Lesson {
@@ -7,8 +11,33 @@ public class Lesson {
 	String room;
 	String teacher;
 	String num;
+	long starts = 0;
+	long ends;
 	Homework homework;
 	ArrayList<Mark> marks;
+
+	void parseTimes(String rawStarts, String rawEnds) throws EljurApiException{
+        SimpleDateFormat lessonTimesSDF = new SimpleDateFormat("HH:mm:ss");
+        try {
+            starts = lessonTimesSDF.parse(rawStarts).getTime();
+            ends = lessonTimesSDF.parse(rawEnds).getTime();
+        } catch (ParseException e) {
+            throw new EljurApiException("Unable to parse lesson times\n"+e.getMessage());
+        }
+
+    }
+
+    public boolean hasTimes(){
+        return starts!=0;
+    }
+
+    public long getStartTime(){
+        return starts;
+    }
+
+    public long getEndTime(){
+        return ends;
+    }
 	
 	public String getNumber(){
 		return num;

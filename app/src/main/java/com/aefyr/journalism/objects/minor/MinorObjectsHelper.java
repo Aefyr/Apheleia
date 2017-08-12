@@ -1,5 +1,7 @@
 package com.aefyr.journalism.objects.minor;
 
+import com.aefyr.journalism.exceptions.EljurApiException;
+
 import java.util.ArrayList;
 
 public class MinorObjectsHelper {
@@ -23,6 +25,10 @@ public class MinorObjectsHelper {
 	public static void addHomeworkToLesson(Lesson lesson, Homework homework){
 		lesson.addHomework(homework);
 	}
+
+	public static void addTimesToLesson(Lesson lesson, String rawStart, String rawEnd)throws EljurApiException{
+        lesson.parseTimes(rawStart, rawEnd);
+    }
 	
 	public static void addOvertimeLessonsToWeekDat(WeekDay weekDay, ArrayList<Lesson> overtimeLessons){
 		weekDay.addOvertimeLessons(overtimeLessons);

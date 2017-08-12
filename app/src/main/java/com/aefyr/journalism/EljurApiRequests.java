@@ -1,6 +1,7 @@
 package com.aefyr.journalism;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 
@@ -35,6 +36,8 @@ import com.aefyr.journalism.objects.minor.MinorObjectsHelper;
 import com.aefyr.journalism.objects.minor.ShortMessage;
 import com.aefyr.journalism.objects.minor.SubjectInGrid;
 import com.aefyr.journalism.objects.minor.WeekDay;
+import com.aefyr.journalism.objects.utility.HometasksComparator;
+import com.aefyr.journalism.objects.utility.WeekDaysComparator;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -181,8 +184,10 @@ class EljurApiRequests {
 	}
 	
 	//Get diary!
-	static StringRequest getDiary(RequestQueue queue, EljurPersona persona, final String studentId, String days, final EljurApiClient.JournalismListener<DiaryEntry> listener){
+	static StringRequest getDiary(RequestQueue queue, EljurPersona persona, final String studentId, String days, boolean getTimes, final EljurApiClient.JournalismListener<DiaryEntry> listener){
 		EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_DIARY).addParameter("student", studentId).addParameter("days", days);
+        if(getTimes)
+            apiRequest.addParameter("rings", "__yes");
 
         StringRequest diaryRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
@@ -190,6 +195,11 @@ class EljurApiRequests {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
                 ArrayList<WeekDay> weekDays = new ArrayList<WeekDay>();
+
+                if(response.size()==0||response.getAsJsonObject("students").size()==0){
+                    listener.onApiError("Расписание отсутствует");
+                    return;
+                }
 
                 JsonObject weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
                 for(Map.Entry<String, JsonElement> entry: weekDaysObj.entrySet()){
@@ -209,6 +219,15 @@ class EljurApiRequests {
                         JsonObject lessonObj = entry2.getValue().getAsJsonObject();
                         Lesson lesson = MinorObjectsFactory.createLesson(lessonObj.get("num").getAsString(), lessonObj.get("name").getAsString(), lessonObj.get("room").getAsString(), lessonObj.get("teacher").getAsString());
 
+                        if(lessonObj.get("starttime")!=null&&lessonObj.get("endtime")!=null){
+                            try {
+                                MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
+                            } catch (EljurApiException e) {
+                                listener.onApiError(e.getMessage());
+                                return;
+                            }
+                        }
+
                         Homework homework = null;
                         if(lessonObj.get("homework")!=null){
                             homework = MinorObjectsFactory.createHomework();
@@ -218,12 +237,14 @@ class EljurApiRequests {
                                 JsonObject hometask = entry3.getValue().getAsJsonObject();
                                 hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
                             }
+
+                            Collections.sort(hometasks, new HometasksComparator());
                             MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
                         }
 
                         if(lessonObj.get("files")!=null){
                             if(homework==null)
-                                homework = new Homework();
+                                homework = MinorObjectsFactory.createHomework();
 
                             ArrayList<Attachment> attachments = new ArrayList<Attachment>();
                             for(JsonElement attachmentEl: lessonObj.getAsJsonArray("files")){
@@ -258,7 +279,7 @@ class EljurApiRequests {
                         return;
                     }
                 }
-
+                Collections.sort(weekDays, new WeekDaysComparator());
                 listener.onSuccess(MajorObjectsFactory.createDiaryEntry(weekDays));
 
             }
@@ -336,9 +357,11 @@ class EljurApiRequests {
 	}
 
 	//Get schedule!
-	static StringRequest getSchedule(RequestQueue queue, EljurPersona persona, final String studentId, String days, final EljurApiClient.JournalismListener<Schedule> listener){
+	static StringRequest getSchedule(RequestQueue queue, EljurPersona persona, final String studentId, String days, boolean getTimes, final EljurApiClient.JournalismListener<Schedule> listener){
 		EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_SCHEDULE).addParameter("studentId", studentId).addParameter("days", days);
-		
+        if(getTimes)
+            apiRequest.addParameter("rings", "__yes");
+
 		StringRequest scheduleRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
@@ -362,7 +385,19 @@ class EljurApiRequests {
                     ArrayList<Lesson> lessons = new ArrayList<Lesson>();
                     for(Map.Entry<String, JsonElement> entry2: weekDay.getAsJsonObject("items").entrySet()){
                         JsonObject lessonObj = entry.getValue().getAsJsonObject();
-                        lessons.add(MinorObjectsFactory.createLesson(lessonObj.get("num").getAsString(), lessonObj.get("name").getAsString(), lessonObj.get("room").getAsString(), lessonObj.get("teacher").getAsString()));
+
+                        Lesson lesson = MinorObjectsFactory.createLesson(lessonObj.get("num").getAsString(), lessonObj.get("name").getAsString(), lessonObj.get("room").getAsString(), lessonObj.get("teacher").getAsString());
+
+                        if(lessonObj.get("starttime")!=null&&lessonObj.get("endtime")!=null){
+                            try {
+                                MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
+                            } catch (EljurApiException e) {
+                                listener.onApiError(e.getMessage());
+                                return;
+                            }
+                        }
+
+                        lessons.add(lesson);
                     }
 
                     try {

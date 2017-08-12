@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#1976d2</color>
     <color name="colorAccent">#7c4dff</color>
     <color name="colorEditTextHint">#546e7a</color>
+    <color name="colorMarkWithCommentHighlight">#b2ebf2</color>
 </resources>

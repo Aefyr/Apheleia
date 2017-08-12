@@ -66,16 +66,16 @@ public class EljurApiClient {
 		return EljurApiRequests.getPeriods(queue, persona, studentId, listener);
 	}
 	
-	public StringRequest getDiary(EljurPersona persona, String studentId, String days, JournalismListener<DiaryEntry> listener){
-		return EljurApiRequests.getDiary(queue, persona, studentId, days, listener);
+	public StringRequest getDiary(EljurPersona persona, String studentId, String days, boolean getTimes, JournalismListener<DiaryEntry> listener){
+		return EljurApiRequests.getDiary(queue, persona, studentId, days, getTimes, listener);
 	}
 	
 	public StringRequest getMarks(EljurPersona persona, String studentId, String days, JournalismListener<MarksGrid> listener){
 		return EljurApiRequests.getMarks(queue, persona, studentId, days, listener);
 	}
 	
-	public StringRequest getSchedule(EljurPersona persona, String studentId, String days, JournalismListener<Schedule> listener){
-		return EljurApiRequests.getSchedule(queue, persona, studentId, days, listener);
+	public StringRequest getSchedule(EljurPersona persona, String studentId, String days, boolean getTimes, JournalismListener<Schedule> listener){
+		return EljurApiRequests.getSchedule(queue, persona, studentId, days, getTimes, listener);
 	}
 	
 	public StringRequest getMessages(EljurPersona persona, MessagesList.Folder folder, boolean unreadOnly, JournalismListener<MessagesList> listener){

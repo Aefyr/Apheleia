@@ -13,6 +13,10 @@ public class Homework {
 	void addAttachments(ArrayList<Attachment> attachments){
 		this.attachments = attachments;
 	}
+
+	public boolean hasTasks(){
+		return hometasks!=null;
+	}
 	
 	public ArrayList<Hometask> getTasks(){
 		return hometasks;

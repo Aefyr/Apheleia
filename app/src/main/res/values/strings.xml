@@ -20,6 +20,20 @@
     <string name="invalid_credentials_desc">Invalid username or password</string>
     <string name="invalid_domain">Invalid school domain</string>
     <string name="invalid_domain_desc">Entered school domain doesn\'t exist</string>
+    <string name="title_activity_container">Apheleia</string>
+
+    <!-- Diary -->
+    <string name="vacation">Vacation</string>
+    <string name="time_unknown">Time unknown</string>
+    <string name="no_homework">● No homework</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

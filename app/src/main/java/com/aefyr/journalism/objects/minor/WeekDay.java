@@ -5,6 +5,7 @@ import com.aefyr.journalism.exceptions.EljurApiException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 
 public class WeekDay {
@@ -15,7 +16,7 @@ public class WeekDay {
 	ArrayList<Lesson> overtimeLessons;
 	
 	void parseDate(String rawDate)throws EljurApiException {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMdd");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 		
 		try {
 			date = simpleDateFormat.parse(rawDate).getTime();
@@ -47,4 +48,6 @@ public class WeekDay {
 	public boolean hasOvertimeLessons(){
 		return overtimeLessons != null;
 	}
+
+
 }
