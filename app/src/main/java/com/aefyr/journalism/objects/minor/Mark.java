@@ -1,6 +1,8 @@
 package com.aefyr.journalism.objects.minor;
 
-public class Mark {
+import java.io.Serializable;
+
+public class Mark implements Serializable{
 	String value;
 	String comment;
 	

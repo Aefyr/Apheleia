@@ -1,6 +1,8 @@
 package com.aefyr.journalism.objects.minor;
 
-public class Attachment {
+import java.io.Serializable;
+
+public class Attachment implements Serializable{
 	String name;
 	String uri;
 	

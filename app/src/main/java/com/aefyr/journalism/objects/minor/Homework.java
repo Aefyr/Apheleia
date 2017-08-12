@@ -1,8 +1,9 @@
 package com.aefyr.journalism.objects.minor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Homework {
+public class Homework implements Serializable{
 	ArrayList<Hometask> hometasks;
 	ArrayList<Attachment> attachments;
 	

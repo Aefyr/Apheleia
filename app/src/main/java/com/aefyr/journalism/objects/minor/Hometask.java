@@ -1,6 +1,8 @@
 package com.aefyr.journalism.objects.minor;
 
-public class Hometask {
+import java.io.Serializable;
+
+public class Hometask implements Serializable{
 	String task;
 	boolean personal;
 	

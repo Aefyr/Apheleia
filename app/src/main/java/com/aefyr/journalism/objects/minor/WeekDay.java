@@ -2,13 +2,14 @@ package com.aefyr.journalism.objects.minor;
 
 import com.aefyr.journalism.exceptions.EljurApiException;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 
-public class WeekDay {
+public class WeekDay implements Serializable{
 	boolean vacation;
 	String name;
 	long date;
@@ -39,6 +40,10 @@ public class WeekDay {
 	
 	public ArrayList<Lesson> getLessons(){
 		return lessons;
+	}
+
+	public ArrayList<Lesson> getOvertimeLessons(){
+		return overtimeLessons;
 	}
 	
 	void addOvertimeLessons(ArrayList<Lesson> overtimeLessons){

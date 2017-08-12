@@ -265,6 +265,8 @@ class EljurApiRequests {
 
                                 if(mark.get("comment")!=null&&mark.get("comment").getAsString().length()>0)
                                     marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("comment").getAsString()));
+                                else if(mark.get("lesson_comment")!=null&&mark.get("lesson_comment").getAsString().length()>0)
+                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("lesson_comment").getAsString()));
                                 else
                                     marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString()));
                             }
@@ -272,12 +274,81 @@ class EljurApiRequests {
                         }
                         lessons.add(lesson);
                     }
+
+                    ArrayList<Lesson> overtimeLessons = null;
+                    if(weekDay.get("items_extday")!=null){
+                        overtimeLessons = new ArrayList<>();
+                        for(JsonElement otLessonEl: weekDay.getAsJsonArray("items_extday")){
+                            JsonObject otLessonObj = otLessonEl.getAsJsonObject();
+                            Lesson otLesson = MinorObjectsFactory.createLesson("OT", otLessonObj.get("name").getAsString(), "OT", otLessonObj.get("teacher").getAsString());
+
+                            if(otLessonObj.get("starttime")!=null&&otLessonObj.get("endtime")!=null){
+                                try {
+                                    MinorObjectsHelper.addTimesToLesson(otLesson, otLessonObj.get("starttime").getAsString(), otLessonObj.get("endtime").getAsString());
+                                } catch (EljurApiException e) {
+                                    listener.onApiError(e.getMessage());
+                                    return;
+                                }
+                            }
+
+                            Homework homework = null;
+                            if(otLessonObj.get("homework")!=null){
+                                homework = MinorObjectsFactory.createHomework();
+
+                                ArrayList<Hometask> hometasks = new ArrayList<Hometask>();
+                                for(JsonElement homeworkEl: otLessonObj.getAsJsonArray("homework")){
+                                    JsonObject hometask = homeworkEl.getAsJsonObject();
+                                    hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
+                                }
+
+                                Collections.sort(hometasks, new HometasksComparator());
+                                MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
+                            }
+
+                            if(otLessonObj.get("files")!=null){
+                                if(homework==null)
+                                    homework = MinorObjectsFactory.createHomework();
+
+                                ArrayList<Attachment> attachments = new ArrayList<Attachment>();
+                                for(JsonElement attachmentEl: otLessonObj.getAsJsonArray("files")){
+                                    JsonObject attachment = attachmentEl.getAsJsonObject();
+                                    attachments.add(MinorObjectsFactory.createAttacment(attachment.get("filename").getAsString(), attachment.get("link").getAsString()));
+                                }
+                                MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);;
+                            }
+
+                            if(homework!=null){
+                                MinorObjectsHelper.addHomeworkToLesson(otLesson, homework);
+                            }
+
+                            if(otLessonObj.get("assessments")!=null){
+                                ArrayList<Mark> marks = new ArrayList<Mark>();
+                                for(JsonElement markEl: otLessonObj.getAsJsonArray("assessments")){
+                                    JsonObject mark = markEl.getAsJsonObject();
+
+                                    if(mark.get("comment")!=null&&mark.get("comment").getAsString().length()>0)
+                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("comment").getAsString()));
+                                    else if(mark.get("lesson_comment")!=null&&mark.get("lesson_comment").getAsString().length()>0)
+                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("lesson_comment").getAsString()));
+                                    else
+                                        marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString()));
+                                }
+                                MinorObjectsHelper.addMarksToLesson(otLesson, marks);
+                            }
+                            overtimeLessons.add(otLesson);
+                        }
+                    }
+                    WeekDay day;
                     try {
-                        weekDays.add(MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons));
+                        day = MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons);
                     } catch (EljurApiException e) {
                         listener.onApiError(e.getMessage());
                         return;
                     }
+
+                    if(overtimeLessons!=null)
+                        MinorObjectsHelper.addOvertimeLessonsToWeekDat(day, overtimeLessons);
+                    weekDays.add(day);
                 }
                 Collections.sort(weekDays, new WeekDaysComparator());
                 listener.onSuccess(MajorObjectsFactory.createDiaryEntry(weekDays));

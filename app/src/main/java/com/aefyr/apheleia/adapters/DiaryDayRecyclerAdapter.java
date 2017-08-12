@@ -1,21 +1,13 @@
 package com.aefyr.apheleia.adapters;
 
-import android.animation.Animator;
-import android.animation.AnimatorInflater;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aefyr.apheleia.R;
@@ -51,9 +43,19 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
 
     @Override
     public void onBindViewHolder(final LessonViewHolder holder, int position) {
-        Lesson lesson = day.getLessons().get(position);
-        holder.lessonNumber.setText(lesson.getNumber());
+        boolean overtimeLesson = position >= day.getLessons().size();
+        Lesson lesson = overtimeLesson?day.getOvertimeLessons().get(position-day.getLessons().size()):day.getLessons().get(position);
+
+        if(overtimeLesson) {
+            holder.lessonNumber.setText(holder.itemView.getContext().getString(R.string.overtime));
+            holder.lessonNumber.setTextColor(holder.itemView.getResources().getColor(R.color.colorOvertimeLesson));
+        }else {
+            holder.lessonNumber.setText(lesson.getNumber());
+            holder.lessonNumber.setTextColor(holder.itemView.getResources().getColor(R.color.colorAccent));
+        }
+
         holder.lessonName.setText(lesson.getName());
+
         if(lesson.hasTimes()) {
             holder.lessonTimes.setText(String.format("%s - %s", timeLord.getLessonTime(lesson.getStartTime()), timeLord.getLessonTime(lesson.getEndTime())));
         }else
@@ -154,7 +156,11 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
 
     @Override
     public int getItemCount() {
-        return day==null?0:day.getLessons().size();
+        if(day==null)
+            return 0;
+        if(day.hasOvertimeLessons())
+            return day.getLessons().size()+day.getOvertimeLessons().size();
+        return day.getLessons().size();
     }
 
     class LessonViewHolder extends RecyclerView.ViewHolder{

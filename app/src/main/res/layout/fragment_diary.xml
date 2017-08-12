@@ -7,7 +7,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/swipeRefreshLayout">
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_below="@+id/quickDayPickBar">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/diaryRecycler"
@@ -15,6 +16,15 @@
             android:layout_height="match_parent" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/quickDayPickBar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?android:attr/colorBackground"
+        android:elevation="@dimen/diary_day_cardview_elevation"
+        android:gravity="center"
+        android:orientation="horizontal"></LinearLayout>
 
 
 </RelativeLayout>

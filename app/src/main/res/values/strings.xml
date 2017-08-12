@@ -26,6 +26,7 @@
     <string name="vacation">Vacation</string>
     <string name="time_unknown">Time unknown</string>
     <string name="no_homework">● No homework</string>
+    <string name="overtime">OT</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -18,6 +18,6 @@
         android:paddingEnd="0dp"
         android:paddingStart="0dp"
         android:paddingTop="0dp"
-        android:text="5"
+        android:text="100"
         android:textSize="18sp" />
 </FrameLayout>

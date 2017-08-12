@@ -11,14 +11,26 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.DiaryRecyclerAdapter;
+import com.aefyr.apheleia.helpers.TimeLord;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.minor.WeekDay;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
@@ -28,6 +40,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private DiaryRecyclerAdapter diaryRecyclerAdapter;
     private EljurApiClient apiClient;
     private Helper helper;
+    private LinearLayout quickDayPickBar;
 
     public DiaryFragment() {
         // Required empty public constructor
@@ -48,7 +61,21 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         apiClient = EljurApiClient.getInstance(getActivity());
         helper = Helper.getInstance(getActivity());
 
-        loadDiary("20170515-20170519");
+        quickDayPickBar = (LinearLayout) view.findViewById(R.id.quickDayPickBar);
+
+        try {
+            FileInputStream stream = new FileInputStream(new File(getActivity().getFilesDir(), "diary.txt"));
+            ObjectInputStream objectInputStream = new ObjectInputStream(stream);
+            DiaryEntry entry = (DiaryEntry) objectInputStream.readObject();
+
+            diaryRecyclerAdapter = new DiaryRecyclerAdapter(entry);
+            diaryRecycler.setAdapter(diaryRecyclerAdapter);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            loadDiary("20170515-20170519");
+        }
+
+        //loadDiary("20170515-20170519");
 
         daysEnterDialog = new AlertDialog.Builder(getActivity()).setView(R.layout.temp_edittext_layout).setTitle("Enter Days").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
@@ -76,11 +103,9 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 }else
                     diaryRecyclerAdapter.setDiaryEntry(result);
 
+                initializeQuickScrolling(true, result);
                 refreshLayout.setRefreshing(false);
-
-                for(WeekDay day: result.getDays()){
-                    System.out.println(String.format("Day: %d, isVacation=%b, Canon: %s", day.getDate(), day.isVacation(), day.getCanonicalName()));
-                }
+                testSer(result);
             }
 
             @Override
@@ -93,5 +118,43 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 new AlertDialog.Builder(getActivity()).setMessage(message).create().show();
             }
         });
+    }
+
+    private void testSer(DiaryEntry entry){
+        try{
+            FileOutputStream fos = new FileOutputStream(new File(getActivity().getFilesDir(), "diary.txt"), false);
+            ObjectOutputStream stream = new ObjectOutputStream(fos);
+            stream.writeObject(entry);
+            fos.close();
+            stream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    private void initializeQuickScrolling(boolean enabled, final DiaryEntry entry){
+        if(enabled){
+            quickDayPickBar.removeAllViews();
+
+            for(final WeekDay day: entry.getDays()){
+                View quickDayPickButton = LayoutInflater.from(quickDayPickBar.getContext()).inflate(R.layout.quick_day_pick_button, null);
+                Button button = (Button) quickDayPickButton.findViewById(R.id.quickDayPickButton);
+                button.setText(String.valueOf(TimeLord.getInstance().getDayTitle(day.getDate()).charAt(0)));
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        diaryRecycler.smoothScrollToPosition(entry.getDays().indexOf(day));
+                    }
+                });
+                quickDayPickBar.addView(quickDayPickButton);
+            }
+        }else {
+            quickDayPickBar.removeAllViews();
+            quickDayPickBar.setVisibility(View.GONE);
+        }
     }
 }

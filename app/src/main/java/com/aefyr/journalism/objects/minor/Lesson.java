@@ -2,11 +2,12 @@ package com.aefyr.journalism.objects.minor;
 
 import com.aefyr.journalism.exceptions.EljurApiException;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class Lesson {
+public class Lesson implements Serializable{
 	String name;
 	String room;
 	String teacher;
