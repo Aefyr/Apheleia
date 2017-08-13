@@ -83,6 +83,10 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
                 for (Hometask task : homework.getTasks()) {
                     homeworkBuilder.append("● ");
                     homeworkBuilder.append(task.getTask());
+                    if(task.isPersonal()) {
+                        homeworkBuilder.append(" ");
+                        homeworkBuilder.append(holder.itemView.getContext().getString(R.string.personal));
+                    }
                     if (t++ < lesson.getHomework().getTasks().size()-1)
                         homeworkBuilder.append("\n");
                 }

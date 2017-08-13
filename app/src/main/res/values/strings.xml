@@ -33,6 +33,7 @@
     <string name="time_unknown">Time unknown</string>
     <string name="no_homework">● No homework</string>
     <string name="overtime">OT</string>
+    <string name="personal">(Individual)</string>
     <string name="error_week_not_saved">"No internet connection and selected week is not saved!"</string>
 
 
