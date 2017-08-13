@@ -55,10 +55,15 @@
         android:layout_below="@+id/lessonHomework"
         android:layout_marginTop="@dimen/diary_day_lesson_padding"
         android:orientation="horizontal">
+    </LinearLayout>
 
-        <include layout="@layout/diary_day_lesson_mark" />
-
-        <include layout="@layout/diary_day_lesson_mark" />
+    <LinearLayout
+        android:id="@+id/attachmentsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/marksContainer"
+        android:orientation="vertical">
     </LinearLayout>
 
 </RelativeLayout>

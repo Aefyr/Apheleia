@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/diary_day_lesson_padding"
+    android:orientation="horizontal"
+    android:padding="@dimen/diary_day_lesson_padding">
+
+    <ImageButton
+        android:id="@+id/attachmentImageButton"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_weight="0.35"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="@color/colorPrimaryDark"
+        app:srcCompat="@drawable/ic_attach_file_black_36dp" />
+
+    <Button
+        android:id="@+id/attachmentButton"
+        style="@style/QuickWeekDayPickButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/attachmentImageButton"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/diary_day_lesson_padding"
+        android:layout_toEndOf="@+id/attachmentImageButton"
+        android:gravity="center_vertical|start"
+        android:maxHeight="36dp"
+        android:text="How to build a time machine.tif"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="12sp" />
+</RelativeLayout>

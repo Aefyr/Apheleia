@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.aefyr.apheleia.helpers.TheInitializer;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.Token;
 
@@ -73,7 +74,21 @@ public class LoginActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         helper.saveToken(token);
                         helper.saveDomain(domainET.getText().toString());
-                        loggedIn();
+
+                        TheInitializer t = new TheInitializer(LoginActivity.this, new TheInitializer.OnInitializationListener() {
+                            @Override
+                            public void OnSuccess() {
+                                loggedIn();
+                            }
+
+                            @Override
+                            public void OnError(String m) {
+                                showAlert("", m);
+                            }
+                        });
+
+                        t.initialize();
+
                     }
 
                     @Override

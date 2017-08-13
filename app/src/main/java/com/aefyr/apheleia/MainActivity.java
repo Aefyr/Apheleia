@@ -1,6 +1,8 @@
 package com.aefyr.apheleia;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
@@ -11,11 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.aefyr.apheleia.fragments.DiaryFragment;
-import com.aefyr.journalism.EljurApiClient;
-import com.aefyr.journalism.EljurPersona;
-import com.aefyr.journalism.objects.major.PersonaInfo;
+import com.aefyr.apheleia.helpers.ProfileHelper;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -23,6 +27,8 @@ public class MainActivity extends AppCompatActivity
 
     private Helper helper;
     private FragmentManager fragmentManager;
+    private DrawerLayout drawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -46,29 +52,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        initializeUserSwitcher(navigationView.getHeaderView(0));
+
         fragmentManager = getSupportFragmentManager();
 
-    }
-
-    private void testRequest(){
-        EljurPersona persona = helper.getPersona();
-        EljurApiClient.getInstance(this).getRules(persona, new EljurApiClient.JournalismListener<PersonaInfo>() {
-            @Override
-            public void onSuccess(PersonaInfo result) {
-                System.out.println(String.format("Name: %s\nEmail: %s\nStudents count: %d", result.getCompositeName(true, true, true), result.email(), result.getStudents().size()));
-                new AlertDialog.Builder(MainActivity.this).setMessage("Yay~"+(result.gender()== PersonaInfo.Gender.FEMALE?"Miss ":"Mister ")+result.getCompositeName(true, false, false)+", you logged in ;3").create().show();
-            }
-
-            @Override
-            public void onNetworkError() {
-                new AlertDialog.Builder(MainActivity.this).setMessage("Network error!").create().show();
-            }
-
-            @Override
-            public void onApiError(String message) {
-                new AlertDialog.Builder(MainActivity.this).setMessage("Api error!").create().show();
-            }
-        });
     }
 
     @Override
@@ -131,11 +118,66 @@ public class MainActivity extends AppCompatActivity
     private enum ApheleiaFragment{
         DIARY
     }
+    private ApheleiaFragment currentApheleiaFragment;
+    private Fragment currentFragment;
     private void setFragment(ApheleiaFragment fragment){
+        currentApheleiaFragment = fragment;
         switch (fragment){
+            case DIARY:
+                currentFragment = new DiaryFragment();
+                break;
+        }
+
+        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment).commit();
+    }
+
+    private TextView studentName;
+    private AlertDialog studentPickerDialog;
+    private void initializeUserSwitcher(View navHeader){
+        final ProfileHelper profileHelper = ProfileHelper.getInstance(this);
+
+        ((TextView)navHeader.findViewById(R.id.usernameText)).setText(profileHelper.getName());
+        ((TextView)navHeader.findViewById(R.id.emailText)).setText(profileHelper.getEmail());
+        studentName = (TextView) navHeader.findViewById(R.id.studentNameText);
+
+        if(profileHelper.getStudentsCount()==1){
+            studentName.setVisibility(View.GONE);
+            navHeader.findViewById(R.id.switchStudentButton).setVisibility(View.GONE);
+        }else {
+            studentName.setText(profileHelper.getStudentName(profileHelper.getCurrentStudentId()));
+
+            final String[] studentsIds = profileHelper.getStudentsIds().toArray(new String[]{});
+            final String[] studentsNames = new String[studentsIds.length];
+            int i = 0;
+            for(String id: studentsIds){
+                studentsNames[i++] = profileHelper.getStudentName(id)+" ("+profileHelper.getStudentClass(id)+")";
+            }
+
+            studentPickerDialog = new AlertDialog.Builder(this).setTitle(getString(R.string.pick_student)).setSingleChoiceItems(studentsNames, Arrays.asList(studentsIds).indexOf(profileHelper.getCurrentStudentId()), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    studentPickerDialog.dismiss();
+                    studentName.setText(studentsNames[i]);
+                    profileHelper.setCurrentStudent(studentsIds[i]);
+                    studentSwitched();
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+            }).setNegativeButton(getString(R.string.cancel), null).create();
+
+            navHeader.findViewById(R.id.switchStudentButton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    studentPickerDialog.show();
+                }
+            });
+        }
+    }
+
+    private void studentSwitched(){
+        switch (currentApheleiaFragment){
 
             case DIARY:
-                fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new DiaryFragment()).commit();
+                ((DiaryFragment)currentFragment).studentSwitched();
                 break;
         }
     }

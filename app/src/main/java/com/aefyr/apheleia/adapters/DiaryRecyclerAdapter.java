@@ -20,8 +20,10 @@ import java.text.SimpleDateFormat;
 public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private DiaryEntry entry;
     private TimeLord timeLord;
+    private DiaryDayRecyclerAdapter.OnLinkOpenRequestListener linkOpenRequestListener;
 
-    public DiaryRecyclerAdapter(DiaryEntry entry){
+    public DiaryRecyclerAdapter(DiaryEntry entry, DiaryDayRecyclerAdapter.OnLinkOpenRequestListener linkOpenRequestListener){
+        setOnLinkOpenRequestListener(linkOpenRequestListener);
         this.entry = entry;
         timeLord = TimeLord.getInstance();
 
@@ -30,6 +32,10 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void setDiaryEntry(DiaryEntry entry){
         this.entry = entry;
         notifyDataSetChanged();
+    }
+
+    public void setOnLinkOpenRequestListener(DiaryDayRecyclerAdapter.OnLinkOpenRequestListener listener){
+        linkOpenRequestListener = listener;
     }
 
     @Override
@@ -68,6 +74,11 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         return entry.getDays().get(position).isVacation()?DayType.VACATION:DayType.NORMAL;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return entry.getDays().get(position).getDate();
+    }
+
     private class DayType{
         private static final int NORMAL = 0;
         private static final int VACATION = 1;
@@ -84,6 +95,8 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             lessonsRecyler.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.VERTICAL, false));
 
             diaryDayRecyclerAdapter = new DiaryDayRecyclerAdapter(null);
+            diaryDayRecyclerAdapter.setHasStableIds(true);
+            diaryDayRecyclerAdapter.setOnLinkOpenRequestListener(linkOpenRequestListener);
             lessonsRecyler.setAdapter(diaryDayRecyclerAdapter);
         }
     }

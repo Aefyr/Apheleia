@@ -1,6 +1,8 @@
 package com.aefyr.apheleia.adapters;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.helpers.TimeLord;
+import com.aefyr.journalism.objects.minor.Attachment;
 import com.aefyr.journalism.objects.minor.Hometask;
 import com.aefyr.journalism.objects.minor.Homework;
 import com.aefyr.journalism.objects.minor.Lesson;
@@ -25,6 +28,11 @@ import com.aefyr.journalism.objects.minor.WeekDay;
 public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapter.LessonViewHolder>{
     private WeekDay day;
     private TimeLord timeLord;
+    private OnLinkOpenRequestListener linkOpenRequestListener;
+
+    public interface OnLinkOpenRequestListener{
+        void onLinkOpenRequest(String uri);
+    }
 
     public DiaryDayRecyclerAdapter(WeekDay day){
         this.day = day;
@@ -34,6 +42,10 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
     public void setDay(WeekDay day){
         this.day = day;
         notifyDataSetChanged();
+    }
+
+    public void setOnLinkOpenRequestListener(OnLinkOpenRequestListener listener){
+        linkOpenRequestListener = listener;
     }
 
     @Override
@@ -82,8 +94,29 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
 
             if(homework.hasAttachments()){
                 //Show and populate attachments container !!
+                holder.attachmentsContainer.removeAllViews();
+                for(final Attachment attachment: homework.getAttachments()){
+                    View view = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.attachment, null);
+
+                    Button button = (Button) view.findViewById(R.id.attachmentButton);
+                    button.setText(attachment.getName());
+
+                    View.OnClickListener listener = new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            openLink(attachment.getUri());
+                        }
+                    };
+                    button.setOnClickListener(listener);
+                    view.findViewById(R.id.attachmentImageButton).setOnClickListener(listener);
+
+                    holder.attachmentsContainer.addView(view);
+                }
+                holder.attachmentsContainer.setVisibility(View.VISIBLE);
+
             }else {
-                //Hide attachments container !!
+                holder.attachmentsContainer.setVisibility(View.GONE);
+                holder.attachmentsContainer.removeAllViews();
             }
 
         }else {
@@ -112,8 +145,11 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
 
                 holder.marksContainer.addView(markView);
             }
+
+            holder.marksContainer.setVisibility(View.VISIBLE);
         }else {
             holder.marksContainer.setVisibility(View.GONE);
+            holder.marksContainer.removeAllViews();
             /*final int originalHeight = holder.marksContainer.getHeight();
             ValueAnimator heightAnimator = ValueAnimator.ofFloat(originalHeight, 0);
             heightAnimator.setDuration(100);
@@ -154,6 +190,7 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
         }
     }
 
+
     @Override
     public int getItemCount() {
         if(day==null)
@@ -163,6 +200,18 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
         return day.getLessons().size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        boolean overtimeLesson = position >= day.getLessons().size();
+        Lesson lesson = overtimeLesson?day.getOvertimeLessons().get(position-day.getLessons().size()):day.getLessons().get(position);
+
+
+        if(lesson.hasTimes())
+            return lesson.getStartTime();
+        else
+            return (lesson.getName()+position).hashCode();
+    }
+
     class LessonViewHolder extends RecyclerView.ViewHolder{
         private TextView lessonNumber;
         private TextView lessonName;
@@ -170,6 +219,7 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
         private TextView lessonHomework;
 
         private LinearLayout marksContainer;
+        private LinearLayout attachmentsContainer;
         public LessonViewHolder(View itemView) {
             super(itemView);
             lessonNumber = (TextView) itemView.findViewById(R.id.lessonNumber);
@@ -177,6 +227,12 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
             lessonTimes = (TextView) itemView.findViewById(R.id.lessonTimes);
             lessonHomework = (TextView) itemView.findViewById(R.id.lessonHomework);
             marksContainer = (LinearLayout) itemView.findViewById(R.id.marksContainer);
+            attachmentsContainer = (LinearLayout) itemView.findViewById(R.id.attachmentsContainer);
         }
+    }
+
+    private void openLink(String uri){
+        if(linkOpenRequestListener!=null)
+            linkOpenRequestListener.onLinkOpenRequest(uri);
     }
 }

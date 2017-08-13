@@ -58,7 +58,4 @@ public class Helper {
         return persona;
     }
 
-    public String getCurrentStudentId(){
-        return preferences.getString("current_student", "448");
-    }
 }

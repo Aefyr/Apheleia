@@ -7,7 +7,10 @@
     <string name="help">Help</string>
     <string name="network_error">Network Error</string>
     <string name="network_error_tip">Check your Internet connection and try again later</string>
-    <string name="api_error">Internal Error</string>
+    <string name="api_error">Critical Error</string>
+    <string name="pick_student">Choose Student</string>
+    <string name="cancel">Cancel</string>
+    <string name="offline_mode">No connection. Loaded saved copy</string>
 
     <!-- Login Activity -->
     <string name="domain">School Domain</string>
@@ -21,12 +24,17 @@
     <string name="invalid_domain">Invalid school domain</string>
     <string name="invalid_domain_desc">Entered school domain doesn\'t exist</string>
     <string name="title_activity_container">Apheleia</string>
+    <string name="initializing">Initializing</string>
+    <string name="loading_profile">Loading profile…</string>
+    <string name="loading_periods">Getting periods info…</string>
 
     <!-- Diary -->
     <string name="vacation">Vacation</string>
     <string name="time_unknown">Time unknown</string>
     <string name="no_homework">● No homework</string>
     <string name="overtime">OT</string>
+    <string name="error_week_not_saved">"No internet connection and selected week is not saved!"</string>
+
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

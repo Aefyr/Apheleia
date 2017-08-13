@@ -16,6 +16,8 @@ public class TimeLord {
 
     private SimpleDateFormat lessonTimesSDF;
 
+    private SimpleDateFormat weeksAndPeriodsSDF;
+
     private TimeLord(){
         instance = this;
 
@@ -30,6 +32,8 @@ public class TimeLord {
         dayTitleSDF = new SimpleDateFormat("EEEE, dd MMMM", Locale.getDefault());
 
         lessonTimesSDF = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+        weeksAndPeriodsSDF = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
     }
 
     public static TimeLord getInstance(){
@@ -42,5 +46,9 @@ public class TimeLord {
 
     public String getLessonTime(long time){
         return  lessonTimesSDF.format(time);
+    }
+
+    public String getWeekOrPeriodDate(long date){
+        return  weeksAndPeriodsSDF.format(date);
     }
 }
