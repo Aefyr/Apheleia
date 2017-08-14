@@ -61,19 +61,19 @@ class EljurApiRequests {
                 try {
                     listener.onSuccessfulLogin(Token.createToken(result.get("token").getAsString(), result.get("expires").getAsString()));
                 } catch (EljurApiException e) {
-                    listener.onApiError(e.getMessage());
+                    listener.onApiError(e.getMessage(), result.toString());
                 }
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error.networkResponse.statusCode==400)
+                if(error.networkResponse==null)
+                    listener.onNetworkError();
+                else if(error.networkResponse.statusCode==400)
                     listener.onInvalidCredentialsError();
                 else if(error.networkResponse.statusCode==500)
                     listener.onInvalidDomainError();
-                else
-                    listener.onNetworkError();
             }
         });
 
@@ -99,7 +99,7 @@ class EljurApiRequests {
                 else if(roles.contains("student"))
                     MajorObjectsHelper.setPersonaInfoRole(personaInfo, PersonaInfo.Role.STUDENT);
                 else
-                    listener.onApiError("Unsupported role");
+                    listener.onApiError("Unsupported role", rawResponse);
 
                 MajorObjectsHelper.setPersonaInfoGender(personaInfo, Utility.parseGender(response.get("gender").getAsString()));
                 MajorObjectsHelper.setPersonaInfoId(personaInfo, response.get("name").getAsString());
@@ -149,7 +149,7 @@ class EljurApiRequests {
                         try {
                             actualPeriod = MinorObjectsFactory.createActualPeriod(period.get("name").getAsString(), period.get("fullname").getAsString(), period.get("start").getAsString(), period.get("end").getAsString());
                         } catch (EljurApiException e) {
-                            listener.onApiError(e.getMessage());
+                            listener.onApiError(e.getMessage(), rawResponse);
                             return;
                         }
 
@@ -160,7 +160,7 @@ class EljurApiRequests {
                             try {
                                 MinorObjectsHelper.addWeekToActualPeriod(actualPeriod, MinorObjectsFactory.createWeek(week.get("start").getAsString(), week.get("end").getAsString(), week.get("title").getAsString()));
                             } catch (EljurApiException e) {
-                                listener.onApiError(e.getMessage());
+                                listener.onApiError(e.getMessage(), rawResponse);
                                 return;
                             }
                         }
@@ -197,18 +197,24 @@ class EljurApiRequests {
                 ArrayList<WeekDay> weekDays = new ArrayList<WeekDay>();
 
                 if(response.size()==0||response.getAsJsonObject("students").size()==0){
-                    listener.onApiError("Расписание отсутствует");
+                    listener.onApiError("Расписание отсутствует", null);
                     return;
                 }
 
                 JsonObject weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
+
+                if(weekDaysObj==null||weekDaysObj.size()==0){
+                    listener.onApiError("Расписание отсутствует", null);
+                    return;
+                }
+
                 for(Map.Entry<String, JsonElement> entry: weekDaysObj.entrySet()){
                     JsonObject weekDay = entry.getValue().getAsJsonObject();
                     if(weekDay.get("alert") != null && weekDay.get("alert").getAsString().equals("vacation")){
                         try {
                             weekDays.add(MinorObjectsFactory.createVacationWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString()));
                         } catch (EljurApiException e) {
-                            listener.onApiError(e.getMessage());
+                            listener.onApiError(e.getMessage(), rawResponse);
                             return;
                         }
                         continue;
@@ -223,7 +229,7 @@ class EljurApiRequests {
                             try {
                                 MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
                             } catch (EljurApiException e) {
-                                listener.onApiError(e.getMessage());
+                                listener.onApiError(e.getMessage(), rawResponse);
                                 return;
                             }
                         }
@@ -286,7 +292,7 @@ class EljurApiRequests {
                                 try {
                                     MinorObjectsHelper.addTimesToLesson(otLesson, otLessonObj.get("starttime").getAsString(), otLessonObj.get("endtime").getAsString());
                                 } catch (EljurApiException e) {
-                                    listener.onApiError(e.getMessage());
+                                    listener.onApiError(e.getMessage(), rawResponse);
                                     return;
                                 }
                             }
@@ -342,7 +348,7 @@ class EljurApiRequests {
                     try {
                         day = MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons);
                     } catch (EljurApiException e) {
-                        listener.onApiError(e.getMessage());
+                        listener.onApiError(e.getMessage(),rawResponse);
                         return;
                     }
 
@@ -374,7 +380,17 @@ class EljurApiRequests {
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
+                if(response.size()==0||response.get("students")==null){
+                    listener.onApiError("Оценки отсутствуют", null);
+                    return;
+                }
+
                 JsonArray lessons = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonArray("lessons");
+
+                if(lessons == null||lessons.size()==0){
+                    listener.onApiError("Оценки отсутствуют", null);
+                    return;
+                }
 
                 ArrayList<SubjectInGrid> subjects = new ArrayList<SubjectInGrid>();
 
@@ -398,14 +414,13 @@ class EljurApiRequests {
                                     gridMark = MinorObjectsFactory.createGridMark(mark.get("value").getAsString(), mark.get("date").getAsString());
                                 }
                             }catch (EljurApiException e){
-                                listener.onApiError(e.getMessage());
+                                listener.onApiError(e.getMessage(), rawResponse);
                                 return;
                             }
 
                             marks.add(gridMark);
-
-                            subjects.add(MinorObjectsFactory.createSubjectInGrid(lesson.get("name").getAsString(), lesson.get("average").getAsString(), marks));
                         }
+                        subjects.add(MinorObjectsFactory.createSubjectInGrid(lesson.get("name").getAsString(), lesson.get("average").getAsString(), marks));
                     }else {
                         subjects.add(MinorObjectsFactory.createSubjectInGrid(lesson.get("name").getAsString(), lesson.get("average").getAsString(), null));
                     }
@@ -448,7 +463,7 @@ class EljurApiRequests {
                         try {
                             weekDays.add(MinorObjectsFactory.createVacationWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString()));
                         } catch (EljurApiException e) {
-                            listener.onApiError(e.getMessage());
+                            listener.onApiError(e.getMessage(), rawResponse);
                             return;
                         }
                         continue;
@@ -463,7 +478,7 @@ class EljurApiRequests {
                             try {
                                 MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
                             } catch (EljurApiException e) {
-                                listener.onApiError(e.getMessage());
+                                listener.onApiError(e.getMessage(), rawResponse);
                                 return;
                             }
                         }
@@ -474,7 +489,7 @@ class EljurApiRequests {
                     try {
                         weekDays.add(MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons));
                     } catch (EljurApiException e) {
-                        listener.onApiError(e.getMessage());
+                        listener.onApiError(e.getMessage(), rawResponse);
                         return;
                     }
                 }
@@ -513,7 +528,7 @@ class EljurApiRequests {
                         try {
                             shortMessages.add(MinorObjectsFactory.createInboxShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(),MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
                         } catch (EljurApiException e) {
-                            listener.onApiError(e.getMessage());
+                            listener.onApiError(e.getMessage(), rawResponse);
                             return;
                         }
                     }else {
@@ -530,7 +545,7 @@ class EljurApiRequests {
                         try {
                             shortMessages.add(MinorObjectsFactory.createSentShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(),receivers, message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
                         } catch (EljurApiException e) {
-                            listener.onApiError(e.getMessage());
+                            listener.onApiError(e.getMessage(), rawResponse);
                             return;
                         }
                     }
@@ -571,7 +586,7 @@ class EljurApiRequests {
                 try {
                     messageInfo = MinorObjectsFactory.createMessageInfo(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("text").getAsString(), message.get("date").getAsString(), folder, MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), receivers);
                 } catch (EljurApiException e) {
-                    listener.onApiError(e.getMessage());
+                    listener.onApiError(e.getMessage(), rawResponse);
                     return;
                 }
 
@@ -649,7 +664,7 @@ class EljurApiRequests {
                 if(response.get("state").getAsInt()==200&&response.get("error").isJsonNull())
                     listener.onSuccess(MajorObjectsFactory.createSentMessageResponse(true));
                 else
-                    listener.onApiError("Message was not sent!");
+                    listener.onApiError("Message was not sent!", rawResponse);
             }
         }, new Response.ErrorListener() {
             @Override

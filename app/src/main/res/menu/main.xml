@@ -6,4 +6,10 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_time_period_switcher"
+        android:icon="@drawable/ic_today_white_36dp"
+        android:title="@string/switch_time_period"
+        app:showAsAction="always" />
 </menu>

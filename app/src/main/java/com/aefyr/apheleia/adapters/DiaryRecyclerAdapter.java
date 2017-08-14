@@ -1,5 +1,6 @@
 package com.aefyr.apheleia.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,12 +22,19 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private DiaryEntry entry;
     private TimeLord timeLord;
     private DiaryDayRecyclerAdapter.OnLinkOpenRequestListener linkOpenRequestListener;
+    private static RecyclerView.RecycledViewPool lessonsPool;
 
-    public DiaryRecyclerAdapter(DiaryEntry entry, DiaryDayRecyclerAdapter.OnLinkOpenRequestListener linkOpenRequestListener){
+    private LayoutInflater inflater;
+
+    public DiaryRecyclerAdapter(Context c, DiaryEntry entry, DiaryDayRecyclerAdapter.OnLinkOpenRequestListener linkOpenRequestListener){
         setOnLinkOpenRequestListener(linkOpenRequestListener);
         this.entry = entry;
         timeLord = TimeLord.getInstance();
-
+        inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if(lessonsPool == null) {
+            lessonsPool = new RecyclerView.RecycledViewPool();
+            lessonsPool.setMaxRecycledViews(444, 256);
+        }
     }
 
     public void setDiaryEntry(DiaryEntry entry){
@@ -42,9 +50,9 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType){
             case DayType.NORMAL:
-                return new NormalDayHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.diary_day_normal, null));
+                return new NormalDayHolder(inflater.inflate(R.layout.diary_day_normal, null));
             case DayType.VACATION:
-                return  new VacationDayHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.diary_day_vacation, null));
+                return  new VacationDayHolder(inflater.inflate(R.layout.diary_day_vacation, null));
         }
         return null;
     }
@@ -91,13 +99,14 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             super(itemView);
             dayTitle = (TextView) itemView.findViewById(R.id.dayName);
 
-            RecyclerView lessonsRecyler = (RecyclerView) itemView.findViewById(R.id.dayLessonsRecycler);
-            lessonsRecyler.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.VERTICAL, false));
+            RecyclerView lessonsRecycler = (RecyclerView) itemView.findViewById(R.id.dayLessonsRecycler);
+            lessonsRecycler.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.VERTICAL, false));
+            lessonsRecycler.setRecycledViewPool(lessonsPool);
 
-            diaryDayRecyclerAdapter = new DiaryDayRecyclerAdapter(null);
+            diaryDayRecyclerAdapter = new DiaryDayRecyclerAdapter(null, inflater);
             diaryDayRecyclerAdapter.setHasStableIds(true);
             diaryDayRecyclerAdapter.setOnLinkOpenRequestListener(linkOpenRequestListener);
-            lessonsRecyler.setAdapter(diaryDayRecyclerAdapter);
+            lessonsRecycler.setAdapter(diaryDayRecyclerAdapter);
         }
     }
 

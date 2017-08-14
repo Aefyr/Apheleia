@@ -1,8 +1,9 @@
 package com.aefyr.journalism.objects.minor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SubjectInGrid {
+public class SubjectInGrid implements Serializable{
 	String name;
 	String averageMark;
 	ArrayList<GridMark> marks;

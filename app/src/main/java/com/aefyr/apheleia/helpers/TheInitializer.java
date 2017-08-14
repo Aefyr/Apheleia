@@ -9,6 +9,8 @@ import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.R;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
+import com.aefyr.journalism.objects.major.DiaryEntry;
+import com.aefyr.journalism.objects.major.MarksGrid;
 import com.aefyr.journalism.objects.major.PeriodsInfo;
 import com.aefyr.journalism.objects.major.PersonaInfo;
 import com.aefyr.journalism.objects.minor.Student;
@@ -38,23 +40,21 @@ public class TheInitializer {
         new InitializationTask().execute();
     }
 
-    private class InitializationTask extends AsyncTask<Void, Integer, String>{
+    private class InitializationTask extends AsyncTask<Void, Void, Void>{
 
         private ProgressDialog dialog;
-        private String error;
         private int i = 0;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             dialog = new ProgressDialog(c, ProgressDialog.STYLE_SPINNER);
-            dialog.setTitle(c.getString(R.string.initializing));
-            dialog.setMessage(c.getString(R.string.loading_profile));
+            dialog.setMessage(c.getString(R.string.loading_data));
             dialog.show();
         }
 
         @Override
-        protected String doInBackground(Void... voids) {
+        protected Void doInBackground(Void... voids) {
             final Helper helper = Helper.getInstance(c);
 
             loadProfile(helper.getPersona(), new EljurApiClient.JournalismListener<PersonaInfo>() {
@@ -69,11 +69,65 @@ public class TheInitializer {
                             @Override
                             public void onSuccess(PeriodsInfo periods) {
                                 profileHelper.setCurrentStudent(s.id());
-                                PeriodsHelper periodsHelper = PeriodsHelper.getInstance(c);
+                                final PeriodsHelper periodsHelper = PeriodsHelper.getInstance(c);
                                 periodsHelper.savePeriodsInfo(periods);
 
-                                if(i++==result.getStudents().size()-1)
-                                    listener.OnSuccess();
+                                if(i++==result.getStudents().size()-1){
+                                    i = 0;
+                                    for(final Student s: result.getStudents()){
+                                        profileHelper.setCurrentStudent(s.id());
+                                        loadDiary(helper.getPersona(), s.id(), periodsHelper.getCurrentWeek(), new EljurApiClient.JournalismListener<DiaryEntry>() {
+                                            @Override
+                                            public void onSuccess(DiaryEntry entry) {
+                                                profileHelper.setCurrentStudent(s.id());
+                                                if(!DiaryHelper.getInstance(c).saveEntry(entry, periodsHelper.getCurrentWeek()))
+                                                    listener.OnError("Критическая ошибка. Не удалось сериализовать дневник");
+
+
+                                                if(i++==result.getStudents().size()-1) {
+                                                    dialog.dismiss();
+                                                    listener.OnSuccess();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onNetworkError() {
+                                                listener.OnError(c.getString(R.string.network_error_tip));
+                                            }
+
+                                            @Override
+                                            public void onApiError(String message, String json) {
+                                                listener.OnError(message);
+                                            }
+                                        });
+
+                                        loadMarks(helper.getPersona(), s.id(), periodsHelper.getCurrentPeriod(), new EljurApiClient.JournalismListener<MarksGrid>() {
+                                            @Override
+                                            public void onSuccess(MarksGrid grid) {
+                                                profileHelper.setCurrentStudent(s.id());
+                                                if(!MarksHelper.getInstance(c).saveGrid(grid, periodsHelper.getCurrentPeriod()))
+                                                    listener.OnError("Критическая ошибка. Не удалось сериализовать оценки");
+
+                                                if(i++==result.getStudents().size()-1) {
+                                                    dialog.dismiss();
+                                                    listener.OnSuccess();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onNetworkError() {
+                                                listener.OnError(c.getString(R.string.network_error_tip));
+                                            }
+
+                                            @Override
+                                            public void onApiError(String message, String json) {
+                                                listener.OnError(message);
+                                            }
+                                        });
+
+
+                                    }
+                                }
                             }
 
                             @Override
@@ -82,10 +136,12 @@ public class TheInitializer {
                             }
 
                             @Override
-                            public void onApiError(String message) {
+                            public void onApiError(String message, String json) {
                                 listener.OnError(message);
                             }
                         });
+
+
                     }
 
                 }
@@ -96,37 +152,13 @@ public class TheInitializer {
                 }
 
                 @Override
-                public void onApiError(String message) {
+                public void onApiError(String message, String json) {
                     listener.OnError(message);
                 }
             });
 
-            return error;
+            return null;
         }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            switch (values[0]){
-                case InitializationStep.LOADING_PROFILE:
-                    dialog.setMessage(c.getString(R.string.loading_profile));
-                    break;
-                case InitializationStep.LOADING_PERIODS:
-                    dialog.setMessage(c.getString(R.string.loading_periods));
-                    break;
-
-            }
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(String aBool) {
-            super.onPostExecute(aBool);
-        }
-    }
-
-    private class InitializationStep{
-        private static final int LOADING_PROFILE = 0;
-        private static final int LOADING_PERIODS = 1;
     }
 
     private void loadProfile(EljurPersona persona, EljurApiClient.JournalismListener<PersonaInfo> listener){
@@ -135,5 +167,13 @@ public class TheInitializer {
 
     private void loadPeriods(EljurPersona persona, String studentId, EljurApiClient.JournalismListener<PeriodsInfo> listener){
         EljurApiClient.getInstance(c).getPeriods(persona, studentId, listener);
+    }
+
+    private void loadDiary(EljurPersona persona, String studentId, String days,  EljurApiClient.JournalismListener<DiaryEntry> listener){
+        EljurApiClient.getInstance(c).getDiary(persona, studentId, days, true, listener);
+    }
+
+    private void loadMarks(EljurPersona persona, String studentId, String days,  EljurApiClient.JournalismListener<MarksGrid> listener){
+        EljurApiClient.getInstance(c).getMarks(persona, studentId, days, listener);
     }
 }

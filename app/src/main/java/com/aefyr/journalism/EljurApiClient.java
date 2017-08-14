@@ -29,7 +29,7 @@ public class EljurApiClient {
     public interface JournalismListener<T>{
         void onSuccess(T result);
         void onNetworkError();
-        void onApiError(String message);
+        void onApiError(String message, String json);
     }
 
     public interface LoginRequestListener{
@@ -37,7 +37,7 @@ public class EljurApiClient {
         void onInvalidCredentialsError();
         void onInvalidDomainError();
         void onNetworkError();
-        void onApiError(String message);
+        void onApiError(String message, String json);
     }
 
     private static EljurApiClient instance;

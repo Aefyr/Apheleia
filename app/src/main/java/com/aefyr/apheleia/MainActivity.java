@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.aefyr.apheleia.fragments.DiaryFragment;
+import com.aefyr.apheleia.fragments.MarksFragment;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 
 import java.util.Arrays;
@@ -56,6 +57,9 @@ public class MainActivity extends AppCompatActivity
 
         fragmentManager = getSupportFragmentManager();
 
+        currentFragment = new DiaryFragment();
+        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment).commit();
+        navigationView.setCheckedItem(R.id.nav_diary);
     }
 
     @Override
@@ -68,10 +72,26 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private MenuItem timePeriodSwitchButton;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        timePeriodSwitchButton = menu.findItem(R.id.action_time_period_switcher);
+        timePeriodSwitchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (currentApheleiaFragment){
+                    case DIARY:
+                        ((DiaryFragment)currentFragment).showTimePeriodSwitcherDialog();
+                        break;
+                    case MARKS:
+                        ((MarksFragment)currentFragment).showTimePeriodSwitcherDialog();
+                        break;
+                }
+                return true;
+            }
+        });
         return true;
     }
 
@@ -87,6 +107,10 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        if(id == R.id.action_time_period_switcher){
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -96,9 +120,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_diary) {
             setFragment(ApheleiaFragment.DIARY);
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_marks) {
+            setFragment(ApheleiaFragment.MARKS);
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -116,19 +141,28 @@ public class MainActivity extends AppCompatActivity
     }
 
     private enum ApheleiaFragment{
-        DIARY
+        DIARY, MARKS
     }
-    private ApheleiaFragment currentApheleiaFragment;
+
     private Fragment currentFragment;
+    private ApheleiaFragment currentApheleiaFragment = ApheleiaFragment.DIARY;
     private void setFragment(ApheleiaFragment fragment){
+        if(fragment == currentApheleiaFragment)
+            return;
         currentApheleiaFragment = fragment;
         switch (fragment){
             case DIARY:
                 currentFragment = new DiaryFragment();
+                timePeriodSwitchButton.setVisible(true);
+                break;
+            case MARKS:
+                currentFragment = new MarksFragment();
+                timePeriodSwitchButton.setVisible(true);
                 break;
         }
-
         fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment).commit();
+
+
     }
 
     private TextView studentName;
@@ -144,7 +178,7 @@ public class MainActivity extends AppCompatActivity
             studentName.setVisibility(View.GONE);
             navHeader.findViewById(R.id.switchStudentButton).setVisibility(View.GONE);
         }else {
-            studentName.setText(profileHelper.getStudentName(profileHelper.getCurrentStudentId()));
+            studentName.setText(profileHelper.getStudentName(profileHelper.getCurrentStudentId())+" ("+profileHelper.getStudentClass(profileHelper.getCurrentStudentId())+")");
 
             final String[] studentsIds = profileHelper.getStudentsIds().toArray(new String[]{});
             final String[] studentsNames = new String[studentsIds.length];
@@ -175,9 +209,11 @@ public class MainActivity extends AppCompatActivity
 
     private void studentSwitched(){
         switch (currentApheleiaFragment){
-
             case DIARY:
-                ((DiaryFragment)currentFragment).studentSwitched();
+                ((DiaryFragment) currentFragment).studentSwitched();
+                break;
+            case MARKS:
+                ((MarksFragment)currentFragment).studentSwitched();
                 break;
         }
     }

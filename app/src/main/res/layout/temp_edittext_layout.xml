@@ -3,11 +3,10 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/editText"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/tempRecycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="days"
-        android:inputType="textPersonName" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal" />
+
 </LinearLayout>

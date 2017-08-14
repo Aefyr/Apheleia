@@ -13,7 +13,7 @@ import com.aefyr.apheleia.R;
 
 public class Chief {
     public static void makeASnack(View view, String message){
-        final Snackbar snackbar = Snackbar.make(view, message, 5000);
+        final Snackbar snackbar = Snackbar.make(view, message, 3000);
         snackbar.setAction(view.getContext().getString(R.string.ok), new View.OnClickListener() {
             @Override
             public void onClick(View view) {

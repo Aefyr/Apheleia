@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onApiError(String message) {
+                    public void onApiError(String message, String json) {
                         progressDialog.hide();
                         showAlert(getString(R.string.api_error), message);
                     }

@@ -2,11 +2,12 @@ package com.aefyr.journalism.objects.minor;
 
 import com.aefyr.journalism.exceptions.EljurApiException;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 
-public class GridMark{
+public class GridMark implements Serializable{
 
 	String value;
 	String comment;

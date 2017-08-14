@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.aefyr.apheleia.Helper;
+import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.PeriodsInfo;
 import com.aefyr.journalism.objects.minor.ActualPeriod;
 import com.aefyr.journalism.objects.minor.Week;
@@ -19,15 +21,58 @@ public class PeriodsHelper {
     private static PeriodsHelper instance;
     private ProfileHelper profileHelper;
     private SharedPreferences preferences;
+    private Context c;
+
+    public interface OnPeriodsChangeDetectedListener{
+        void OnFoundMoreWeeks();
+        void OnFoundMorePeriods();
+        void OnFoundLessWeeks();
+        void OnFoundLessPeriods();
+    }
 
     private PeriodsHelper(Context c){
         instance = this;
+        this.c = c;
         preferences = PreferenceManager.getDefaultSharedPreferences(c);
         profileHelper = ProfileHelper.getInstance(c);
     }
 
     public static PeriodsHelper getInstance(Context c){
         return instance==null?new PeriodsHelper(c):instance;
+    }
+
+    public void checkPeriods(final OnPeriodsChangeDetectedListener listener){
+        EljurApiClient.getInstance(c).getPeriods(Helper.getInstance(c).getPersona(), profileHelper.getCurrentStudentId(), new EljurApiClient.JournalismListener<PeriodsInfo>() {
+            @Override
+            public void onSuccess(PeriodsInfo result) {
+                int prevPeriodsCount = getPeriodsCount();
+                int prevWeeksCount = getWeeksCount();
+
+                savePeriodsInfo(result);
+
+                if(prevPeriodsCount<getPeriodsCount())
+                    listener.OnFoundMorePeriods();
+                else if(prevPeriodsCount>getPeriodsCount())
+                    listener.OnFoundLessPeriods();
+
+                if(prevWeeksCount<getWeeksCount())
+                    listener.OnFoundMoreWeeks();
+                else if(prevWeeksCount>getWeeksCount())
+                    listener.OnFoundLessWeeks();
+
+
+            }
+
+            @Override
+            public void onNetworkError() {
+
+            }
+
+            @Override
+            public void onApiError(String message, String json) {
+
+            }
+        });
     }
 
     public void savePeriods(Set<String> periods){
@@ -50,6 +95,14 @@ public class PeriodsHelper {
         return preferences.getString("period_name_"+profileHelper.getCurrentStudentId()+"_"+period, "nani");
     }
 
+    public int getPeriodsCount(){
+        return preferences.getInt("periods_count_"+profileHelper.getCurrentStudentId(), 0);
+    }
+
+    public void setPeriodsCount(int count){
+        preferences.edit().putInt("periods_count_"+profileHelper.getCurrentStudentId(), count).apply();
+    }
+
     public void setPeriodName(String period, String name){
         preferences.edit().putString("period_name_"+profileHelper.getCurrentStudentId()+"_"+period, name).apply();
     }
@@ -68,6 +121,14 @@ public class PeriodsHelper {
 
     public void setCurrentWeek(String weeks){
         preferences.edit().putString("current_week_"+profileHelper.getCurrentStudentId(), weeks).apply();
+    }
+
+    public int getWeeksCount(){
+        return preferences.getInt("weeks_count_"+profileHelper.getCurrentStudentId(), 0);
+    }
+
+    public void setWeeksCount(int count){
+        preferences.edit().putInt("weeks_count_"+profileHelper.getCurrentStudentId(), count).apply();
     }
 
     public void savePeriodsInfo(PeriodsInfo periodsInfo){
@@ -93,6 +154,8 @@ public class PeriodsHelper {
 
         savePeriods(periods);
         saveWeeks(weeks);
+        setWeeksCount(weeks.size());
+        setPeriodsCount(periods.size());
         setCurrentPeriod(lastPeriod);
         setCurrentWeek(lastWeek);
     }

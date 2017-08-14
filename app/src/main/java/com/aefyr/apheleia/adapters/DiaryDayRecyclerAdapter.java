@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.aefyr.apheleia.R;
+import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.TimeLord;
 import com.aefyr.journalism.objects.minor.Attachment;
 import com.aefyr.journalism.objects.minor.Hometask;
@@ -30,11 +31,14 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
     private TimeLord timeLord;
     private OnLinkOpenRequestListener linkOpenRequestListener;
 
+    private LayoutInflater inflater;
+
     public interface OnLinkOpenRequestListener{
         void onLinkOpenRequest(String uri);
     }
 
-    public DiaryDayRecyclerAdapter(WeekDay day){
+    public DiaryDayRecyclerAdapter(WeekDay day, LayoutInflater inflater){
+        this.inflater = inflater;
         this.day = day;
         timeLord = TimeLord.getInstance();
     }
@@ -50,7 +54,7 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
 
     @Override
     public LessonViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new LessonViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.diary_day_lesson, null));
+        return new LessonViewHolder(inflater.inflate(R.layout.diary_day_lesson, null));
     }
 
     @Override
@@ -100,7 +104,7 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
                 //Show and populate attachments container !!
                 holder.attachmentsContainer.removeAllViews();
                 for(final Attachment attachment: homework.getAttachments()){
-                    View view = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.attachment, null);
+                    View view = inflater.inflate(R.layout.attachment, null);
 
                     Button button = (Button) view.findViewById(R.id.attachmentButton);
                     button.setText(attachment.getName());
@@ -132,7 +136,7 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
             holder.marksContainer.removeAllViews();
 
             for(final Mark mark: lesson.getMarks()){
-                View markView = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.diary_day_lesson_mark, null);
+                View markView = inflater.inflate(R.layout.diary_day_lesson_mark, null);
                 final Button markButton = (Button) markView.findViewById(R.id.markButton);
                 markButton.setText(mark.getValue());
 
@@ -140,7 +144,7 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
                     markButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new AlertDialog.Builder(holder.itemView.getContext()).setMessage(mark.getComment()).create().show();
+                            Chief.makeAnAlert(holder.itemView.getContext(), mark.getComment());
                         }
                     });
                 }else {
@@ -154,42 +158,6 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
         }else {
             holder.marksContainer.setVisibility(View.GONE);
             holder.marksContainer.removeAllViews();
-            /*final int originalHeight = holder.marksContainer.getHeight();
-            ValueAnimator heightAnimator = ValueAnimator.ofFloat(originalHeight, 0);
-            heightAnimator.setDuration(100);
-            heightAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.marksContainer.getLayoutParams();
-                    params.height = (int) ((float)valueAnimator.getAnimatedValue());
-                    holder.marksContainer.setLayoutParams(params);
-                }
-            });
-            heightAnimator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    holder.marksContainer.setVisibility(View.GONE);
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.marksContainer.getLayoutParams();
-                    params.height = originalHeight;
-                    holder.marksContainer.setLayoutParams(params);
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-
-                }
-            });
-            heightAnimator.start();*/
 
         }
     }
@@ -214,6 +182,11 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
             return lesson.getStartTime();
         else
             return (lesson.getName()+position).hashCode();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return 444;
     }
 
     class LessonViewHolder extends RecyclerView.ViewHolder{

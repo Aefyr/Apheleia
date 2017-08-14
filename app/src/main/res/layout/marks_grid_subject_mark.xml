@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="46dp"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/gridMarkDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gridMarkButton"
+        android:layout_centerHorizontal="true"
+        android:text="31.08" />
+
+    <Button
+        android:id="@+id/gridMarkButton"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/mark_circle"
+        android:minHeight="36dp"
+        android:minWidth="36dp"
+        android:paddingBottom="0dp"
+        android:paddingEnd="0dp"
+        android:paddingStart="0dp"
+        android:paddingTop="0dp"
+        android:text="100"
+        android:textSize="18sp" />
+</RelativeLayout>

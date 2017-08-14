@@ -18,6 +18,8 @@ public class TimeLord {
 
     private SimpleDateFormat weeksAndPeriodsSDF;
 
+    private SimpleDateFormat gridMarkSDF;
+
     private TimeLord(){
         instance = this;
 
@@ -34,6 +36,8 @@ public class TimeLord {
         lessonTimesSDF = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
         weeksAndPeriodsSDF = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+
+        gridMarkSDF = new SimpleDateFormat("dd.MM", Locale.getDefault());
     }
 
     public static TimeLord getInstance(){
@@ -50,5 +54,9 @@ public class TimeLord {
 
     public String getWeekOrPeriodDate(long date){
         return  weeksAndPeriodsSDF.format(date);
+    }
+
+    public String getGridMarkDate(long date){
+        return  gridMarkSDF.format(date);
     }
 }
