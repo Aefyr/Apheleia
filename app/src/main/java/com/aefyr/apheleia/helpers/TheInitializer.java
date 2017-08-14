@@ -84,7 +84,7 @@ public class TheInitializer {
                                                     listener.OnError("Критическая ошибка. Не удалось сериализовать дневник");
 
 
-                                                if(i++==result.getStudents().size()-1) {
+                                                if(i++==result.getStudents().size()*2-1) {
                                                     dialog.dismiss();
                                                     listener.OnSuccess();
                                                 }
@@ -108,7 +108,7 @@ public class TheInitializer {
                                                 if(!MarksHelper.getInstance(c).saveGrid(grid, periodsHelper.getCurrentPeriod()))
                                                     listener.OnError("Критическая ошибка. Не удалось сериализовать оценки");
 
-                                                if(i++==result.getStudents().size()-1) {
+                                                if(i++==result.getStudents().size()*2-1) {
                                                     dialog.dismiss();
                                                     listener.OnSuccess();
                                                 }

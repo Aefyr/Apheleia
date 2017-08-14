@@ -38,10 +38,11 @@
         android:id="@+id/studentNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
         android:text="Hanzo Shimada (10W)"
         android:textAppearance="@android:style/TextAppearance.Material.Subhead"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/emailText"
