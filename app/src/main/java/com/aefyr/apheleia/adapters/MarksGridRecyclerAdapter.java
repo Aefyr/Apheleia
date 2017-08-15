@@ -83,7 +83,9 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
             subjectRecyclerAdapter = new MarksGridSubjectRecyclerAdapter(null, inflater);
             subjectRecyclerAdapter.setHasStableIds(true);
 
-            subjectRecycler.setLayoutManager(new GridLayoutManager(itemView.getContext(), (int) (Utility.displayWidth(itemView.getResources())/ Utility.dpToPx(46, itemView.getResources()))));
+            GridLayoutManager m = new GridLayoutManager(itemView.getContext(), (int) (Utility.displayWidth(itemView.getResources())/ Utility.dpToPx(46, itemView.getResources())));
+            m.setInitialPrefetchItemCount(128);
+            subjectRecycler.setLayoutManager(m);
             subjectRecycler.setAdapter(subjectRecyclerAdapter);
 
         }

@@ -18,7 +18,11 @@ import android.widget.TextView;
 
 import com.aefyr.apheleia.fragments.DiaryFragment;
 import com.aefyr.apheleia.fragments.MarksFragment;
+import com.aefyr.apheleia.fragments.ScheduleFragment;
+import com.aefyr.apheleia.helpers.Chief;
+import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
+import com.aefyr.apheleia.helpers.TheInitializer;
 
 import java.util.Arrays;
 
@@ -88,6 +92,9 @@ public class MainActivity extends AppCompatActivity
                     case MARKS:
                         ((MarksFragment)currentFragment).showTimePeriodSwitcherDialog();
                         break;
+                    case SCHEDULE:
+                        ((ScheduleFragment)currentFragment).showTimePeriodSwitcherDialog();
+                        break;
                 }
                 return true;
             }
@@ -125,7 +132,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_marks) {
             setFragment(ApheleiaFragment.MARKS);
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_schedule) {
+            setFragment(ApheleiaFragment.SCHEDULE);
 
         } else if (id == R.id.nav_manage) {
 
@@ -141,7 +149,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private enum ApheleiaFragment{
-        DIARY, MARKS
+        DIARY, MARKS, SCHEDULE
     }
 
     private Fragment currentFragment;
@@ -149,6 +157,7 @@ public class MainActivity extends AppCompatActivity
     private void setFragment(ApheleiaFragment fragment){
         if(fragment == currentApheleiaFragment)
             return;
+
         currentApheleiaFragment = fragment;
         switch (fragment){
             case DIARY:
@@ -159,6 +168,9 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = new MarksFragment();
                 timePeriodSwitchButton.setVisible(true);
                 break;
+            case SCHEDULE:
+                currentFragment = new ScheduleFragment();
+                timePeriodSwitchButton.setVisible(true);
         }
         fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment).commit();
 
@@ -215,6 +227,55 @@ public class MainActivity extends AppCompatActivity
             case MARKS:
                 ((MarksFragment)currentFragment).studentSwitched();
                 break;
+            case SCHEDULE:
+                ((ScheduleFragment)currentFragment).studentSwitched();
+                break;
         }
+    }
+
+    private void checkPeriods(){
+        PeriodsHelper.getInstance(this).checkPeriods(new PeriodsHelper.OnPeriodsChangeDetectedListener() {
+            @Override
+            public void OnFoundMoreWeeks() {
+                studentSwitched();
+            }
+
+            @Override
+            public void OnFoundMorePeriods() {
+                studentSwitched();
+            }
+
+            @Override
+            public void OnFoundLessWeeks() {
+                reInitialize();
+            }
+
+            @Override
+            public void OnFoundLessPeriods() {
+                reInitialize();
+            }
+        });
+    }
+
+    private void reInitialize(){
+        helper.setLoggedIn(false);
+        TheInitializer initializer = new TheInitializer(this, new TheInitializer.OnInitializationListener() {
+            @Override
+            public void OnSuccess() {
+                studentSwitched();
+                helper.setLoggedIn(true);
+            }
+
+            @Override
+            public void OnError(String m, String json, String failedWhat) {
+                if(json!=null){
+                    Chief.makeReportApiErrorDialog(MainActivity.this, failedWhat, m, json, true);
+                }else {
+                    helper.setLoggedIn(true);
+                }
+            }
+
+        });
+        initializer.initialize();
     }
 }

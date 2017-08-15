@@ -2,8 +2,7 @@ package com.aefyr.apheleia.fragments;
 
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,22 +14,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.Utility;
-import com.aefyr.apheleia.adapters.DiaryRecyclerAdapter;
+import com.aefyr.apheleia.adapters.ScheduleRecyclerAdapter;
 import com.aefyr.apheleia.custom.PreloadLayoutManager;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
-import com.aefyr.apheleia.helpers.DiaryHelper;
 import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
+import com.aefyr.apheleia.helpers.ScheduleHelper;
 import com.aefyr.apheleia.helpers.SerializerHelperWithTimeAndStudentKeysBase;
 import com.aefyr.apheleia.helpers.TimeLord;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
-import com.aefyr.journalism.objects.major.DiaryEntry;
+import com.aefyr.journalism.objects.major.Schedule;
 import com.aefyr.journalism.objects.minor.WeekDay;
 import com.android.volley.toolbox.StringRequest;
 
@@ -39,53 +39,59 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, DiaryRecyclerAdapter.OnLinkOpenRequestListener {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     private boolean firstLoad = true;
     private StringRequest currentRequest;
-    private View emptyDiary;
 
-    private SwipeRefreshLayout refreshLayout;
-    private RecyclerView diaryRecycler;
-    private DiaryRecyclerAdapter diaryRecyclerAdapter;
+    private View emptySchedule;
+
     private EljurApiClient apiClient;
-
     private EljurPersona persona;
-    private DiaryHelper diaryHelper;
-    private ProfileHelper profileHelper;
     private PeriodsHelper periodsHelper;
+    private ProfileHelper profileHelper;
+    private ScheduleHelper scheduleHelper;
     private ConnectionHelper connectionHelper;
+
+    private RecyclerView scheduleRecycler;
+    private ScheduleRecyclerAdapter scheduleRecyclerAdapter;
+    private SwipeRefreshLayout refreshLayout;
 
     private LinearLayout quickDayPickBar;
 
-    public DiaryFragment() {
-        // Required empty public constructor
+
+    public ScheduleFragment() {
     }
-
-
 
 
     private int selectedWeek;
     private String[] weeks;
     private String[] weekNames;
+    private AlertDialog weeksPickerDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_diary, container, false);
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         refreshLayout.setOnRefreshListener(this);
-        emptyDiary = view.findViewById(R.id.emptyDiary);
+        refreshLayout.setColorSchemeColors(Color.RED);
 
-        diaryRecycler = (RecyclerView) view.findViewById(R.id.diaryRecycler);
-        diaryRecycler.setLayoutManager(new PreloadLayoutManager(getActivity(), 7));
-        diaryRecycler.setItemViewCacheSize(7);
+        scheduleRecycler = (RecyclerView) view.findViewById(R.id.diaryRecycler);
+        scheduleRecycler.setLayoutManager(new PreloadLayoutManager(getActivity(), 7));
+        scheduleRecycler.setItemViewCacheSize(7);
+
+        emptySchedule = view.findViewById(R.id.emptyDiary);
+        ((TextView)emptySchedule).setText(getString(R.string.no_schedule));
 
         apiClient = EljurApiClient.getInstance(getActivity());
         persona = Helper.getInstance(getActivity()).getPersona();
-        diaryHelper = DiaryHelper.getInstance(getActivity());
-        profileHelper = ProfileHelper.getInstance(getActivity());
         periodsHelper = PeriodsHelper.getInstance(getActivity());
-        connectionHelper = ConnectionHelper.getInstance(getActivity());
+        profileHelper = ProfileHelper.getInstance(getActivity());
+        scheduleHelper = ScheduleHelper.getInstance(getActivity());
+        connectionHelper =ConnectionHelper.getInstance(getActivity());
 
         quickDayPickBar = (LinearLayout) view.findViewById(R.id.quickDayPickBar);
 
@@ -94,21 +100,33 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         return view;
     }
 
-    private AlertDialog weeksPickerDialog;
     @Override
     public void onRefresh() {
-        loadDiary(weeks[selectedWeek]);
+        loadSchedule(weeks[selectedWeek]);
+    }
+
+    private void setScheduleToAdapter(Schedule schedule){
+        if(scheduleRecyclerAdapter == null){
+            scheduleRecyclerAdapter = new ScheduleRecyclerAdapter(getActivity(), schedule);
+            scheduleRecyclerAdapter.setHasStableIds(true);
+            scheduleRecycler.setAdapter(scheduleRecyclerAdapter);
+        }else {
+            scheduleRecyclerAdapter.setSchedule(schedule);
+        }
+
+        checkEmptiness(schedule);
+        initializeQuickScrolling(true, schedule);
     }
 
     private boolean loadedFromMemory = false;
-    private void loadDiary(final String days){
+    private void loadSchedule(final String days){
         loadedFromMemory = false;
         refreshLayout.setRefreshing(true);
 
         if(firstLoad||requestedWeek!=selectedWeek||!connectionHelper.hasNetworkConnection()) {
-            if (diaryHelper.isEntrySaved(days)) {
+            if (scheduleHelper.isScheduleSaved(days)) {
                 try {
-                    setDiaryEntryToAdapter(diaryHelper.loadSavedEntry(days));
+                    setScheduleToAdapter(scheduleHelper.loadSavedSchedule(days));
                     loadedFromMemory = true;
                     firstLoad = false;
                 } catch (Exception e) {
@@ -138,16 +156,16 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             return;
         }
 
-        currentRequest = apiClient.getDiary(persona, profileHelper.getCurrentStudentId(), days, true, new EljurApiClient.JournalismListener<DiaryEntry>() {
+        currentRequest = apiClient.getSchedule(persona, profileHelper.getCurrentStudentId(), days, true, new EljurApiClient.JournalismListener<Schedule>() {
             @Override
-            public void onSuccess(DiaryEntry result) {
-                setDiaryEntryToAdapter(result);
+            public void onSuccess(Schedule result) {
+                setScheduleToAdapter(result);
 
-                diaryHelper.saveEntryAsync(result, days, new SerializerHelperWithTimeAndStudentKeysBase.ObjectSaveListener() {
+                scheduleHelper.saveScheduleAsync(result, days, new SerializerHelperWithTimeAndStudentKeysBase.ObjectSaveListener() {
                     @Override
                     public void onSaveCompleted(boolean successful) {
                         if(successful)
-                            periodsHelper.setCurrentWeek(days);
+                            periodsHelper.setCurrentScheduleWeek(days);
                     }
                 });
 
@@ -179,17 +197,6 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         weeksPickerDialog.getListView().setSelection(selectedWeek);
     }
 
-    private void setDiaryEntryToAdapter(DiaryEntry entry){
-        if(diaryRecyclerAdapter == null) {
-            diaryRecyclerAdapter = new DiaryRecyclerAdapter(getActivity(), entry, DiaryFragment.this);
-            diaryRecyclerAdapter.setHasStableIds(true);
-            diaryRecycler.setAdapter(diaryRecyclerAdapter);
-        }else
-            diaryRecyclerAdapter.setDiaryEntry(entry);
-
-        checkEmptiness(entry);
-        initializeQuickScrolling(true, entry);
-    }
 
     private int requestedWeek;
     public void studentSwitched(){
@@ -198,7 +205,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         weeks = periodsHelper.getWeeks().toArray(new String[] {});
         Arrays.sort(weeks);
-        selectedWeek = Arrays.binarySearch(weeks, periodsHelper.getCurrentWeek());
+        selectedWeek = Arrays.binarySearch(weeks, periodsHelper.getCurrentScheduleWeek());
         weekNames = new String[weeks.length];
 
         SimpleDateFormat parser = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
@@ -221,12 +228,12 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 weeksPickerDialog.dismiss();
                 requestedWeek = i;
                 cancelRequest();
-                loadDiary(weeks[requestedWeek]);
+                loadSchedule(weeks[requestedWeek]);
             }
         }).create();
 
         requestedWeek = selectedWeek;
-        loadDiary(weeks[selectedWeek]);
+        loadSchedule(weeks[selectedWeek]);
     }
 
     public void showTimePeriodSwitcherDialog(){
@@ -234,7 +241,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
 
-    private void initializeQuickScrolling(boolean enabled, final DiaryEntry entry){
+    private void initializeQuickScrolling(boolean enabled, final Schedule schedule){
         if(enabled){
 
             if(firstLoad){
@@ -246,14 +253,14 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
             quickDayPickBar.removeAllViews();
 
-            for(final WeekDay day: entry.getDays()){
+            for(final WeekDay day: schedule.getDays()){
                 View quickDayPickButton = LayoutInflater.from(quickDayPickBar.getContext()).inflate(R.layout.quick_day_pick_button, null);
                 Button button = (Button) quickDayPickButton.findViewById(R.id.quickDayPickButton);
                 button.setText(String.valueOf(TimeLord.getInstance().getDayTitle(day.getDate()).charAt(0)));
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        diaryRecycler.scrollToPosition(entry.getDays().indexOf(day));
+                        scheduleRecycler.scrollToPosition(schedule.getDays().indexOf(day));
                     }
                 });
                 quickDayPickBar.addView(quickDayPickButton);
@@ -263,12 +270,6 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             quickDayPickBar.removeAllViews();
             quickDayPickBar.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onLinkOpenRequest(String uri) {
-        Intent linkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        startActivity(linkIntent);
     }
 
     @Override
@@ -282,10 +283,10 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             currentRequest.cancel();
     }
 
-    private void checkEmptiness(DiaryEntry entry){
-        if(entry.getDays().size()==0)
-            emptyDiary.setVisibility(View.VISIBLE);
+    private void checkEmptiness(Schedule schedule){
+        if(schedule.getDays().size()==0)
+            emptySchedule.setVisibility(View.VISIBLE);
         else
-            emptyDiary.setVisibility(View.GONE);
+            emptySchedule.setVisibility(View.GONE);
     }
 }

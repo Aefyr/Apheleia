@@ -12,9 +12,9 @@
             android:icon="@drawable/ic_apps_black_24dp"
             android:title="@string/marks" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_schedule"
+            android:icon="@drawable/ic_schedule_black_24dp"
+            android:title="@string/schedule" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

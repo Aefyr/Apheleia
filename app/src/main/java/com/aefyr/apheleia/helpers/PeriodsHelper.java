@@ -131,6 +131,14 @@ public class PeriodsHelper {
         preferences.edit().putInt("weeks_count_"+profileHelper.getCurrentStudentId(), count).apply();
     }
 
+    public void setCurrentScheduleWeek(String weeks){
+        preferences.edit().putString("current_schedule_week_"+profileHelper.getCurrentStudentId(), weeks).apply();
+    }
+
+    public String getCurrentScheduleWeek(){
+        return preferences.getString("current_schedule_week_"+profileHelper.getCurrentStudentId(), "0");
+    }
+
     public void savePeriodsInfo(PeriodsInfo periodsInfo){
         HashSet<String> periods = new HashSet<>();
         String lastPeriod = null;
@@ -158,5 +166,6 @@ public class PeriodsHelper {
         setPeriodsCount(periods.size());
         setCurrentPeriod(lastPeriod);
         setCurrentWeek(lastWeek);
+        setCurrentScheduleWeek(lastWeek);
     }
 }

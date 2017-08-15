@@ -12,26 +12,28 @@ import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.TimeLord;
 import com.aefyr.journalism.objects.minor.GridMark;
-import com.aefyr.journalism.objects.minor.Lesson;
 import com.aefyr.journalism.objects.minor.SubjectInGrid;
 
 /**
  * Created by Aefyr on 14.08.2017.
  */
 
-public class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubjectRecyclerAdapter.MarksGridSubjectViewHolder>{
+class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubjectRecyclerAdapter.MarksGridSubjectViewHolder>{
 
     private SubjectInGrid subject;
-    private LayoutInflater inflater;
-    private TimeLord timeLord;
+    private static LayoutInflater inflater;
+    private static TimeLord timeLord;
 
-    public MarksGridSubjectRecyclerAdapter(SubjectInGrid subject, LayoutInflater inflater){
+    MarksGridSubjectRecyclerAdapter(SubjectInGrid subject, LayoutInflater inflater2){
         this.subject = subject;
-        this.inflater = inflater;
-        timeLord = TimeLord.getInstance();
+
+        if(inflater==null) {
+            inflater = inflater2;
+            timeLord = TimeLord.getInstance();
+        }
     }
 
-    public void setSubject(SubjectInGrid subject){
+    void setSubject(SubjectInGrid subject){
         this.subject = subject;
         notifyDataSetChanged();
     }
@@ -83,7 +85,7 @@ public class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksG
 
         private TextView date;
         private Button mark;
-        public MarksGridSubjectViewHolder(View itemView) {
+        MarksGridSubjectViewHolder(View itemView) {
             super(itemView);
             date = (TextView) itemView.findViewById(R.id.gridMarkDate);
             mark = (Button) itemView.findViewById(R.id.gridMarkButton);

@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +20,7 @@ import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.MarksHelper;
 import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
+import com.aefyr.apheleia.helpers.SerializerHelperWithTimeAndStudentKeysBase;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.objects.major.MarksGrid;
@@ -38,6 +39,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView marksRecycler;
     private MarksGridRecyclerAdapter gridRecyclerAdapter;
+    private View emptyMarks;
 
     private EljurApiClient apiClient;
     private PeriodsHelper periodsHelper;
@@ -62,8 +64,10 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         refreshLayout.setOnRefreshListener(this);
+        emptyMarks = view.findViewById(R.id.emptyMarks);
         marksRecycler = (RecyclerView) view.findViewById(R.id.marksRecycler);
-        marksRecycler.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
+        LinearLayoutManager m = new LinearLayoutManager(getActivity());
+        marksRecycler.setLayoutManager(m);
         marksRecycler.setItemViewCacheSize(24);
 
         apiClient = EljurApiClient.getInstance(getActivity());
@@ -102,9 +106,13 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }
 
         if(!connectionHelper.hasNetworkConnection()){
-            if(loadedFromMemory)
-                Chief.makeASnack(getActivity().getCurrentFocus(), getString(R.string.offline_mode));
-            else {
+            if(loadedFromMemory) {
+                View v = getView();
+                if (v == null)
+                    v = getActivity().getWindow().getDecorView();
+
+                Chief.makeASnack(v, getString(R.string.offline_mode));
+            }else {
                 antiScroll();
                 Chief.makeAnAlert(getActivity(), getString(R.string.error_grid_not_saved));
             }
@@ -117,7 +125,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             public void onSuccess(MarksGrid result) {
                 setGridToAdapter(result);
 
-                marksHelper.saveGridAsync(result, days, new MarksHelper.GridSaveListener() {
+                marksHelper.saveGridAsync(result, days, new SerializerHelperWithTimeAndStudentKeysBase.ObjectSaveListener() {
                     @Override
                     public void onSaveCompleted(boolean successful) {
                         if(successful)
@@ -162,6 +170,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }else {
             gridRecyclerAdapter.setGrid(grid);
         }
+        checkEmptiness(grid);
     }
 
     private String[] periods;
@@ -211,5 +220,12 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private void cancelRequest(){
         if(currentRequest != null && !currentRequest.hasHadResponseDelivered())
             currentRequest.cancel();
+    }
+
+    private void checkEmptiness(MarksGrid grid){
+        if(grid.getLessons().size()==0)
+            emptyMarks.setVisibility(View.VISIBLE);
+        else
+            emptyMarks.setVisibility(View.GONE);
     }
 }

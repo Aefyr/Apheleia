@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.TheInitializer;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.Token;
@@ -82,9 +83,14 @@ public class LoginActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void OnError(String m) {
-                                showAlert("", m);
+                            public void OnError(String m, String json, String failedWhat) {
+                                if(json!=null) {
+                                    Chief.makeReportApiErrorDialog(LoginActivity.this,failedWhat, m, json, true);
+                                }else {
+                                    Chief.makeAnAlert(LoginActivity.this, m);
+                                }
                             }
+
                         });
 
                         t.initialize();
@@ -144,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loggedIn(){
-        //TODO Get rules and set default student, days, period
+        helper.setLoggedIn(true);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

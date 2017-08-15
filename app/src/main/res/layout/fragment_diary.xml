@@ -4,27 +4,55 @@
     android:layout_height="match_parent"
     tools:context="com.aefyr.apheleia.fragments.DiaryFragment">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/swipeRefreshLayout"
-        android:layout_below="@+id/quickDayPickBar">
+        android:layout_above="@+id/quickDayPickBar">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/diaryRecycler"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+            <TextView
+                android:id="@+id/emptyDiary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:text="@string/no_diary"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorOvertimeLesson"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/diaryRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/windowBackground" />
+
+        </FrameLayout>
+
+
+
+
+    </com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport>
+
+
 
     <LinearLayout
         android:id="@+id/quickDayPickBar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="?android:attr/colorBackground"
-        android:elevation="@dimen/diary_day_cardview_elevation"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/rect_with_top_shadow"
         android:gravity="center"
-        android:orientation="horizontal"></LinearLayout>
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:visibility="gone">
+
+    </LinearLayout>
 
 
 </RelativeLayout>

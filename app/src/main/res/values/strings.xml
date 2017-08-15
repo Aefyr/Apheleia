@@ -3,7 +3,9 @@
 
 
     <!-- Commons -->
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">Nope</string>
     <string name="help">Help</string>
     <string name="network_error">Network Error</string>
     <string name="network_error_tip">Check your Internet connection and try again later</string>
@@ -14,6 +16,16 @@
     <string name="switch_time_period">Switch time period</string>
     <string name="diary">Diary</string>
     <string name="marks">Marks</string>
+    <string name="schedule">Schedule</string>
+    <string name="periods">Periods info</string>
+    <string name="profile">Profile info</string>
+
+    <!-- Errors handling -->
+    <string name="api_error_report_prompt">Apheleia was unable to handle response from Eljur.\n\nDo you want to send that response which contains your %s to developer, so he can resolve this error?</string>
+    <string name="api_error_reported">Thanks for the report! I will try to resolve the error ASAP, watch out for updates!</string>
+    <string name="api_error_prompt_declined">I won\'t be able to resolve this problem, until someone else reports the same problem then.\n\nAre you sure you don\'t want to report? This data will only be used to make Apheleia work for you</string>
+    <string name="report">Report</string>
+    <string name="dont_report">Don\'t report</string>
 
     <!-- Login Activity -->
     <string name="domain">School Domain</string>
@@ -37,10 +49,17 @@
     <string name="personal">(Individual)</string>
     <string name="error_week_not_saved">No internet connection and selected week is not saved!</string>
     <string name="diary_network_error">Failed to fetch diary due to a network error, please try again later</string>
+    <string name="no_diary">No diary found for selected week</string>
 
     <!-- Marks Grid -->
     <string name="average">Average</string>
     <string name="error_grid_not_saved">No internet connection and selected period is not saved!</string>
+    <string name="no_marks">No marks found for selected period</string>
+
+    <!-- Schedule -->
+    <string name="teacher">Teacher</string>
+    <string name="room">Room</string>
+    <string name="no_schedule">Schedule is not set for selected week</string>
 
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

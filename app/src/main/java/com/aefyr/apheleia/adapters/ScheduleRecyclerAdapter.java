@@ -10,27 +10,21 @@ import android.widget.TextView;
 
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.helpers.TimeLord;
-import com.aefyr.journalism.objects.major.DiaryEntry;
+import com.aefyr.journalism.objects.major.Schedule;
 
 /**
- * Created by Aefyr on 12.08.2017.
+ * Created by Aefyr on 15.08.2017.
  */
 
-public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-    private DiaryEntry entry;
+public class ScheduleRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    private Schedule schedule;
     private TimeLord timeLord;
-    private OnLinkOpenRequestListener linkOpenRequestListener;
     private static RecyclerView.RecycledViewPool lessonsPool;
 
     private LayoutInflater inflater;
 
-    public interface OnLinkOpenRequestListener{
-        void onLinkOpenRequest(String uri);
-    }
-
-    public DiaryRecyclerAdapter(Context c, DiaryEntry entry, OnLinkOpenRequestListener linkOpenRequestListener){
-        setOnLinkOpenRequestListener(linkOpenRequestListener);
-        this.entry = entry;
+    public ScheduleRecyclerAdapter(Context c, Schedule schedule){
+        this.schedule = schedule;
         timeLord = TimeLord.getInstance();
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(lessonsPool == null) {
@@ -39,13 +33,9 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    public void setDiaryEntry(DiaryEntry entry){
-        this.entry = entry;
+    public void setSchedule(Schedule schedule){
+        this.schedule = schedule;
         notifyDataSetChanged();
-    }
-
-    public void setOnLinkOpenRequestListener(OnLinkOpenRequestListener listener){
-        linkOpenRequestListener = listener;
     }
 
     @Override
@@ -64,29 +54,29 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         switch (holder.getItemViewType()){
             case DayType.NORMAL:
                 NormalDayHolder normalDayHolder = (NormalDayHolder) holder;
-                normalDayHolder.dayTitle.setText(timeLord.getDayTitle(entry.getDays().get(position).getDate()));
-                normalDayHolder.diaryDayRecyclerAdapter.setDay(entry.getDays().get(position));
+                normalDayHolder.dayTitle.setText(timeLord.getDayTitle(schedule.getDays().get(position).getDate()));
+                normalDayHolder.scheduleDayRecyclerAdapter.setDay(schedule.getDays().get(position));
                 break;
             case DayType.VACATION:
                 VacationDayHolder vacationDayHolder = (VacationDayHolder) holder;
-                vacationDayHolder.dayTitle.setText(timeLord.getDayTitle(entry.getDays().get(position).getDate()));
+                vacationDayHolder.dayTitle.setText(timeLord.getDayTitle(schedule.getDays().get(position).getDate()));
                 break;
         }
     }
 
     @Override
     public int getItemCount() {
-        return entry.getDays().size();
+        return schedule.getDays().size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return entry.getDays().get(position).isVacation()?DayType.VACATION:DayType.NORMAL;
+        return schedule.getDays().get(position).isVacation()?DayType.VACATION:DayType.NORMAL;
     }
 
     @Override
     public long getItemId(int position) {
-        return entry.getDays().get(position).getDate();
+        return schedule.getDays().get(position).getDate();
     }
 
     private class DayType{
@@ -96,7 +86,7 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private class NormalDayHolder extends RecyclerView.ViewHolder{
         private TextView dayTitle;
-        private DiaryDayRecyclerAdapter diaryDayRecyclerAdapter;
+        private ScheduleDayRecyclerAdapter scheduleDayRecyclerAdapter;
         NormalDayHolder(View itemView) {
             super(itemView);
             dayTitle = (TextView) itemView.findViewById(R.id.dayName);
@@ -105,10 +95,9 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             lessonsRecycler.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.VERTICAL, false));
             lessonsRecycler.setRecycledViewPool(lessonsPool);
 
-            diaryDayRecyclerAdapter = new DiaryDayRecyclerAdapter(null, inflater);
-            diaryDayRecyclerAdapter.setHasStableIds(true);
-            diaryDayRecyclerAdapter.setOnLinkOpenRequestListener(linkOpenRequestListener);
-            lessonsRecycler.setAdapter(diaryDayRecyclerAdapter);
+            scheduleDayRecyclerAdapter = new ScheduleDayRecyclerAdapter(null, inflater);
+            scheduleDayRecyclerAdapter.setHasStableIds(true);
+            lessonsRecycler.setAdapter(scheduleDayRecyclerAdapter);
         }
     }
 

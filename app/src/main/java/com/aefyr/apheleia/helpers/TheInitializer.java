@@ -3,6 +3,7 @@ package com.aefyr.apheleia.helpers;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 
 import com.aefyr.apheleia.Helper;
@@ -13,6 +14,7 @@ import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.major.MarksGrid;
 import com.aefyr.journalism.objects.major.PeriodsInfo;
 import com.aefyr.journalism.objects.major.PersonaInfo;
+import com.aefyr.journalism.objects.major.Schedule;
 import com.aefyr.journalism.objects.minor.Student;
 
 import java.util.ArrayList;
@@ -26,10 +28,11 @@ public class TheInitializer {
 
     public interface OnInitializationListener{
         void OnSuccess();
-        void OnError(String m);
+        void OnError(String m, String json, String failedWhat);
     }
 
     private OnInitializationListener listener;
+
 
     public TheInitializer(Context c, OnInitializationListener listener){
         this.c = c;
@@ -40,10 +43,14 @@ public class TheInitializer {
         new InitializationTask().execute();
     }
 
+    private boolean finished;
+    private ProgressDialog dialog;
+
     private class InitializationTask extends AsyncTask<Void, Void, Void>{
 
-        private ProgressDialog dialog;
+
         private int i = 0;
+        private int actions = 3;
 
         @Override
         protected void onPreExecute() {
@@ -81,23 +88,22 @@ public class TheInitializer {
                                             public void onSuccess(DiaryEntry entry) {
                                                 profileHelper.setCurrentStudent(s.id());
                                                 if(!DiaryHelper.getInstance(c).saveEntry(entry, periodsHelper.getCurrentWeek()))
-                                                    listener.OnError("Критическая ошибка. Не удалось сериализовать дневник");
+                                                    fail("Критическая ошибка. Не удалось сериализовать дневник", null, null);
 
 
-                                                if(i++==result.getStudents().size()*2-1) {
-                                                    dialog.dismiss();
-                                                    listener.OnSuccess();
+                                                if(i++==result.getStudents().size()*actions-1) {
+                                                    done();
                                                 }
                                             }
 
                                             @Override
                                             public void onNetworkError() {
-                                                listener.OnError(c.getString(R.string.network_error_tip));
+                                                fail(c.getString(R.string.network_error_tip), null, null);
                                             }
 
                                             @Override
                                             public void onApiError(String message, String json) {
-                                                listener.OnError(message);
+                                                fail(message, json, c.getString(R.string.diary));
                                             }
                                         });
 
@@ -106,38 +112,61 @@ public class TheInitializer {
                                             public void onSuccess(MarksGrid grid) {
                                                 profileHelper.setCurrentStudent(s.id());
                                                 if(!MarksHelper.getInstance(c).saveGrid(grid, periodsHelper.getCurrentPeriod()))
-                                                    listener.OnError("Критическая ошибка. Не удалось сериализовать оценки");
+                                                    fail("Критическая ошибка. Не удалось сериализовать оценки", null, null);
 
-                                                if(i++==result.getStudents().size()*2-1) {
-                                                    dialog.dismiss();
-                                                    listener.OnSuccess();
+                                                if(i++==result.getStudents().size()*actions-1) {
+                                                    done();
                                                 }
                                             }
 
                                             @Override
                                             public void onNetworkError() {
-                                                listener.OnError(c.getString(R.string.network_error_tip));
+                                                fail(c.getString(R.string.network_error_tip), null, null);
                                             }
 
                                             @Override
                                             public void onApiError(String message, String json) {
-                                                listener.OnError(message);
+                                                fail(message, json, c.getString(R.string.marks));
+                                            }
+                                        });
+
+                                        loadSchedule(helper.getPersona(), s.id(), periodsHelper.getCurrentScheduleWeek(), new EljurApiClient.JournalismListener<Schedule>() {
+                                            @Override
+                                            public void onSuccess(Schedule schedule) {
+                                                profileHelper.setCurrentStudent(s.id());
+                                                if(!ScheduleHelper.getInstance(c).saveSchedule(schedule, periodsHelper.getCurrentScheduleWeek()))
+                                                    fail("Критическая ошибка. Не удалось серилизовать расписание", null, null);
+
+                                                if(i++==result.getStudents().size()*actions-1) {
+                                                    done();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onNetworkError() {
+                                                fail(c.getString(R.string.network_error_tip), null, null);
+                                            }
+
+                                            @Override
+                                            public void onApiError(String message, String json) {
+                                                fail(message, json, c.getString(R.string.marks));
                                             }
                                         });
 
 
                                     }
+
                                 }
                             }
 
                             @Override
                             public void onNetworkError() {
-                                listener.OnError(c.getString(R.string.network_error_tip));
+                                fail(c.getString(R.string.network_error_tip), null, null);
                             }
 
                             @Override
                             public void onApiError(String message, String json) {
-                                listener.OnError(message);
+                                fail(message, json, c.getString(R.string.periods));
                             }
                         });
 
@@ -148,17 +177,35 @@ public class TheInitializer {
 
                 @Override
                 public void onNetworkError() {
-                    listener.OnError(c.getString(R.string.network_error_tip));
+                    fail(c.getString(R.string.network_error_tip), null, null);
                 }
 
                 @Override
                 public void onApiError(String message, String json) {
-                    listener.OnError(message);
+                    fail(message, json, c.getString(R.string.profile));
                 }
             });
 
             return null;
         }
+    }
+
+
+
+    private void fail(String m, String json, String failedWhat){
+        if(finished)
+            return;
+        finished = true;
+        dialog.dismiss();
+        listener.OnError(m, json, failedWhat);
+    }
+
+    private void done(){
+        if(finished)
+            return;
+        finished = true;
+        dialog.dismiss();
+        listener.OnSuccess();
     }
 
     private void loadProfile(EljurPersona persona, EljurApiClient.JournalismListener<PersonaInfo> listener){
@@ -175,5 +222,9 @@ public class TheInitializer {
 
     private void loadMarks(EljurPersona persona, String studentId, String days,  EljurApiClient.JournalismListener<MarksGrid> listener){
         EljurApiClient.getInstance(c).getMarks(persona, studentId, days, listener);
+    }
+
+    private void loadSchedule(EljurPersona persona, String studentId, String days,  EljurApiClient.JournalismListener<Schedule> listener){
+        EljurApiClient.getInstance(c).getSchedule(persona, studentId, days, true, listener);
     }
 }

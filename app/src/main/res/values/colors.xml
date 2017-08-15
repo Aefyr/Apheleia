@@ -6,4 +6,8 @@
     <color name="colorEditTextHint">#546e7a</color>
     <color name="colorMarkWithCommentHighlight">#b2ebf2</color>
     <color name="colorOvertimeLesson">#ffb74d</color>
+    <color name="colorQuickDayPickBar">#bbdefb</color>
+
+    <color name="colorShadowStart">#000000</color>
+    <color name="colorShadowEnd">#00bdbdbd</color>
 </resources>

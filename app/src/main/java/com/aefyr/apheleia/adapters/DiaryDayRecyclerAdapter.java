@@ -1,9 +1,7 @@
 package com.aefyr.apheleia.adapters;
 
-import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
-import android.net.Uri;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,29 +24,43 @@ import com.aefyr.journalism.objects.minor.WeekDay;
  * Created by Aefyr on 12.08.2017.
  */
 
-public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapter.LessonViewHolder>{
+class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapter.LessonViewHolder>{
     private WeekDay day;
-    private TimeLord timeLord;
-    private OnLinkOpenRequestListener linkOpenRequestListener;
+    private static TimeLord timeLord;
+    private static DiaryRecyclerAdapter.OnLinkOpenRequestListener linkOpenRequestListener;
 
-    private LayoutInflater inflater;
+    private static LayoutInflater inflater;
 
-    public interface OnLinkOpenRequestListener{
-        void onLinkOpenRequest(String uri);
-    }
+    private static String OVERTIME;
+    private static int COLOR_NORMAL_LESSON;
+    private static int COLOR_OT_LESSON;
+    private static String TIME_UNKNOWN;
 
-    public DiaryDayRecyclerAdapter(WeekDay day, LayoutInflater inflater){
-        this.inflater = inflater;
+
+
+    DiaryDayRecyclerAdapter(WeekDay day, LayoutInflater inflater2){
         this.day = day;
-        timeLord = TimeLord.getInstance();
+
+        if(inflater == null) {
+            inflater = inflater2;
+            timeLord = TimeLord.getInstance();
+            initializeStaticResources(inflater2.getContext().getResources());
+        }
     }
 
-    public void setDay(WeekDay day){
+    private void initializeStaticResources(Resources r){
+        COLOR_NORMAL_LESSON = r.getColor(R.color.colorAccent);
+        COLOR_OT_LESSON = r.getColor(R.color.colorOvertimeLesson);
+        OVERTIME = r.getString(R.string.overtime);
+        TIME_UNKNOWN = r.getString(R.string.time_unknown);
+    }
+
+    void setDay(WeekDay day){
         this.day = day;
         notifyDataSetChanged();
     }
 
-    public void setOnLinkOpenRequestListener(OnLinkOpenRequestListener listener){
+    void setOnLinkOpenRequestListener(DiaryRecyclerAdapter.OnLinkOpenRequestListener listener){
         linkOpenRequestListener = listener;
     }
 
@@ -63,11 +75,11 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
         Lesson lesson = overtimeLesson?day.getOvertimeLessons().get(position-day.getLessons().size()):day.getLessons().get(position);
 
         if(overtimeLesson) {
-            holder.lessonNumber.setText(holder.itemView.getContext().getString(R.string.overtime));
-            holder.lessonNumber.setTextColor(holder.itemView.getResources().getColor(R.color.colorOvertimeLesson));
+            holder.lessonNumber.setText(OVERTIME);
+            holder.lessonNumber.setTextColor(COLOR_OT_LESSON);
         }else {
             holder.lessonNumber.setText(lesson.getNumber());
-            holder.lessonNumber.setTextColor(holder.itemView.getResources().getColor(R.color.colorAccent));
+            holder.lessonNumber.setTextColor(COLOR_NORMAL_LESSON);
         }
 
         holder.lessonName.setText(lesson.getName());
@@ -75,7 +87,7 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
         if(lesson.hasTimes()) {
             holder.lessonTimes.setText(String.format("%s - %s", timeLord.getLessonTime(lesson.getStartTime()), timeLord.getLessonTime(lesson.getEndTime())));
         }else
-            holder.lessonTimes.setText(holder.itemView.getContext().getString(R.string.time_unknown));
+            holder.lessonTimes.setText(TIME_UNKNOWN);
 
         if(lesson.hasHomework()){
             Homework homework = lesson.getHomework();
@@ -197,12 +209,12 @@ public class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecycl
 
         private LinearLayout marksContainer;
         private LinearLayout attachmentsContainer;
-        public LessonViewHolder(View itemView) {
+        LessonViewHolder(View itemView) {
             super(itemView);
             lessonNumber = (TextView) itemView.findViewById(R.id.lessonNumber);
             lessonName = (TextView) itemView.findViewById(R.id.lessonTitle);
             lessonTimes = (TextView) itemView.findViewById(R.id.lessonTimes);
-            lessonHomework = (TextView) itemView.findViewById(R.id.lessonHomework);
+            lessonHomework = (TextView) itemView.findViewById(R.id.lessonInfo);
             marksContainer = (LinearLayout) itemView.findViewById(R.id.marksContainer);
             attachmentsContainer = (LinearLayout) itemView.findViewById(R.id.attachmentsContainer);
         }

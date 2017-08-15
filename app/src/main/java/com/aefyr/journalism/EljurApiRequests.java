@@ -1,5 +1,7 @@
 package com.aefyr.journalism;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -184,7 +186,7 @@ class EljurApiRequests {
 	}
 	
 	//Get diary!
-	static StringRequest getDiary(RequestQueue queue, EljurPersona persona, final String studentId, String days, boolean getTimes, final EljurApiClient.JournalismListener<DiaryEntry> listener){
+	static StringRequest getDiary(RequestQueue queue, EljurPersona persona, final String studentId, String days, final boolean getTimes, final EljurApiClient.JournalismListener<DiaryEntry> listener){
 		EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_DIARY).addParameter("student", studentId).addParameter("days", days);
         if(getTimes)
             apiRequest.addParameter("rings", "__yes");
@@ -194,19 +196,19 @@ class EljurApiRequests {
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-                ArrayList<WeekDay> weekDays = new ArrayList<WeekDay>();
-
                 if(response.size()==0||response.getAsJsonObject("students").size()==0){
-                    listener.onApiError("Расписание отсутствует", null);
+                    listener.onSuccess(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
                     return;
                 }
 
                 JsonObject weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
 
                 if(weekDaysObj==null||weekDaysObj.size()==0){
-                    listener.onApiError("Расписание отсутствует", null);
+                    listener.onSuccess(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
                     return;
                 }
+
+                ArrayList<WeekDay> weekDays = new ArrayList<>(5);
 
                 for(Map.Entry<String, JsonElement> entry: weekDaysObj.entrySet()){
                     JsonObject weekDay = entry.getValue().getAsJsonObject();
@@ -268,6 +270,10 @@ class EljurApiRequests {
                             ArrayList<Mark> marks = new ArrayList<Mark>();
                             for(JsonElement markEl: lessonObj.getAsJsonArray("assessments")){
                                 JsonObject mark = markEl.getAsJsonObject();
+
+                                //Phantom marks filter, why do they even appear tho?
+                                if(mark.get("value").getAsString().equals(""))
+                                    continue;
 
                                 if(mark.get("comment")!=null&&mark.get("comment").getAsString().length()>0)
                                     marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("comment").getAsString()));
@@ -332,6 +338,10 @@ class EljurApiRequests {
                                 for(JsonElement markEl: otLessonObj.getAsJsonArray("assessments")){
                                     JsonObject mark = markEl.getAsJsonObject();
 
+                                    //Phantom marks filter, why do they even appear tho?
+                                    if(mark.get("value").getAsString().equals(""))
+                                        continue;
+
                                     if(mark.get("comment")!=null&&mark.get("comment").getAsString().length()>0)
                                         marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("comment").getAsString()));
                                     else if(mark.get("lesson_comment")!=null&&mark.get("lesson_comment").getAsString().length()>0)
@@ -381,27 +391,31 @@ class EljurApiRequests {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
                 if(response.size()==0||response.get("students")==null){
-                    listener.onApiError("Оценки отсутствуют", null);
+                    listener.onSuccess(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
                     return;
                 }
 
                 JsonArray lessons = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonArray("lessons");
 
                 if(lessons == null||lessons.size()==0){
-                    listener.onApiError("Оценки отсутствуют", null);
+                    listener.onSuccess(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
                     return;
                 }
 
-                ArrayList<SubjectInGrid> subjects = new ArrayList<SubjectInGrid>();
+                ArrayList<SubjectInGrid> subjects = new ArrayList<>();
 
                 for(JsonElement lessonEl: lessons){
                     JsonObject lesson = lessonEl.getAsJsonObject();
 
-                    ArrayList<GridMark> marks = new ArrayList<GridMark>();
+                    ArrayList<GridMark> marks = new ArrayList<>();
 
                     if(lesson.get("marks")!=null&&lesson.getAsJsonArray("marks").size()>0){
                         for(JsonElement markEl: lesson.getAsJsonArray("marks")){
                             JsonObject mark = markEl.getAsJsonObject();
+
+                            //Phantom marks filter, why do they even appear tho?
+                            if(mark.get("value").getAsString().equals(""))
+                                continue;
 
                             GridMark gridMark;
 
@@ -453,9 +467,19 @@ class EljurApiRequests {
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
+                if(response.size() == 0|| response.get("students")==null){
+                    listener.onSuccess(MajorObjectsFactory.createSchedule(new ArrayList<WeekDay>(0)));
+                    return;
+                }
+
                 JsonObject weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
 
-                ArrayList<WeekDay> weekDays = new ArrayList<WeekDay>();
+                if(weekDaysObj.size()==0){
+                    listener.onSuccess(MajorObjectsFactory.createSchedule(new ArrayList<WeekDay>(0)));
+                    return;
+                }
+
+                ArrayList<WeekDay> weekDays = new ArrayList<>(5);
                 for(Map.Entry<String, JsonElement> entry: weekDaysObj.entrySet()){
                     JsonObject weekDay = entry.getValue().getAsJsonObject();
 
@@ -470,7 +494,7 @@ class EljurApiRequests {
                     }
                     ArrayList<Lesson> lessons = new ArrayList<Lesson>();
                     for(Map.Entry<String, JsonElement> entry2: weekDay.getAsJsonObject("items").entrySet()){
-                        JsonObject lessonObj = entry.getValue().getAsJsonObject();
+                        JsonObject lessonObj = entry2.getValue().getAsJsonObject();
 
                         Lesson lesson = MinorObjectsFactory.createLesson(lessonObj.get("num").getAsString(), lessonObj.get("name").getAsString(), lessonObj.get("room").getAsString(), lessonObj.get("teacher").getAsString());
 
@@ -486,14 +510,39 @@ class EljurApiRequests {
                         lessons.add(lesson);
                     }
 
+                    ArrayList<Lesson> overtimeLessons = null;
+                    if(weekDay.get("items_extday")!=null) {
+                        overtimeLessons = new ArrayList<>();
+                        for (JsonElement otLessonEl : weekDay.getAsJsonArray("items_extday")) {
+                            JsonObject otLessonObj = otLessonEl.getAsJsonObject();
+                            Lesson otLesson = MinorObjectsFactory.createLesson("OT", otLessonObj.get("name").getAsString(), "OT", otLessonObj.get("teacher").getAsString());
+
+                            if (otLessonObj.get("starttime") != null && otLessonObj.get("endtime") != null) {
+                                try {
+                                    MinorObjectsHelper.addTimesToLesson(otLesson, otLessonObj.get("starttime").getAsString(), otLessonObj.get("endtime").getAsString());
+                                } catch (EljurApiException e) {
+                                    listener.onApiError(e.getMessage(), rawResponse);
+                                    return;
+                                }
+                            }
+
+                            overtimeLessons.add(otLesson);
+                        }
+                    }
+
+                    WeekDay day;
                     try {
-                        weekDays.add(MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons));
+                        day = MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons);
                     } catch (EljurApiException e) {
-                        listener.onApiError(e.getMessage(), rawResponse);
+                        listener.onApiError(e.getMessage(),rawResponse);
                         return;
                     }
-                }
 
+                    if(overtimeLessons!=null)
+                        MinorObjectsHelper.addOvertimeLessonsToWeekDat(day, overtimeLessons);
+                    weekDays.add(day);
+                }
+                Collections.sort(weekDays, new WeekDaysComparator());
                 listener.onSuccess(MajorObjectsFactory.createSchedule(weekDays));
             }
         }, new Response.ErrorListener() {

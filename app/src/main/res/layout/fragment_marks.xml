@@ -6,16 +6,35 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView">
+        android:layout_height="wrap_content">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/marksRecycler"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/emptyMarks"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:text="@string/no_marks"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/colorOvertimeLesson"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/marksRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/windowBackground"/>
+
+        </FrameLayout>
+
+
+    </com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport>
 
 </RelativeLayout>

@@ -45,25 +45,6 @@
         android:layout_below="@+id/lessonTitle"
         android:layout_marginTop="@dimen/diary_day_lesson_padding"
         android:padding="@dimen/diary_day_lesson_padding"
-        android:text="● Watch something \n● Do something else " />
-
-    <LinearLayout
-        android:id="@+id/marksContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/lessonInfo"
-        android:layout_marginTop="@dimen/diary_day_lesson_padding"
-        android:orientation="horizontal">
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/attachmentsContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/marksContainer"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:text="● Teacher: Albert Enstein\n● Room: Large Hardon Collider " />
 
 </RelativeLayout>

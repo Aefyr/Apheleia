@@ -25,8 +25,16 @@ public class Helper {
     }
 
     //Logging in...
-    boolean isLoggedIn(){
+    boolean isTokenSaved(){
         return !preferences.getString("token", "nope").equals("nope");
+    }
+
+    boolean isLoggedIn(){
+        return preferences.getBoolean("logged_in", false);
+    }
+
+    void setLoggedIn(boolean loggedIn){
+        preferences.edit().putBoolean("logged_in", true).apply();
     }
 
     void saveDomain(String domain){
