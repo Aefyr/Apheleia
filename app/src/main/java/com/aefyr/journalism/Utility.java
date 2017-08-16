@@ -5,18 +5,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 
-class Utility {
+public class Utility {
 	
 	
-	static JsonObject getJsonFromResponse(String rawResponse){
+	public static JsonObject getJsonFromResponse(String rawResponse){
 		return new JsonParser().parse(rawResponse).getAsJsonObject().getAsJsonObject("response").getAsJsonObject("result");
 	}
 
-	static JsonObject getRawJsonFromResponse(String rawResponse){
+	public static JsonObject getRawJsonFromResponse(String rawResponse){
 		return new JsonParser().parse(rawResponse).getAsJsonObject();
 	}
 	
-	static PersonaInfo.Gender parseGender(String genderString){
+	public static PersonaInfo.Gender parseGender(String genderString){
 		if(genderString.equals("female"))
 			return PersonaInfo.Gender.FEMALE;
 		else if (genderString.equals("male"))

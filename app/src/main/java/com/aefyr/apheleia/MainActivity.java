@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.aefyr.apheleia.fragments.DiaryFragment;
 import com.aefyr.apheleia.fragments.MarksFragment;
+import com.aefyr.apheleia.fragments.MessagesFragment;
 import com.aefyr.apheleia.fragments.ScheduleFragment;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.PeriodsHelper;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         currentFragment = new DiaryFragment();
         fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment).commit();
         navigationView.setCheckedItem(R.id.nav_diary);
+
     }
 
     @Override
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private MenuItem timePeriodSwitchButton;
+    private MenuItem mailFolderSwitchButton;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -97,6 +100,23 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
                 return true;
+            }
+        });
+
+        mailFolderSwitchButton = menu.findItem(R.id.action_mail_folder_switch);
+        mailFolderSwitchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                if(currentApheleiaFragment==ApheleiaFragment.MESSAGES){
+                    ((MessagesFragment) currentFragment).toggleFolder();
+                    if(((MessagesFragment)currentFragment).isInboxSelected())
+                        mailFolderSwitchButton.setIcon(R.drawable.ic_send_white_36dp);
+                    else
+                        mailFolderSwitchButton.setIcon(R.drawable.ic_inbox_white_36dp);
+
+                    return true;
+                }
+                return false;
             }
         });
         return true;
@@ -135,7 +155,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_schedule) {
             setFragment(ApheleiaFragment.SCHEDULE);
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_messages) {
+            setFragment(ApheleiaFragment.MESSAGES);
 
         } else if (id == R.id.nav_share) {
 
@@ -149,7 +170,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private enum ApheleiaFragment{
-        DIARY, MARKS, SCHEDULE
+        DIARY, MARKS, SCHEDULE, MESSAGES
     }
 
     private Fragment currentFragment;
@@ -163,14 +184,23 @@ public class MainActivity extends AppCompatActivity
             case DIARY:
                 currentFragment = new DiaryFragment();
                 timePeriodSwitchButton.setVisible(true);
+                mailFolderSwitchButton.setVisible(false);
                 break;
             case MARKS:
                 currentFragment = new MarksFragment();
                 timePeriodSwitchButton.setVisible(true);
+                mailFolderSwitchButton.setVisible(false);
                 break;
             case SCHEDULE:
                 currentFragment = new ScheduleFragment();
                 timePeriodSwitchButton.setVisible(true);
+                mailFolderSwitchButton.setVisible(false);
+                break;
+            case MESSAGES:
+                currentFragment = new MessagesFragment();
+                timePeriodSwitchButton.setVisible(false);
+                mailFolderSwitchButton.setVisible(true);
+                break;
         }
         fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment).commit();
 

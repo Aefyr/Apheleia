@@ -20,6 +20,8 @@ public class TimeLord {
 
     private SimpleDateFormat gridMarkSDF;
 
+    private SimpleDateFormat messageSDF;
+
     private TimeLord(){
         instance = this;
 
@@ -38,6 +40,8 @@ public class TimeLord {
         weeksAndPeriodsSDF = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
 
         gridMarkSDF = new SimpleDateFormat("dd.MM", Locale.getDefault());
+
+        messageSDF = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
     }
 
     public static TimeLord getInstance(){
@@ -58,5 +62,9 @@ public class TimeLord {
 
     public String getGridMarkDate(long date){
         return  gridMarkSDF.format(date);
+    }
+
+    public String getMessageDate(long date){
+        return messageSDF.format(date);
     }
 }

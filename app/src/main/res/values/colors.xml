@@ -7,7 +7,11 @@
     <color name="colorMarkWithCommentHighlight">#b2ebf2</color>
     <color name="colorOvertimeLesson">#ffb74d</color>
     <color name="colorQuickDayPickBar">#bbdefb</color>
+    <color name="colorMessageRead">#757575</color>\
+    <color name="colorMessageUnread">#212121</color>
 
     <color name="colorShadowStart">#000000</color>
     <color name="colorShadowEnd">#00bdbdbd</color>
+
+
 </resources>

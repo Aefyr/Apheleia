@@ -12,4 +12,11 @@
         android:icon="@drawable/ic_today_white_36dp"
         android:title="@string/switch_time_period"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_mail_folder_switch"
+        android:icon="@drawable/ic_send_white_36dp"
+        android:title="@string/toggle_folder"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

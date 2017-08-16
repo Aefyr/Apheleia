@@ -16,9 +16,9 @@
             android:icon="@drawable/ic_schedule_black_24dp"
             android:title="@string/schedule" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_messages"
+            android:icon="@drawable/ic_email_black_24dp"
+            android:title="@string/messages" />
     </group>
 
     <item android:title="Communicate">

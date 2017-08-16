@@ -3,8 +3,6 @@ package com.aefyr.apheleia.helpers;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 
 import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.R;
@@ -16,8 +14,6 @@ import com.aefyr.journalism.objects.major.PeriodsInfo;
 import com.aefyr.journalism.objects.major.PersonaInfo;
 import com.aefyr.journalism.objects.major.Schedule;
 import com.aefyr.journalism.objects.minor.Student;
-
-import java.util.ArrayList;
 
 /**
  * Created by Aefyr on 13.08.2017.
@@ -46,7 +42,7 @@ public class TheInitializer {
     private boolean finished;
     private ProgressDialog dialog;
 
-    private class InitializationTask extends AsyncTask<Void, Void, Void>{
+    private class InitializationTask extends AsyncTask<Void, Integer, Void>{
 
 
         private int i = 0;
@@ -56,7 +52,8 @@ public class TheInitializer {
         protected void onPreExecute() {
             super.onPreExecute();
             dialog = new ProgressDialog(c, ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage(c.getString(R.string.loading_data));
+            dialog.setMessage(c.getString(R.string.loading_profile));
+            dialog.setMax(0);
             dialog.show();
         }
 
@@ -69,6 +66,8 @@ public class TheInitializer {
                 public void onSuccess(final PersonaInfo result) {
                     final ProfileHelper profileHelper = ProfileHelper.getInstance(c);
                     profileHelper.savePersonaInfo(result);
+
+                    publishProgress(result.getStudents().size());
 
 
                     for(final Student s: result.getStudents()){
@@ -94,6 +93,8 @@ public class TheInitializer {
                                                 if(i++==result.getStudents().size()*actions-1) {
                                                     done();
                                                 }
+
+                                                publishProgress(i);
                                             }
 
                                             @Override
@@ -117,6 +118,8 @@ public class TheInitializer {
                                                 if(i++==result.getStudents().size()*actions-1) {
                                                     done();
                                                 }
+
+                                                publishProgress(i);
                                             }
 
                                             @Override
@@ -140,6 +143,8 @@ public class TheInitializer {
                                                 if(i++==result.getStudents().size()*actions-1) {
                                                     done();
                                                 }
+
+                                                publishProgress(i);
                                             }
 
                                             @Override
@@ -187,6 +192,26 @@ public class TheInitializer {
             });
 
             return null;
+        }
+
+
+        private boolean styleUpdated;
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            if(!styleUpdated){
+                dialog.dismiss();
+
+                dialog = new ProgressDialog(c);
+                dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                dialog.setMessage(c.getString(R.string.loading_data));
+                dialog.setMax(values[0]*actions);
+                dialog.setProgress(0);
+                dialog.show();
+                styleUpdated = true;
+            }else
+                dialog.setProgress(values[0]);
+
         }
     }
 

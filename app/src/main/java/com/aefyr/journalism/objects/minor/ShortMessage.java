@@ -64,6 +64,10 @@ public class ShortMessage {
 	public boolean isUnread(){
 		return unread;
 	}
+
+	public void read(){
+		unread = false;
+	}
 	
 	public boolean hasFiles(){
 		return hasFiles;

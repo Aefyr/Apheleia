@@ -186,7 +186,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
             public void onApiError(String message, String json) {
                 if(!loadedFromMemory)
                     antiScroll();
-                Chief.makeASnack(getActivity().getCurrentFocus(), getString(R.string.api_error)+"\n"+message);
+                Chief.makeReportApiErrorDialog(getActivity(), getString(R.string.schedule), message, json, true);
                 refreshLayout.setRefreshing(false);
             }
         });

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/selectableItemBackground"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/messageName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/messageAttachmentsIcon"
+        android:text="Djuvadadzu Djidjavadze"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/colorMessageUnread"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/messageSubject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/messageName"
+        android:layout_marginTop="2dp"
+        android:layout_toStartOf="@+id/messageAttachmentsIcon"
+        android:text="We have a problem"
+        android:textColor="@color/colorMessageUnread"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/messagePreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/messageSubject"
+        android:layout_marginTop="2dp"
+        android:text="They have assaulted our temple! Can you sent us support immediately? We can't last any longer with the supplies we have left..."
+        android:textColor="@color/colorMessageRead" />
+
+    <ImageView
+        android:id="@+id/messageAttachmentsIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/messagePreview"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/messageDate"
+        android:tint="@color/colorAccent"
+        app:srcCompat="@drawable/ic_attach_file_black_36dp" />
+
+    <TextView
+        android:id="@+id/messageDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/messagePreview"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text="16/08/17"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
+</RelativeLayout>
