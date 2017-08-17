@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment).commit();
         navigationView.setCheckedItem(R.id.nav_diary);
 
+        checkPeriods();
     }
 
     @Override
@@ -267,24 +268,40 @@ public class MainActivity extends AppCompatActivity
         PeriodsHelper.getInstance(this).checkPeriods(new PeriodsHelper.OnPeriodsChangeDetectedListener() {
             @Override
             public void OnFoundMoreWeeks() {
+                Chief.makeAToast(MainActivity.this, getString(R.string.check_periods_updated));
                 studentSwitched();
             }
 
             @Override
             public void OnFoundMorePeriods() {
+                Chief.makeAToast(MainActivity.this, getString(R.string.check_periods_updated));
                 studentSwitched();
             }
 
             @Override
             public void OnFoundLessWeeks() {
-                reInitialize();
+                showReinitializePrompt();
             }
 
             @Override
             public void OnFoundLessPeriods() {
-                reInitialize();
+                showReinitializePrompt();
             }
         });
+    }
+
+    private void showReinitializePrompt(){
+        new AlertDialog.Builder(this).setTitle(getString(R.string.reinitialization_title)).setMessage(getString(R.string.reinitialization_prompt)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                new AlertDialog.Builder(MainActivity.this).setTitle(getString(R.string.reinitialization_title)).setMessage(getString(R.string.reinitialization_warning)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        reInitialize();
+                    }
+                }).setNegativeButton(getString(R.string.cancel), null).create().show();
+            }
+        }).setNegativeButton(getString(R.string.no), null).create().show();
     }
 
     private void reInitialize(){
@@ -301,7 +318,14 @@ public class MainActivity extends AppCompatActivity
                 if(json!=null){
                     Chief.makeReportApiErrorDialog(MainActivity.this, failedWhat, m, json, true);
                 }else {
-                    helper.setLoggedIn(true);
+                    AlertDialog d = new AlertDialog.Builder(MainActivity.this).setTitle(getString(R.string.network_error)).setMessage(getString(R.string.reinitialize_failed)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            finish();
+                        }
+                    }).setCancelable(false).create();
+                    d.setCanceledOnTouchOutside(false);
+                    d.show();
                 }
             }
 

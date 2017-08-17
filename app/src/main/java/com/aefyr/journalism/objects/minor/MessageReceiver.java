@@ -1,6 +1,8 @@
 package com.aefyr.journalism.objects.minor;
 
-public class MessageReceiver extends MessagePerson{
+import java.io.Serializable;
+
+public class MessageReceiver extends MessagePerson implements Serializable {
 	String info;
 	
 	public String getInfo(){

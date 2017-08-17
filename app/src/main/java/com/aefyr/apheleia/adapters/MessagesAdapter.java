@@ -47,8 +47,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     }
 
     public void setMessages(ArrayList<ShortMessage> messages){
-        if(this.messages.size()==messages.size()&&this.messages.get(0).getDate()==messages.get(0).getDate())
-            return;
         this.messages = messages;
         notifyDataSetChanged();
     }

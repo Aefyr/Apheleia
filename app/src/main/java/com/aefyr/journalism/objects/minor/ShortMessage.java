@@ -3,12 +3,13 @@ package com.aefyr.journalism.objects.minor;
 import com.aefyr.journalism.exceptions.EljurApiException;
 import com.aefyr.journalism.objects.major.MessagesList;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 
-public class ShortMessage {
+public class ShortMessage implements Serializable {
 	MessagesList.Folder folder;
 	
 	String id;

@@ -246,11 +246,6 @@ class EljurApiRequests {
 
                 JsonObject weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
 
-                if(weekDaysObj.size()==0){
-                    listener.onSuccess(MajorObjectsFactory.createSchedule(new ArrayList<WeekDay>(0)));
-                    return;
-                }
-
                 ArrayList<WeekDay> weekDays = new ArrayList<>(5);
                 for(Map.Entry<String, JsonElement> entry: weekDaysObj.entrySet()){
                     JsonObject weekDay = entry.getValue().getAsJsonObject();

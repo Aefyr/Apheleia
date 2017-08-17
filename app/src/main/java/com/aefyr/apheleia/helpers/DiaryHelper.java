@@ -46,4 +46,8 @@ public class DiaryHelper extends SerializerHelperWithTimeAndStudentKeysBase<Diar
         saveObjectAsync(grid, weeks, listener);
     }
 
+    public void loadEntryAsync(String weeks, ObjectLoadListener listener){
+        loadSavedObjectAsync(weeks, listener);
+    }
+
 }

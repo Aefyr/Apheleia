@@ -61,9 +61,19 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
         void onSaveCompleted(boolean successful);
     }
 
+    public interface ObjectLoadListener<T>{
+        void onLoaded(T object);
+        void onFailed();
+    }
+
     protected void saveObjectAsync(T object, String timeKey, ObjectSaveListener listener){
         ObjectSaveTask objectSaveTask = new ObjectSaveTask();
         objectSaveTask.execute(new ObjectSaveTaskParams(listener, object, timeKey));
+    }
+
+    protected void loadSavedObjectAsync(String timeKey, ObjectLoadListener<T> listener){
+        ObjectLoadTask objectLoadTask = new ObjectLoadTask();
+        objectLoadTask.execute(new ObjectLoadTaskParams(timeKey, listener));
     }
 
     protected class ObjectSaveTaskParams {
@@ -90,6 +100,45 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
             listener.onSaveCompleted(success);
+        }
+    }
+
+    protected class ObjectLoadTaskParams{
+        String timeKey;
+        ObjectLoadListener listener;
+
+        protected ObjectLoadTaskParams(String timeKey, ObjectLoadListener listener){
+            this.timeKey = timeKey;
+            this.listener = listener;
+        }
+
+    }
+
+    protected class ObjectLoadTask extends AsyncTask<ObjectLoadTaskParams, Void, T>{
+
+        private ObjectLoadListener listener;
+
+        protected void bindListener(ObjectLoadListener listener){
+            this.listener = listener;
+        }
+
+        @Override
+        protected T doInBackground(ObjectLoadTaskParams... objectLoadTaskParams) {
+            bindListener(objectLoadTaskParams[0].listener);
+            try {
+                return loadSavedObject(objectLoadTaskParams[0].timeKey);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(T object) {
+            if (object==null)
+                listener.onFailed();
+            else
+                listener.onLoaded(object);
         }
     }
 

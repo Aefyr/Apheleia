@@ -41,9 +41,10 @@ public class MajorObjectsFactory {
 	
 	
 
-	public static MessagesList createMessagesList(int total, int count, ArrayList<ShortMessage> messages){
+	public static MessagesList createMessagesList(int total, int count, ArrayList<ShortMessage> messages, MessagesList.Folder folder){
 		MessagesList list = new MessagesList();
-		
+
+		list.folder = folder;
 		list.total = total;
 		list.count = count;
 		list.messages = messages;

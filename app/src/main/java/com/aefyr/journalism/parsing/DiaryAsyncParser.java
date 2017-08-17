@@ -51,15 +51,11 @@ public class DiaryAsyncParser {
 
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-            if(response.size()==0||response.getAsJsonObject("students").size()==0){
+            if(response.size()==0||response.get("students")==null){
                 return new AsyncParserTaskResult<DiaryEntry>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
             }
 
             JsonObject weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
-
-            if(weekDaysObj==null||weekDaysObj.size()==0){
-                return new AsyncParserTaskResult<DiaryEntry>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
-            }
 
             ArrayList<WeekDay> weekDays = new ArrayList<>(5);
 

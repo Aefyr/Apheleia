@@ -20,7 +20,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal"
                 android:paddingTop="8dp"
-                android:text="@string/no_marks"
+                android:text="@string/no_messages"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@color/colorOvertimeLesson"
                 android:visibility="gone" />
@@ -37,7 +37,7 @@
     </com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/composeFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.aefyr.apheleia.R;
+import com.aefyr.apheleia.Utility;
 
 /**
  * Created by Aefyr on 13.08.2017.
@@ -60,9 +61,13 @@ public class Chief {
         }).setNegativeButton(c.getString(R.string.dont_report), null).create().show();
     }
 
-    public static void makeAToast(Context c, String message){
+    public static void makeAFlyingToast(Context c, String message){
         Toast t = Toast.makeText(c, message, Toast.LENGTH_SHORT);
-        t.setGravity(Gravity.TOP, 0, 0);
+        t.setGravity(Gravity.TOP, 0, (int) Utility.dpToPx(56, c.getResources()));
         t.show();
+    }
+
+    public static void makeAToast(Context c, String message){
+        Toast.makeText(c, message, Toast.LENGTH_SHORT).show();
     }
 }

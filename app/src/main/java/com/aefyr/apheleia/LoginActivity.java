@@ -10,8 +10,10 @@ import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.TheInitializer;
@@ -20,10 +22,11 @@ import com.aefyr.journalism.objects.major.Token;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Helper helper;
-    EditText domainET;
-    EditText usernameET;
-    EditText passwordET;
+    private Helper helper;
+    private EditText domainET;
+    private EditText usernameET;
+    private EditText passwordET;
+    private ImageButton passwordVisibilitySwitch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +37,10 @@ public class LoginActivity extends AppCompatActivity {
         domainET.requestFocus();
         usernameET = (EditText) findViewById(R.id.username);
         passwordET = (EditText) findViewById(R.id.password);
+        passwordVisibilitySwitch = (ImageButton) findViewById(R.id.passwordVisibilitySwitch);
 
         setupDomainHelpButton();
+        setupPasswordVisibilitySwitcher();
         setupLoginSystem();
     }
 
@@ -44,6 +49,25 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 showAlert(getString(R.string.help), getString(R.string.what_is_school_domain));
+            }
+        });
+    }
+
+    private boolean passwordShown = false;
+    private void setupPasswordVisibilitySwitcher(){
+        passwordVisibilitySwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int selection = passwordET.getSelectionEnd();
+                if(passwordShown){
+                    passwordET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    passwordVisibilitySwitch.setImageResource(R.drawable.ic_visibility_black_24dp);
+                }else {
+                    passwordET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    passwordVisibilitySwitch.setImageResource(R.drawable.ic_visibility_off_black_24dp);
+                }
+                passwordET.setSelection(selection);
+                passwordShown = !passwordShown;
             }
         });
     }

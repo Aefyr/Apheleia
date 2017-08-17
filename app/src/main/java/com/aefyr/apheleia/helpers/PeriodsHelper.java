@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.aefyr.apheleia.Helper;
+import com.aefyr.apheleia.R;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.PeriodsInfo;
 import com.aefyr.journalism.objects.minor.ActualPeriod;
@@ -52,14 +53,17 @@ public class PeriodsHelper {
 
                 if(prevPeriodsCount<getPeriodsCount())
                     listener.OnFoundMorePeriods();
-                else if(prevPeriodsCount>getPeriodsCount())
+                else if(prevPeriodsCount>getPeriodsCount()) {
                     listener.OnFoundLessPeriods();
+                    return;
+                }
 
                 if(prevWeeksCount<getWeeksCount())
                     listener.OnFoundMoreWeeks();
                 else if(prevWeeksCount>getWeeksCount())
                     listener.OnFoundLessWeeks();
 
+                System.out.println("Checked periods!");
 
             }
 
@@ -70,7 +74,8 @@ public class PeriodsHelper {
 
             @Override
             public void onApiError(String message, String json) {
-
+                Chief.makeAToast(c, c.getString(R.string.check_periods_failed));
+                //TODO Report error, I guess, w/o prompt, since periods are not some sensitive data
             }
         });
     }

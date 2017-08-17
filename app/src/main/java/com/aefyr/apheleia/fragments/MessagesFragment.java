@@ -2,9 +2,12 @@ package com.aefyr.apheleia.fragments;
 
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,32 +17,40 @@ import android.view.ViewGroup;
 import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.MessageViewActivity;
 import com.aefyr.apheleia.R;
+import com.aefyr.apheleia.Utility;
 import com.aefyr.apheleia.adapters.MessagesAdapter;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
+import com.aefyr.apheleia.helpers.MessagesHelper;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.android.volley.toolbox.StringRequest;
+
+import java.util.HashSet;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, MessagesAdapter.OnMessageClickListener {
 
-    private boolean firstLoad;
+    private boolean firstLoad = true;
     private StringRequest currentRequest;
     private View emptyMessages;
 
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView messagesRecycler;
     private MessagesAdapter messagesAdapter;
+    private FloatingActionButton composeFab;
 
     private EljurPersona persona;
     private EljurApiClient apiClient;
     private ConnectionHelper connectionHelper;
+    private MessagesHelper messagesHelper;
 
     private static MessagesList.Folder currentFolder;
+    private HashSet<AsyncTask> tasks;
+
 
     public MessagesFragment() {
         // Required empty public constructor
@@ -52,13 +63,20 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         refreshLayout.setOnRefreshListener(this);
+        composeFab = (FloatingActionButton) view.findViewById(R.id.composeFab);
         messagesRecycler = (RecyclerView) view.findViewById(R.id.messagesRecycler);
         messagesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(getResources().getDrawable(R.drawable.messages_divider));
+        messagesRecycler.addItemDecoration(divider);
         emptyMessages = view.findViewById(R.id.emptyMessages);
+        initializeFabVisibilitySwitcher();
 
         persona = Helper.getInstance(getActivity()).getPersona();
         apiClient = EljurApiClient.getInstance(getActivity());
         connectionHelper = ConnectionHelper.getInstance(getActivity());
+        messagesHelper = MessagesHelper.getInstance(getActivity());
+        tasks = new HashSet<>();
 
 
         if(currentFolder==null)
@@ -67,6 +85,36 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         loadMessages(currentFolder);
         return view;
+    }
+
+    private static final int COMPOSE_FAB_VISIBILITY_CHANGE_THRESHOLD_IN_DP = 8;
+    private int fabVisibilityChangeThreshold;
+    private int fabVisibilitySwitcherProgress;
+    private boolean composeFabShown = true;
+    private void initializeFabVisibilitySwitcher(){
+        fabVisibilityChangeThreshold = (int) Utility.dpToPx(COMPOSE_FAB_VISIBILITY_CHANGE_THRESHOLD_IN_DP, getResources());
+
+        messagesRecycler.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(Math.abs(fabVisibilitySwitcherProgress)<= fabVisibilityChangeThreshold){
+                    fabVisibilitySwitcherProgress = Utility.clamp(fabVisibilitySwitcherProgress +dy, -fabVisibilityChangeThreshold, fabVisibilityChangeThreshold);
+                }
+
+                if(fabVisibilitySwitcherProgress >= fabVisibilityChangeThreshold) {
+                    if(composeFabShown){
+                        composeFab.hide();
+                        composeFabShown = false;
+                    }
+                }else if(fabVisibilitySwitcherProgress <=-fabVisibilityChangeThreshold){
+                    if(!composeFabShown){
+                        composeFab.show();
+                        composeFabShown = true;
+                    }
+                }
+            }
+        });
     }
 
 
@@ -82,25 +130,35 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
             messagesRecycler.setAdapter(messagesAdapter);
         }else
             messagesAdapter.setMessages(messagesList.getMessages());
+        checkEmptiness(messagesList);
     }
 
-    private boolean loadedFromMemory;
-    private void loadMessages(MessagesList.Folder folder){
+    private void loadMessages(final MessagesList.Folder folder){
         refreshLayout.setRefreshing(true);
 
-        if(firstLoad||!connectionHelper.hasNetworkConnection()){
-            //Try loading cached version
-            //Wait, should we even cache messages? Someone may have thousands of them, and deserializing 3000 messages is not such a good idea, is it?
-        }
+        if(folderToggled||firstLoad||!connectionHelper.hasNetworkConnection()){
+            tasks.add(messagesHelper.loadMessages(folder == MessagesList.Folder.INBOX, new MessagesHelper.LoadMessagesTaskResultListener() {
+                @Override
+                public void onSuccess(MessagesList list) {
+                    setMessagesToAdapter(list);
+                    System.out.println("Loaded messages");
+                }
 
-        if(loadedFromMemory){
-            //Maybe do something
+                @Override
+                public void onFail() {
+                    System.out.println("Failed to load messages");
+                }
+            }));
+
+            firstLoad = false;
+            folderToggled = false;
         }
 
         currentRequest = apiClient.getMessages(persona, folder, false, new EljurApiClient.JournalismListener<MessagesList>() {
             @Override
             public void onSuccess(MessagesList result) {
-
+                System.out.println("Set messages!");
+                messagesHelper.saveMessages(result, folder == MessagesList.Folder.INBOX, null);
                 setMessagesToAdapter(result);
                 refreshLayout.setRefreshing(false);
             }
@@ -108,25 +166,29 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
             @Override
             public void onNetworkError() {
                 refreshLayout.setRefreshing(false);
+                Chief.makeASnack(getView(), getString(R.string.network_error_tip));
             }
 
             @Override
             public void onApiError(String message, String json) {
                 refreshLayout.setRefreshing(false);
+                Chief.makeReportApiErrorDialog(getActivity(), getString(R.string.messages), message, json, false);
             }
         });
     }
 
+    private boolean folderToggled;
     public void toggleFolder(){
         if(!currentRequest.hasHadResponseDelivered())
             currentRequest.cancel();
         if(currentFolder == MessagesList.Folder.INBOX) {
             currentFolder = MessagesList.Folder.SENT;
-            Chief.makeAToast(getActivity(), getString(R.string.sent));
+            Chief.makeAFlyingToast(getActivity(), getString(R.string.sent));
         }else {
             currentFolder = MessagesList.Folder.INBOX;
-            Chief.makeAToast(getActivity(), getString(R.string.inbox));
+            Chief.makeAFlyingToast(getActivity(), getString(R.string.inbox));
         }
+        folderToggled = true;
         loadMessages(currentFolder);
     }
 
@@ -146,12 +208,19 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onDetach() {
         cancelRequest();
+        cancelTasks();
         super.onDetach();
     }
 
     private void cancelRequest(){
         if(currentRequest != null && !currentRequest.hasHadResponseDelivered())
             currentRequest.cancel();
+    }
+
+    private void cancelTasks(){
+        for(AsyncTask task: tasks)
+            task.cancel(true);
+        tasks.clear();
     }
 
     private void checkEmptiness(MessagesList list){

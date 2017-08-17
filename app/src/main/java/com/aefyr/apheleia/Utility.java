@@ -15,4 +15,16 @@ public class Utility {
     public static float displayWidth(Resources r){
         return r.getDisplayMetrics().widthPixels;
     }
+
+    public static boolean checkSelectedTime(int i, String[] a){
+        return i<a.length&&i>=0;
+    }
+
+    public static int clamp(int a, int min, int max){
+        if(a<min)
+            return min;
+        if(a>max)
+            return max;
+        return a;
+    }
 }

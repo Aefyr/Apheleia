@@ -52,6 +52,9 @@ public class MessagesListAsyncParser {
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
             MessagesList.Folder folder = messagesParseTaskParams.folder;
 
+            if(response.size()==0||response.get("messages")==null){
+                return new AsyncParserTaskResult<MessagesList>(MajorObjectsFactory.createMessagesList(response.get("total").getAsInt(), response.get("count").getAsInt(), new ArrayList<ShortMessage>(0), folder));
+            }
 
             ArrayList<ShortMessage> shortMessages = new ArrayList<>();
             for(JsonElement messageEl: response.getAsJsonArray("messages")){
@@ -85,7 +88,7 @@ public class MessagesListAsyncParser {
                 }
             }
 
-            return new AsyncParserTaskResult<MessagesList>(MajorObjectsFactory.createMessagesList(response.get("total").getAsInt(), response.get("count").getAsInt(), shortMessages));
+            return new AsyncParserTaskResult<MessagesList>(MajorObjectsFactory.createMessagesList(response.get("total").getAsInt(), response.get("count").getAsInt(), shortMessages, folder));
         }
     }
 

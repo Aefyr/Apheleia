@@ -1,6 +1,8 @@
 package com.aefyr.journalism.objects.minor;
 
-public class MessagePerson {
+import java.io.Serializable;
+
+public class MessagePerson implements Serializable {
 	String id;
 	String firstName;
 	String middleName;

@@ -34,7 +34,7 @@ public class Helper {
     }
 
     void setLoggedIn(boolean loggedIn){
-        preferences.edit().putBoolean("logged_in", true).apply();
+        preferences.edit().putBoolean("logged_in", loggedIn).apply();
     }
 
     void saveDomain(String domain){

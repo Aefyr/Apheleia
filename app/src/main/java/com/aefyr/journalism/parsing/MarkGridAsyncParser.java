@@ -49,10 +49,6 @@ public class MarkGridAsyncParser {
 
             JsonArray lessons = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonArray("lessons");
 
-            if(lessons == null||lessons.size()==0){
-                return new AsyncParserTaskResult<MarksGrid>(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
-            }
-
             ArrayList<SubjectInGrid> subjects = new ArrayList<>();
 
             for(JsonElement lessonEl: lessons){

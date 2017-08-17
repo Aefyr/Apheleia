@@ -64,8 +64,18 @@
         android:layout_height="48dp"
         android:layout_alignBottom="@+id/domain"
         android:layout_toEndOf="@+id/domain"
-        android:background="@android:color/transparent"
+        android:background="?android:attr/selectableItemBackground"
         android:tint="@color/colorAccent"
         app:srcCompat="@drawable/ic_help_outline_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/passwordVisibilitySwitch"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_above="@+id/singIn"
+        android:layout_toEndOf="@+id/password"
+        android:background="?android:attr/selectableItemBackground"
+        android:tint="@color/colorAccent"
+        app:srcCompat="@drawable/ic_visibility_black_24dp" />
 
 </RelativeLayout>
