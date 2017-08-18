@@ -51,6 +51,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         notifyDataSetChanged();
     }
 
+    public void markAsRead(int index){
+        if(messages.get(index).isUnread()) {
+            messages.get(index).read();
+            notifyItemChanged(index);
+        }
+    }
+
     @Override
     public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new MessageViewHolder(inflater.inflate(R.layout.message, null));
@@ -117,13 +124,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onMessageClick(messages.get(getAdapterPosition()).getId(), messages.get(getAdapterPosition()).getFolder()== MessagesList.Folder.INBOX);
+                    int index = getAdapterPosition();
+                    listener.onMessageClick(index, messages.get(index).getId(), messages.get(index).getFolder()== MessagesList.Folder.INBOX);
                 }
             });
         }
     }
 
     public interface OnMessageClickListener{
-        void onMessageClick(String messageId, boolean inbox);
+        void onMessageClick(int index, String messageId, boolean inbox);
     }
 }

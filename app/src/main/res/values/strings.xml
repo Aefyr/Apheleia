@@ -81,7 +81,12 @@
     <string name="cant_get_message">Unable to fetch message</string>
     <string name="retry">Retry</string>
     <string name="message">Message</string>
-    <string name="viewing_message">Message View</string>
+    <string name="viewing_message">View Message</string>
+    <string name="fetching_message">Fetching message…</string>
+    <string name="from" formatted="false">From: %s</string>
+    <string name="to" formatted="false">To: %s</string>
+    <string name="to_many" formatted="false">To: %s and %d others</string>
+    <string name="you">You</string>
 
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

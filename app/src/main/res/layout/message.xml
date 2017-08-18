@@ -47,6 +47,8 @@
         android:layout_above="@+id/messagePreview"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/messageDate"
+        android:padding="4dp"
+        android:rotation="90"
         android:tint="@color/colorAccent"
         app:srcCompat="@drawable/ic_attach_file_black_36dp" />
 

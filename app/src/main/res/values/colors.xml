@@ -9,6 +9,7 @@
     <color name="colorQuickDayPickBar">#bbdefb</color>
     <color name="colorMessageRead">#757575</color>\
     <color name="colorMessageUnread">#212121</color>
+    <color name="colorMessageText">#424242</color>
 
     <color name="colorShadowStart">#000000</color>
     <color name="colorShadowEnd">#00bdbdbd</color>

@@ -1,9 +1,13 @@
-<com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.aefyr.apheleia.fragments.MarksFragment">
+
+    <com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeRefreshLayout">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -28,5 +32,7 @@
 
     </FrameLayout>
 
+    </com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport>
 
-</com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport>
+
+</FrameLayout>

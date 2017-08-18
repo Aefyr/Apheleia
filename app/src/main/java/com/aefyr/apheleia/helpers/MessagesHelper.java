@@ -82,6 +82,8 @@ public class MessagesHelper {
                 listener.onSuccess(list);
             else
                 listener.onFail();
+
+            listener = null;
         }
     }
 

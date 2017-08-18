@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,6 +51,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private static MessagesList.Folder currentFolder;
     private HashSet<AsyncTask> tasks;
+    private MessagesList messagesList;
 
 
     public MessagesFragment() {
@@ -157,9 +159,10 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         currentRequest = apiClient.getMessages(persona, folder, false, new EljurApiClient.JournalismListener<MessagesList>() {
             @Override
             public void onSuccess(MessagesList result) {
+                messagesList = result;
                 System.out.println("Set messages!");
-                messagesHelper.saveMessages(result, folder == MessagesList.Folder.INBOX, null);
-                setMessagesToAdapter(result);
+                messagesHelper.saveMessages(messagesList, folder == MessagesList.Folder.INBOX, null);
+                setMessagesToAdapter(messagesList);
                 refreshLayout.setRefreshing(false);
             }
 
@@ -197,12 +200,15 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         loadMessages(currentFolder);
     }
 
+    private static final int OPEN_MESSAGE = 222;
+    private int openedMessage;
     @Override
-    public void onMessageClick(String messageId, boolean inbox) {
+    public void onMessageClick(int index, String messageId, boolean inbox) {
+        openedMessage = index;
         Intent messageViewIntent = new Intent(getActivity(), MessageViewActivity.class);
         messageViewIntent.putExtra("messageId", messageId);
         messageViewIntent.putExtra("inbox", inbox);
-        startActivity(messageViewIntent);
+        startActivityForResult(messageViewIntent, OPEN_MESSAGE);
     }
 
     @Override
@@ -230,4 +236,19 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
             emptyMessages.setVisibility(View.GONE);
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==OPEN_MESSAGE){
+            if(resultCode== AppCompatActivity.RESULT_OK) {
+                messagesAdapter.markAsRead(openedMessage);
+
+                /*This performance tho... But keeping ShortMessages as individual files is an even worse idea, right?
+                Well, it's and AsyncTask anyway, but still this can really badly affect users with tons of messages and weak devices*/
+                messagesHelper.saveMessages(messagesList,currentFolder == MessagesList.Folder.INBOX, null);
+            }
+
+        }
+    }
 }

@@ -16,6 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_weight="0.35"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:rotation="90"
         android:tint="@color/colorPrimaryDark"
         app:srcCompat="@drawable/ic_attach_file_black_36dp" />
 

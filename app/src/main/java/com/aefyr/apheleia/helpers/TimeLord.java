@@ -22,6 +22,8 @@ public class TimeLord {
 
     private SimpleDateFormat messageSDF;
 
+    private SimpleDateFormat fullMessageSDF;
+
     private TimeLord(){
         instance = this;
 
@@ -41,7 +43,9 @@ public class TimeLord {
 
         gridMarkSDF = new SimpleDateFormat("dd.MM", Locale.getDefault());
 
-        messageSDF = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+        messageSDF = new SimpleDateFormat("dd.MM.yy", Locale.getDefault());
+
+        fullMessageSDF = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
     }
 
     public static TimeLord getInstance(){
@@ -66,5 +70,9 @@ public class TimeLord {
 
     public String getMessageDate(long date){
         return messageSDF.format(date);
+    }
+
+    public String getFullMessageDate(long date){
+        return  fullMessageSDF.format(date);
     }
 }

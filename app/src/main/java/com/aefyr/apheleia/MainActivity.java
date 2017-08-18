@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
 
         currentFragment = new DiaryFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
         navigationView.setCheckedItem(R.id.nav_diary);
 
         checkPeriods();
@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity
             return;
 
         currentApheleiaFragment = fragment;
+        fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("C")).commit();
         switch (fragment){
             case DIARY:
                 currentFragment = new DiaryFragment();
@@ -203,7 +204,7 @@ public class MainActivity extends AppCompatActivity
                 mailFolderSwitchButton.setVisible(true);
                 break;
         }
-        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
 
 
     }
