@@ -79,15 +79,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(domainET.getText().length()==0) {
-                    highLightET(domainET);
+                    Utility.highLightET(getResources(), domainET);
                     return;
                 }
                 if(usernameET.getText().length()==0) {
-                    highLightET(usernameET);
+                    Utility.highLightET(getResources(), usernameET);
                     return;
                 }
                 if(passwordET.getText().length()==0) {
-                    highLightET(passwordET);
+                    Utility.highLightET(getResources(), passwordET);
                     return;
                 }
                 progressDialog.setMessage(getString(R.string.authorization));
@@ -149,22 +149,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void highLightET(final EditText et){
-        ValueAnimator colorAnimator = new ValueAnimator();
-        colorAnimator.setIntValues(Color.RED, getResources().getColor(R.color.colorEditTextHint));
-        colorAnimator.setEvaluator(new ArgbEvaluator());
-        colorAnimator.setRepeatCount(6);
-        colorAnimator.setRepeatMode(ValueAnimator.REVERSE);
-        colorAnimator.setDuration(100);
-        colorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                et.setHintTextColor((Integer) valueAnimator.getAnimatedValue());
-            }
-        });
-        et.requestFocus();
-        colorAnimator.start();
-    }
 
     ProgressDialog progressDialog;
 

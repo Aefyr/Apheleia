@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aefyr.apheleia.Helper;
+import com.aefyr.apheleia.MessageComposeActivity;
 import com.aefyr.apheleia.MessageViewActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.Utility;
@@ -72,7 +73,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         divider.setDrawable(getResources().getDrawable(R.drawable.messages_divider));
         messagesRecycler.addItemDecoration(divider);
         emptyMessages = view.findViewById(R.id.emptyMessages);
-        initializeFabVisibilitySwitcher();
+        initializeFab();
 
         persona = Helper.getInstance(getActivity()).getPersona();
         apiClient = EljurApiClient.getInstance(getActivity());
@@ -89,11 +90,17 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         return view;
     }
 
-    private static final int COMPOSE_FAB_VISIBILITY_CHANGE_THRESHOLD_IN_DP = 8;
+    private static final int COMPOSE_FAB_VISIBILITY_CHANGE_THRESHOLD_IN_DP = 4;
     private int fabVisibilityChangeThreshold;
     private int fabVisibilitySwitcherProgress;
     private boolean composeFabShown = true;
-    private void initializeFabVisibilitySwitcher(){
+    private void initializeFab(){
+        composeFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), MessageComposeActivity.class));
+            }
+        });
         fabVisibilityChangeThreshold = (int) Utility.dpToPx(COMPOSE_FAB_VISIBILITY_CHANGE_THRESHOLD_IN_DP, getResources());
 
         messagesRecycler.setOnScrollListener(new RecyclerView.OnScrollListener() {

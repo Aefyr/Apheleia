@@ -1,5 +1,7 @@
 package com.aefyr.journalism;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 class EljurApiRequest {
@@ -39,7 +41,13 @@ class EljurApiRequest {
 	String getRequestURL(){
 		String httpRequest = HTTPS+persona.schoolDomain+ELJUR+method+"?"+BOUND+"&vendor="+persona.schoolDomain+"&auth_token="+persona.token;
 		for(String k:parameters.keySet())
-			httpRequest+="&"+k+"="+parameters.get(k);
+			try {
+				httpRequest+="&"+k+"="+URLEncoder.encode(parameters.get(k), "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+				//Well, it shouldn't happen I guess...
+                //TODO Gotta ad Firebase report here
+			}
 		return httpRequest;
 	}
 }

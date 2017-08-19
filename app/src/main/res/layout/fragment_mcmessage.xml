@@ -1,0 +1,38 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.aefyr.apheleia.fragments.MCMessageFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <EditText
+        android:id="@+id/messageSubject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:elevation="9dp"
+        android:ems="10"
+        android:hint="@string/subject"
+        android:inputType="text|textMultiLine|textEmailSubject"
+        android:maxLines="2" />
+
+    <EditText
+        android:id="@+id/messageText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/messageSubject"
+        android:background="@null"
+        android:gravity="start"
+        android:hint="@string/text"
+        android:inputType="text|textMultiLine|textLongMessage"
+        android:isScrollContainer="true"
+        android:maxLines="4096"
+        android:paddingEnd="4dp"
+        android:paddingStart="4dp"
+        android:paddingTop="4dp"
+        android:scrollbars="vertical"
+        android:singleLine="false" />
+
+</RelativeLayout>

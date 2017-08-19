@@ -46,7 +46,7 @@
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_container"
@@ -58,7 +58,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MessageViewActivity" android:parentActivityName=".MainActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".MessageViewActivity" android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".MessageComposeActivity" android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

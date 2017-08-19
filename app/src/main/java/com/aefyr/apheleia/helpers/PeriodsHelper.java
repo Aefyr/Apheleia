@@ -49,21 +49,26 @@ public class PeriodsHelper {
                 int prevPeriodsCount = getPeriodsCount();
                 int prevWeeksCount = getWeeksCount();
 
-                savePeriodsInfo(result);
+                int newPeriodsCount = result.getPeriods().size();
+                int newWeeksCount = 0;
+                for(ActualPeriod p: result.getPeriods()){
+                    newWeeksCount+=p.getWeeks().size();
+                }
 
-                if(prevPeriodsCount<getPeriodsCount())
+                if(prevPeriodsCount<newPeriodsCount) {
+                    savePeriodsInfo(result);
                     listener.OnFoundMorePeriods();
-                else if(prevPeriodsCount>getPeriodsCount()) {
+                    return;
+                }else if(prevPeriodsCount>newPeriodsCount) {
                     listener.OnFoundLessPeriods();
                     return;
                 }
 
-                if(prevWeeksCount<getWeeksCount())
+                if(prevWeeksCount<newWeeksCount) {
+                    savePeriodsInfo(result);
                     listener.OnFoundMoreWeeks();
-                else if(prevWeeksCount>getWeeksCount())
+                }else if(prevWeeksCount>newWeeksCount)
                     listener.OnFoundLessWeeks();
-
-                System.out.println("Checked periods!");
 
             }
 

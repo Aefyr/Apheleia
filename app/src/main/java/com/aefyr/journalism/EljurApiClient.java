@@ -22,6 +22,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 
 public class EljurApiClient {
@@ -95,7 +96,15 @@ public class EljurApiClient {
 	}
 	
 	public StringRequest sendMessage(EljurPersona persona, String subject, String text, ArrayList<MessageReceiver> receivers, JournalismListener<SentMessageResponse> listener){
-		return EljurApiRequests.sendMessage(queue, persona, subject, text, receivers, listener);
+        HashSet<String> receiversIds = new HashSet<>();
+        for(MessageReceiver receiver: receivers){
+            receiversIds.add(receiver.getId());
+        }
+		return EljurApiRequests.sendMessage(queue, persona, subject, text, receiversIds, listener);
+	}
+
+	public StringRequest sendMessage(EljurPersona persona, String subject, String text, HashSet<String> receiversIds, JournalismListener<SentMessageResponse> listener){
+		return EljurApiRequests.sendMessage(queue, persona, subject, text, receiversIds, listener);
 	}
 	
 	public StringRequest getFinals(EljurPersona persona, String studentId, JournalismListener<Finals> listener){

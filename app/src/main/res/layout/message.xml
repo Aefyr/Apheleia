@@ -42,21 +42,19 @@
 
     <ImageView
         android:id="@+id/messageAttachmentsIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/messagePreview"
-        android:layout_alignParentTop="true"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_toStartOf="@+id/messageDate"
         android:padding="4dp"
         android:rotation="90"
         android:tint="@color/colorAccent"
-        app:srcCompat="@drawable/ic_attach_file_black_36dp" />
+        app:srcCompat="@drawable/ic_attach_file_black_36dp"
+        android:layout_alignParentTop="true" />
 
     <TextView
         android:id="@+id/messageDate"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/messagePreview"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:gravity="center"

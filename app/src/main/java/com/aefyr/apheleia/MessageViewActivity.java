@@ -49,8 +49,6 @@ public class MessageViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_view);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getString(R.string.viewing_message));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -69,6 +67,8 @@ public class MessageViewActivity extends AppCompatActivity {
             replyFab.hide();
 
         loadingDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        loadingDialog.setCancelable(false);
+        loadingDialog.setCanceledOnTouchOutside(false);
         loadingDialog.setMessage(getString(R.string.fetching_message));
 
         getMessage();
@@ -85,7 +85,7 @@ public class MessageViewActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setMessage(MessageInfo message){
+    private void setMessage(final MessageInfo message){
         messageLayout.setVisibility(View.VISIBLE);
 
         subject.setText(message.getSubject());
@@ -106,6 +106,17 @@ public class MessageViewActivity extends AppCompatActivity {
                 }
                 receiversInfo = String.format(getString(R.string.to), receiversBuilder.toString().substring(0, receiversBuilder.length()-2));
             }
+
+            replyFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent replyIntent = new Intent(MessageViewActivity.this, MessageComposeActivity.class);
+                    replyIntent.putExtra("replyIntent", true);
+                    replyIntent.putExtra("receiver", message.getSender().getId());
+                    replyIntent.putExtra("subject", message.getSubject());
+                    startActivity(replyIntent);
+                }
+            });
 
         }else {
             sender.setText(String.format(getString(R.string.from), getString(R.string.you)));
@@ -185,6 +196,13 @@ public class MessageViewActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(!messageGetRequest.hasHadResponseDelivered())
+            messageGetRequest.cancel();
+        super.onDestroy();
     }
 
     @Override

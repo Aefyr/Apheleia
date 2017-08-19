@@ -2,6 +2,7 @@ package com.aefyr.journalism;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 
 
@@ -345,7 +346,7 @@ class EljurApiRequests {
 	}
 
 	//Get message info!
-	public static StringRequest getMessageInfo(RequestQueue queue, EljurPersona persona, final MessagesList.Folder folder, String messageId, final EljurApiClient.JournalismListener<MessageInfo> listener){
+	static StringRequest getMessageInfo(RequestQueue queue, EljurPersona persona, final MessagesList.Folder folder, String messageId, final EljurApiClient.JournalismListener<MessageInfo> listener){
 		EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_MESSAGE_INFO).addParameter("id", messageId);
 
         StringRequest messageInfoRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
@@ -362,7 +363,7 @@ class EljurApiRequests {
 
 
                 JsonObject sender = message.getAsJsonObject("user_from");
-                MessageInfo messageInfo = null;
+                MessageInfo messageInfo;
                 try {
                     messageInfo = MinorObjectsFactory.createMessageInfo(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("text").getAsString(), message.get("date").getAsString(), folder, MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), receivers);
                 } catch (EljurApiException e) {
@@ -393,7 +394,7 @@ class EljurApiRequests {
 		return messageInfoRequest;
 	}
 	
-	public static StringRequest getMessageReceivers(RequestQueue queue, EljurPersona persona, final EljurApiClient.JournalismListener<MessageReceiversInfo> listener){
+	static StringRequest getMessageReceivers(RequestQueue queue, EljurPersona persona, final EljurApiClient.JournalismListener<MessageReceiversInfo> listener){
 		EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_MESSAGE_RECEIVERS);
 
         StringRequest messageReceiversInfoRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
@@ -407,11 +408,27 @@ class EljurApiRequests {
                     JsonObject group = groupEl.getAsJsonObject();
 
                     ArrayList<MessageReceiver> receivers = new ArrayList<MessageReceiver>();
-                    for(JsonElement receiverEl: group.getAsJsonArray("users")){
-                        JsonObject receiver = receiverEl.getAsJsonObject();
 
-                        receivers.add(MinorObjectsFactory.createMessageReceiver(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString(), (receiver.get("info")!=null?receiver.get("info").getAsString():null)));
+                    if(group.get("subgroups")!=null){
+                        for(JsonElement subgroupEl: group.get("subgroups").getAsJsonArray()){
+                            JsonObject subgroup = subgroupEl.getAsJsonObject();
+                            for(JsonElement receiverEl: subgroup.getAsJsonArray("users")){
+                                JsonObject receiver = receiverEl.getAsJsonObject();
+
+                                MessageReceiver receiverToAdd = MinorObjectsFactory.createMessageReceiver(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString(), (receiver.get("info")!=null?receiver.get("info").getAsString():null));
+                                if(!receivers.contains(receiverToAdd))
+                                    receivers.add(receiverToAdd);
+                            }
+                        }
+                    }else {
+                        for(JsonElement receiverEl: group.getAsJsonArray("users")){
+                            JsonObject receiver = receiverEl.getAsJsonObject();
+
+                            MessageReceiver receiverToAdd = MinorObjectsFactory.createMessageReceiver(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString(), (receiver.get("info")!=null?receiver.get("info").getAsString():null));
+                            if(!receivers.contains(receiverToAdd))
+                                receivers.add(receiverToAdd);                        }
                     }
+
                     groups.add(MinorObjectsFactory.createMessageReceiversGroup(group.get("key").getAsString(), group.get("name").getAsString(), receivers));
                 }
 
@@ -428,10 +445,10 @@ class EljurApiRequests {
 		return messageReceiversInfoRequest;
 	}
 	
-	public static StringRequest sendMessage(RequestQueue queue, EljurPersona persona, String subject, String text, ArrayList<MessageReceiver> receivers, final EljurApiClient.JournalismListener<SentMessageResponse> listener){
+	static StringRequest sendMessage(RequestQueue queue, EljurPersona persona, String subject, String text, HashSet<String> receiversIds, final EljurApiClient.JournalismListener<SentMessageResponse> listener){
 		final StringBuilder r = new StringBuilder();
-        for(MessageReceiver receiver:receivers){
-            r.append(receiver.getId()+",");
+        for(String receiverId:receiversIds){
+            r.append(receiverId).append(",");
         }
         
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.SEND_MESSAGE).addParameter("users_to", r.substring(0,r.length()-1)).addParameter("subject", subject).addParameter("text", text);
@@ -439,12 +456,11 @@ class EljurApiRequests {
         StringRequest sendMessageRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
-                JsonObject response = Utility.getRawJsonFromResponse(rawResponse);
+                System.out.println(rawResponse);
+                JsonObject response = Utility.getRawJsonFromResponse(rawResponse).getAsJsonObject("response");
 
                 if(response.get("state").getAsInt()==200&&response.get("error").isJsonNull())
                     listener.onSuccess(MajorObjectsFactory.createSentMessageResponse(true));
-                else
-                    listener.onApiError("Message was not sent!", rawResponse);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -457,7 +473,7 @@ class EljurApiRequests {
         return sendMessageRequest;
 	}
 	
-	public static StringRequest getFinals(RequestQueue queue, EljurPersona persona, final String studentId, final EljurApiClient.JournalismListener<Finals> listener){
+	static StringRequest getFinals(RequestQueue queue, EljurPersona persona, final String studentId, final EljurApiClient.JournalismListener<Finals> listener){
 		EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_FINALS).addParameter("student", studentId);
 
         StringRequest finalsRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
