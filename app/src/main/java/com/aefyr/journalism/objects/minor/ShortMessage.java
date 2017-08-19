@@ -35,7 +35,7 @@ public class ShortMessage implements Serializable {
 	}
 	
 	void setText(String text){
-		previewText = text.replaceAll("<br />", "").replaceAll("\n", "");
+		previewText = text.replaceAll("<br />", " ").replaceAll("\n", "");
 	}
 	
 	public String getId(){
