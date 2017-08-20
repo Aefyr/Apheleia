@@ -176,7 +176,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
             @Override
             public void onNetworkError() {
                 refreshLayout.setRefreshing(false);
-                Chief.makeASnack(getView(), getString(R.string.network_error_tip));
+                Chief.makeASnack(getView(), getString(R.string.offline_mode));
             }
 
             @Override
@@ -249,11 +249,11 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==OPEN_MESSAGE){
             if(resultCode== AppCompatActivity.RESULT_OK) {
-                messagesAdapter.markAsRead(openedMessage);
-
+                if(messagesAdapter.markAsRead(openedMessage))
+                    messagesHelper.saveMessages(messagesList, currentFolder == MessagesList.Folder.INBOX, null);
                 /*This performance tho... But keeping ShortMessages as individual files is an even worse idea, right?
                 Well, it's and AsyncTask anyway, but still this can really badly affect users with tons of messages and weak devices*/
-                messagesHelper.saveMessages(messagesList,currentFolder == MessagesList.Folder.INBOX, null);
+
             }
 
         }

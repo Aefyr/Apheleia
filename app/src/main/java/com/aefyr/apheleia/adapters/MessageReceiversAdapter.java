@@ -107,7 +107,10 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
         holder.name.setText(group.getName());
         holder.adapter.setGroup(group);
 
-
+        if(innerRecyclerVisibilities[position])
+            holder.people.setVisibility(View.VISIBLE);
+        else
+            holder.people.setVisibility(View.GONE);
 
     }
 
@@ -182,8 +185,8 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
                 }
             };
 
-            itemView.findViewById(R.id.layout).setOnClickListener(visibilitySwitch);
-            itemView.findViewById(R.id.receiversGroupArrow).setOnClickListener(visibilitySwitch);
+            name.setOnClickListener(visibilitySwitch);
+            arrow.setOnClickListener(visibilitySwitch);
         }
     }
 }

@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/selectableItemBackground"
-    android:padding="8dp">
+    android:layout_height="match_parent">
 
     <ImageButton
         android:id="@+id/receiversGroupArrow"
@@ -23,7 +21,9 @@
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/receiversGroupArrow"
         android:layout_toStartOf="@+id/receiversGroupOptions"
+        android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical|start"
+        android:paddingStart="4dp"
         android:text="Admins"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
@@ -36,13 +36,14 @@
         android:background="?android:attr/colorBackground"
         android:visibility="gone"></android.support.v7.widget.RecyclerView>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/receiversGroupOptions"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
         android:tint="@color/colorAccent"
         app:srcCompat="@drawable/ic_more_vert_black_36dp" />
 </RelativeLayout>

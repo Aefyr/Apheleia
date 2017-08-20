@@ -51,11 +51,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         notifyDataSetChanged();
     }
 
-    public void markAsRead(int index){
+    public boolean markAsRead(int index){
         if(messages.get(index).isUnread()) {
             messages.get(index).read();
             notifyItemChanged(index);
-        }
+            return true;
+        }else
+            return false;
     }
 
     @Override
