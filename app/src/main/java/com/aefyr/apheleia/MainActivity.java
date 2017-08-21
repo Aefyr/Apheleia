@@ -17,10 +17,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.aefyr.apheleia.fragments.DiaryFragment;
+import com.aefyr.apheleia.fragments.FinalsFragment;
 import com.aefyr.apheleia.fragments.MarksFragment;
 import com.aefyr.apheleia.fragments.MessagesFragment;
 import com.aefyr.apheleia.fragments.ScheduleFragment;
 import com.aefyr.apheleia.helpers.Chief;
+import com.aefyr.apheleia.helpers.Destroyer;
 import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.TheInitializer;
@@ -147,31 +149,34 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        boolean doNotClose = false;
 
         if (id == R.id.nav_diary) {
             setFragment(ApheleiaFragment.DIARY);
         } else if (id == R.id.nav_marks) {
             setFragment(ApheleiaFragment.MARKS);
 
-        } else if (id == R.id.nav_schedule) {
+        }else if(id == R.id.nav_finals){
+            setFragment(ApheleiaFragment.FINALS);
+        }else if (id == R.id.nav_schedule) {
             setFragment(ApheleiaFragment.SCHEDULE);
 
         } else if (id == R.id.nav_messages) {
             setFragment(ApheleiaFragment.MESSAGES);
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_logout) {
+            logout();
+            doNotClose = true;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if(!doNotClose) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
         return true;
     }
 
     private enum ApheleiaFragment{
-        DIARY, MARKS, SCHEDULE, MESSAGES
+        DIARY, MARKS, SCHEDULE, MESSAGES, FINALS
     }
 
     private Fragment currentFragment;
@@ -202,6 +207,11 @@ public class MainActivity extends AppCompatActivity
                 currentFragment = new MessagesFragment();
                 timePeriodSwitchButton.setVisible(false);
                 mailFolderSwitchButton.setVisible(true);
+                break;
+            case FINALS:
+                currentFragment = new FinalsFragment();
+                timePeriodSwitchButton.setVisible(false);
+                mailFolderSwitchButton.setVisible(false);
                 break;
         }
         fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
@@ -262,6 +272,8 @@ public class MainActivity extends AppCompatActivity
             case SCHEDULE:
                 ((ScheduleFragment)currentFragment).studentSwitched();
                 break;
+            case FINALS:
+                ((FinalsFragment)currentFragment).studentSwitched();
         }
     }
 
@@ -332,5 +344,20 @@ public class MainActivity extends AppCompatActivity
 
         });
         initializer.initialize();
+    }
+
+    private void logout(){
+        new AlertDialog.Builder(this).setMessage(getString(R.string.logout_prompt)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                new Destroyer(MainActivity.this).destroy(new Destroyer.OnDestructionListener() {
+                    @Override
+                    public void onDestroyed() {
+                        LoginActivity.startFromActivity(MainActivity.this);
+                    }
+                });
+            }
+        }).setNegativeButton(getString(R.string.cancel), null).create().show();
+
     }
 }

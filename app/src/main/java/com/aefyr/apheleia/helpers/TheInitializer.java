@@ -9,6 +9,7 @@ import com.aefyr.apheleia.R;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.objects.major.DiaryEntry;
+import com.aefyr.journalism.objects.major.Finals;
 import com.aefyr.journalism.objects.major.MarksGrid;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.major.PeriodsInfo;
@@ -53,7 +54,7 @@ public class TheInitializer {
 
 
         private int i = 0;
-        private int actionsPerStudent = 4;
+        private int actionsPerStudent = 5;
         private int actionsPerAccount = 1;
         private int actionsGoal;
 
@@ -185,6 +186,31 @@ public class TheInitializer {
                             }
                         });
 
+                        loadFinals(helper.getPersona(), s.id(), new EljurApiClient.JournalismListener<Finals>() {
+                            @Override
+                            public void onSuccess(Finals finals) {
+                                profileHelper.setCurrentStudent(s.id());
+                                if(!FinalsHelper.getInstance(c).saveFinals(finals))
+                                    fail("Критическая ошибка. Не удалось сериализовать расписание", null, null);
+
+                                if (++i == actionsGoal) {
+                                    done();
+                                }
+
+                                publishProgress(i);
+                            }
+
+                            @Override
+                            public void onNetworkError() {
+                                fail(c.getString(R.string.network_error_tip), null, null);
+                            }
+
+                            @Override
+                            public void onApiError(String message, String json) {
+                                fail(message, json, c.getString(R.string.finals));
+                            }
+                        });
+
 
                     }
 
@@ -303,5 +329,9 @@ public class TheInitializer {
     private void loadMessages(EljurPersona persona, EljurApiClient.JournalismListener<MessagesList> listener) {
         requests.add(EljurApiClient.getInstance(c).getMessages(persona, MessagesList.Folder.INBOX, false, listener));
         requests.add(EljurApiClient.getInstance(c).getMessages(persona, MessagesList.Folder.SENT, false, listener));
+    }
+
+    private void loadFinals(EljurPersona persona, String studentId, EljurApiClient.JournalismListener<Finals> listener){
+        requests.add(EljurApiClient.getInstance(c).getFinals(persona, studentId, listener));
     }
 }

@@ -50,4 +50,8 @@ public class DiaryHelper extends SerializerHelperWithTimeAndStudentKeysBase<Diar
         loadSavedObjectAsync(weeks, listener);
     }
 
+    static void destroy(){
+        instance = null;
+    }
+
 }

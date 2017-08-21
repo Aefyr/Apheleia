@@ -20,6 +20,10 @@
     <string name="messages">Messages</string>
     <string name="periods">Periods info</string>
     <string name="profile">Profile info</string>
+    <string name="fetch_network_error" formatted="false">Failed to fetch %s due to a network error, please try again later</string>
+    <string name="logout">Logout</string>
+    <string name="logout_prompt">Log out?</string>
+    <string name="misc">Other</string>
 
     <!-- Errors handling -->
     <string name="api_error_report_prompt">Apheleia was unable to handle response from Eljur.\n\nDo you want to send that response which contains your %s to developer, so he can resolve this error?</string>
@@ -42,6 +46,7 @@
     <string name="title_activity_container">Apheleia</string>
     <string name="loading_profile">Fetching profile…</string>
     <string name="loading_data">Fetching initial data…</string>
+    <string name="logging_out">Logging out…</string>
 
     <!-- Re:Initialization and periods helper-->
     <string name="check_periods_failed">Failed to update weeks/periods info. Error was reported</string>
@@ -59,7 +64,6 @@
     <string name="overtime">OT</string>
     <string name="personal">(Individual)</string>
     <string name="error_week_not_saved">No internet connection and selected week is not saved!</string>
-    <string name="diary_network_error">Failed to fetch diary due to a network error, please try again later</string>
     <string name="no_diary">No diary found for selected week</string>
 
     <!-- Marks Grid -->
@@ -101,6 +105,10 @@
     <string name="cant_get_receivers">Unable to fetch receivers</string>
     <string name="cant_send_message">Unable to send message</string>
     <string name="reply_subject_prefix" formatted="false">Re: %s</string>
+
+    <!-- Finals -->
+    <string name="finals">Finals</string>
+    <string name="no_finals">No final marks found</string>
 
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

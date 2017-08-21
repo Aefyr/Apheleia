@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aefyr.apheleia.Helper;
+import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MarksGridRecyclerAdapter;
 import com.aefyr.apheleia.helpers.Chief;
@@ -61,6 +62,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_marks, container, false);
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         refreshLayout.setOnRefreshListener(this);
@@ -143,7 +145,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             public void onNetworkError() {
                 if(!loadedFromMemory)
                     antiScroll();
-                Chief.makeASnack(getActivity().getCurrentFocus(), getString(R.string.diary_network_error));
+                Chief.makeASnack(getActivity().getCurrentFocus(), String.format(getString(R.string.fetch_network_error), getString(R.string.marks)));
                 refreshLayout.setRefreshing(false);
             }
 

@@ -178,4 +178,8 @@ public class PeriodsHelper {
         setCurrentWeek(lastWeek);
         setCurrentScheduleWeek(lastWeek);
     }
+
+    static void destroy(){
+        instance = null;
+    }
 }

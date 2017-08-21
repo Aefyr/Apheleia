@@ -36,6 +36,7 @@ import com.aefyr.journalism.objects.minor.MinorObjectsHelper;
 import com.aefyr.journalism.objects.minor.WeekDay;
 import com.aefyr.journalism.parsing.DiaryAsyncParser;
 import com.aefyr.journalism.parsing.MarkGridAsyncParser;
+import com.aefyr.journalism.parsing.MessageInfoAsyncParser;
 import com.aefyr.journalism.parsing.MessagesListAsyncParser;
 import com.aefyr.journalism.objects.utility.HometasksComparator;
 import com.aefyr.journalism.objects.utility.WeekDaysComparator;
@@ -352,36 +353,7 @@ class EljurApiRequests {
         StringRequest messageInfoRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
-                JsonObject message = Utility.getJsonFromResponse(rawResponse).getAsJsonObject("message");
-
-                ArrayList<MessagePerson> receivers = new ArrayList<MessagePerson>();
-                for(JsonElement receiverEl: message.getAsJsonArray("user_to")){
-
-                    JsonObject receiver = receiverEl.getAsJsonObject();
-                    receivers.add(MinorObjectsFactory.createMessagePerson(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString()));
-                }
-
-
-                JsonObject sender = message.getAsJsonObject("user_from");
-                MessageInfo messageInfo;
-                try {
-                    messageInfo = MinorObjectsFactory.createMessageInfo(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("text").getAsString(), message.get("date").getAsString(), folder, MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), receivers);
-                } catch (EljurApiException e) {
-                    listener.onApiError(e.getMessage(), rawResponse);
-                    return;
-                }
-
-                if(message.get("files")!=null){
-                    ArrayList<Attachment> attachments = new ArrayList<Attachment>();
-                    for(JsonElement fileEl: message.getAsJsonArray("files")){
-                        JsonObject file = fileEl.getAsJsonObject();
-                        attachments.add(MinorObjectsFactory.createAttacment(file.get("filename").getAsString(), file.get("link").getAsString()));
-                    }
-
-                    MinorObjectsHelper.addAttacmentsToMessageInfo(messageInfo, attachments);
-                }
-
-                listener.onSuccess(messageInfo);
+                MessageInfoAsyncParser.getInstance().parseMessage(rawResponse, folder, listener);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -480,6 +452,11 @@ class EljurApiRequests {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
+
+                if(response.size() == 0|| response.get("students")==null){
+                    listener.onSuccess(MajorObjectsFactory.createFinals(new ArrayList<FinalSubject>(0)));
+                    return;
+                }
 
                 ArrayList<FinalSubject> subjects = new ArrayList<FinalSubject>();
 

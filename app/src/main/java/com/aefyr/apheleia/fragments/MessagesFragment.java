@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aefyr.apheleia.Helper;
+import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.MessageComposeActivity;
 import com.aefyr.apheleia.MessageViewActivity;
 import com.aefyr.apheleia.R;
@@ -63,6 +64,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_messages, container, false);
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null||currentFolder== MessagesList.Folder.INBOX)?R.string.inbox:R.string.sent));
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         refreshLayout.setOnRefreshListener(this);
@@ -191,13 +193,11 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void toggleFolder(){
         if(!currentRequest.hasHadResponseDelivered())
             currentRequest.cancel();
-        if(currentFolder == MessagesList.Folder.INBOX) {
+        if(currentFolder == MessagesList.Folder.INBOX)
             currentFolder = MessagesList.Folder.SENT;
-            Chief.makeAFlyingToast(getActivity(), getString(R.string.sent));
-        }else {
+        else
             currentFolder = MessagesList.Folder.INBOX;
-            Chief.makeAFlyingToast(getActivity(), getString(R.string.inbox));
-        }
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString(currentFolder == MessagesList.Folder.INBOX?R.string.inbox:R.string.sent));
         folderToggled = true;
         loadMessages(currentFolder);
     }

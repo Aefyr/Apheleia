@@ -49,4 +49,8 @@ public class MarksHelper extends SerializerHelperWithTimeAndStudentKeysBase<Mark
         saveObjectAsync(grid, weeks, listener);
     }
 
+    static void destroy(){
+        instance = null;
+    }
+
 }

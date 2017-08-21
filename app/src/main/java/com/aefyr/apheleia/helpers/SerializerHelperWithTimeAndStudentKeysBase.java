@@ -2,6 +2,8 @@ package com.aefyr.apheleia.helpers;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,12 +68,12 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
         void onFailed();
     }
 
-    protected void saveObjectAsync(T object, String timeKey, ObjectSaveListener listener){
+    protected void saveObjectAsync(T object, String timeKey, @Nullable ObjectSaveListener listener){
         ObjectSaveTask objectSaveTask = new ObjectSaveTask();
         objectSaveTask.execute(new ObjectSaveTaskParams(listener, object, timeKey));
     }
 
-    protected void loadSavedObjectAsync(String timeKey, ObjectLoadListener<T> listener){
+    protected void loadSavedObjectAsync(String timeKey, @NonNull ObjectLoadListener<T> listener){
         ObjectLoadTask objectLoadTask = new ObjectLoadTask();
         objectLoadTask.execute(new ObjectLoadTaskParams(timeKey, listener));
     }
@@ -99,7 +101,8 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
-            listener.onSaveCompleted(success);
+            if(listener!=null)
+                listener.onSaveCompleted(success);
         }
     }
 

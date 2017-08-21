@@ -1,6 +1,8 @@
 package com.aefyr.journalism.objects.minor;
 
-public class FinalPeriod {
+import java.io.Serializable;
+
+public class FinalPeriod implements Serializable{
 	String name;
 	String value;
 	String comment;

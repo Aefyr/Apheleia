@@ -1,8 +1,9 @@
 package com.aefyr.journalism.objects.minor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class FinalSubject {
+public class FinalSubject implements Serializable{
 	String name;
 	ArrayList<FinalPeriod> periods;
 	

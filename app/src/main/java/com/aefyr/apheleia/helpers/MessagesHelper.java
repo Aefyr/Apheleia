@@ -138,4 +138,8 @@ public class MessagesHelper {
             listener.onSaveCompleted(aBoolean);
         }
     }
+
+    static void destroy(){
+        instance = null;
+    }
 }

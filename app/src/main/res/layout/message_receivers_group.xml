@@ -45,5 +45,5 @@
         android:background="?attr/selectableItemBackground"
         android:padding="8dp"
         android:tint="@color/colorAccent"
-        app:srcCompat="@drawable/ic_more_vert_black_36dp" />
+        app:srcCompat="@drawable/ic_more_vert_black_48dp" />
 </RelativeLayout>

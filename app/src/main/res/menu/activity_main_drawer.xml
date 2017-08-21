@@ -11,6 +11,9 @@
             android:id="@+id/nav_marks"
             android:icon="@drawable/ic_apps_black_24dp"
             android:title="@string/marks" />
+        <item android:id="@+id/nav_finals"
+            android:icon="@drawable/ic_flag_black_24dp"
+            android:title="@string/finals"/>
         <item
             android:id="@+id/nav_schedule"
             android:icon="@drawable/ic_schedule_black_24dp"
@@ -21,16 +24,12 @@
             android:title="@string/messages" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/misc">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_clear_black_24dp"
+                android:title="@string/logout" />
         </menu>
     </item>
 

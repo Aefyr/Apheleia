@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.util.TypedValue;
 import android.widget.EditText;
 
+import java.io.File;
+
 /**
  * Created by Aefyr on 14.08.2017.
  */
@@ -47,5 +49,15 @@ public class Utility {
         });
         et.requestFocus();
         colorAnimator.start();
+    }
+
+    public static void deleteRecursive(File file){
+        File[] contents = file.listFiles();
+        if (contents != null) {
+            for (File f : contents) {
+                deleteRecursive(f);
+            }
+        }
+        file.delete();
     }
 }

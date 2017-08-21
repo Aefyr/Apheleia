@@ -111,4 +111,8 @@ public class ProfileHelper {
         setCurrentStudent(lastId);
         setStudentsCount(studentIds.size());
     }
+
+    static void destroy(){
+        instance = null;
+    }
 }

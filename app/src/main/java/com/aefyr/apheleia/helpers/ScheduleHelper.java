@@ -48,4 +48,8 @@ public class ScheduleHelper extends SerializerHelperWithTimeAndStudentKeysBase<S
         saveObjectAsync(schedule, weeks, listener);
     }
 
+    static void destroy(){
+        instance = null;
+    }
+
 }
