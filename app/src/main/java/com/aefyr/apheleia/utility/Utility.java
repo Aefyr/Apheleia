@@ -1,4 +1,4 @@
-package com.aefyr.apheleia;
+package com.aefyr.apheleia.utility;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.TypedValue;
 import android.widget.EditText;
+
+import com.aefyr.apheleia.R;
 
 import java.io.File;
 

@@ -13,10 +13,13 @@ import android.view.MenuItem;
 
 import com.aefyr.apheleia.fragments.MCMessageFragment;
 import com.aefyr.apheleia.fragments.MCReceiversFragment;
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
+import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.SentMessageResponse;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 
@@ -112,6 +115,7 @@ public class MessageComposeActivity extends AppCompatActivity {
         messageSendRequest = EljurApiClient.getInstance(this).sendMessage(Helper.getInstance(this).getPersona(), messageFragment.getMessageSubject(), messageFragment.getMessageText(), receiversFragment.getReceiversIds(), new EljurApiClient.JournalismListener<SentMessageResponse>() {
             @Override
             public void onSuccess(SentMessageResponse result) {
+                AnalyticsHelper.logMessageSentEvent(FirebaseAnalytics.getInstance(MessageComposeActivity.this));
                 sendingDialog.dismiss();
                 Chief.makeAToast(MessageComposeActivity.this, getString(R.string.message_sent));
                 finish();
@@ -141,7 +145,7 @@ public class MessageComposeActivity extends AppCompatActivity {
 
             @Override
             public void onApiError(String message, String json) {
-
+                //Apparently, this never happens
             }
         });
 

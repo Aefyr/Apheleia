@@ -5,11 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +15,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
+import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.TimeLord;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.MessagesList;
@@ -25,6 +25,7 @@ import com.aefyr.journalism.objects.minor.Attachment;
 import com.aefyr.journalism.objects.minor.MessageInfo;
 import com.aefyr.journalism.objects.minor.MessagePerson;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class MessageViewActivity extends AppCompatActivity {
 
@@ -86,6 +87,7 @@ public class MessageViewActivity extends AppCompatActivity {
     }
 
     private void setMessage(final MessageInfo message){
+        AnalyticsHelper.logMessageViewEvent(FirebaseAnalytics.getInstance(this));
         messageLayout.setVisibility(View.VISIBLE);
 
         subject.setText(message.getSubject());

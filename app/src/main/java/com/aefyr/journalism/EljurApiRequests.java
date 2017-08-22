@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.journalism.exceptions.EljurApiException;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.major.Finals;
@@ -431,7 +432,6 @@ class EljurApiRequests {
         StringRequest sendMessageRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
-                System.out.println(rawResponse);
                 JsonObject response = Utility.getRawJsonFromResponse(rawResponse).getAsJsonObject("response");
 
                 if(response.get("state").getAsInt()==200&&response.get("error").isJsonNull())

@@ -63,7 +63,7 @@ public class ProfileHelper {
         return preferences.getString("gender", "f");
     }
 
-    public void setGender(String gender){
+    private void setGender(String gender){
         preferences.edit().putString("gender", gender).apply();
     }
 
@@ -71,7 +71,7 @@ public class ProfileHelper {
         return preferences.getString("email", "n");
     }
 
-    public void setEmail(String email){
+    private void setEmail(String email){
         preferences.edit().putString("email", email).apply();
     }
 
@@ -87,7 +87,20 @@ public class ProfileHelper {
         return preferences.getInt("students_count", 1);
     }
 
-    public void setStudentsCount(int studentsCount){
+    public class Role{
+        public final static String STUDENT = "student";
+        public final static String PARENT = "parent";
+    }
+
+    private void setRole(String role){
+        preferences.edit().putString("role", role).apply();
+    }
+
+    public String getRole(){
+        return preferences.getString("role", "na");
+    }
+
+    private void setStudentsCount(int studentsCount){
         preferences.edit().putInt("students_count", studentsCount).apply();
     }
 
@@ -96,6 +109,7 @@ public class ProfileHelper {
         setGender(personaInfo.gender()== PersonaInfo.Gender.FEMALE?"f":"m");
         setEmail(personaInfo.email());
         setName(personaInfo.getCompositeName(true, false, true));
+        setRole(personaInfo.role()== PersonaInfo.Role.PARENT?Role.PARENT:Role.STUDENT);
 
 
         HashSet<String> studentIds = new HashSet<>();

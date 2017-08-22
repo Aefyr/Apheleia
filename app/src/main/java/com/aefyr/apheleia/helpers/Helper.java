@@ -1,4 +1,4 @@
-package com.aefyr.apheleia;
+package com.aefyr.apheleia.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,32 +25,32 @@ public class Helper {
     }
 
     //Logging in...
-    boolean isTokenSaved(){
+    public boolean isTokenSaved(){
         return !preferences.getString("token", "nope").equals("nope");
     }
 
-    boolean isLoggedIn(){
+    public boolean isLoggedIn(){
         return preferences.getBoolean("logged_in", false);
     }
 
-    void setLoggedIn(boolean loggedIn){
+    public void setLoggedIn(boolean loggedIn){
         preferences.edit().putBoolean("logged_in", loggedIn).apply();
     }
 
-    void saveDomain(String domain){
+    public void saveDomain(String domain){
         preferences.edit().putString("domain", domain).apply();
     }
 
-    String getDomain(){
+    public String getDomain(){
         return preferences.getString("domain", "nande");
     }
 
     //Token
-    void saveToken(Token token){
+    public void saveToken(Token token){
         preferences.edit().putString("token", token.getToken()).putLong("token_expires", token.getExpirationTime()).apply();
     }
 
-    boolean isTokenExpired(){
+    public boolean isTokenExpired(){
         return System.currentTimeMillis() > preferences.getLong("token_expires", 0);
     }
 
@@ -70,9 +70,6 @@ public class Helper {
         instance = null;
     }
 
-    public void clear(){
-        preferences.edit().clear().apply();
-    }
 
 
 }

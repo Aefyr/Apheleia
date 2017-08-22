@@ -2,7 +2,6 @@ package com.aefyr.apheleia.fragments;
 
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,10 +16,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aefyr.apheleia.ActionListener;
-import com.aefyr.apheleia.Helper;
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
+import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
-import com.aefyr.apheleia.Utility;
+import com.aefyr.apheleia.utility.FirebaseConstants;
+import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.apheleia.adapters.ScheduleRecyclerAdapter;
 import com.aefyr.apheleia.custom.PreloadLayoutManager;
 import com.aefyr.apheleia.helpers.Chief;
@@ -35,6 +36,7 @@ import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.objects.major.Schedule;
 import com.aefyr.journalism.objects.minor.WeekDay;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -77,6 +79,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_diary, container, false);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.schedule));
+        AnalyticsHelper.logAppSectionViewEvent(FirebaseAnalytics.getInstance(getActivity()), FirebaseConstants.SECTION_SCHEDULE);
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);

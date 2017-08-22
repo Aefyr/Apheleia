@@ -3,14 +3,14 @@ package com.aefyr.apheleia.helpers;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
 import com.aefyr.apheleia.R;
-import com.aefyr.apheleia.Utility;
+import com.aefyr.apheleia.utility.Utility;
+import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * Created by Aefyr on 13.08.2017.
@@ -56,7 +56,7 @@ public class Chief {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 makeAnAlert(c, c.getString(R.string.api_error_reported));
-                System.out.println("Reported");
+                FirebaseCrash.log("ApiError: "+message+"\nRaw response: "+json);
             }
         }).setNegativeButton(c.getString(R.string.dont_report), null).create().show();
     }

@@ -13,11 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aefyr.apheleia.Helper;
-import com.aefyr.apheleia.MessageViewActivity;
+import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MessageReceiversAdapter;
-import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.MessageReceiversInfo;
 import com.android.volley.toolbox.StringRequest;

@@ -1,12 +1,8 @@
 package com.aefyr.apheleia;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,9 +13,15 @@ import android.widget.ImageButton;
 
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Destroyer;
+import com.aefyr.apheleia.helpers.Helper;
+import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.TheInitializer;
+import com.aefyr.apheleia.utility.FirebaseConstants;
+import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.Token;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -156,11 +158,33 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showAlert(String title, String message){
         new AlertDialog.Builder(this).setTitle(title).setMessage(message).setPositiveButton(getString(R.string.ok), null).create().show();
-
     }
 
     private void loggedIn(){
         helper.setLoggedIn(true);
+
+        //Btw, this may be used to identify person in unique cases like only male/female student in class or so. Does that mean this is personal data? Actually, I guess school life doesn't count as personal/family life, right?
+        ProfileHelper profileHelper = ProfileHelper.getInstance(this);
+        Bundle params = new Bundle();
+        params.putString(FirebaseConstants.SCHOOL_DOMAIN, helper.getDomain());
+        params.putString(FirebaseConstants.ROLE, profileHelper.getRole());
+        params.putString(FirebaseConstants.GENDER, profileHelper.getGender());
+        if(profileHelper.getRole().equals(ProfileHelper.Role.PARENT))
+            params.putInt(FirebaseConstants.STUDENTS_COUNT, profileHelper.getStudentsCount());
+        else {
+            String rawClass = profileHelper.getStudentClass(profileHelper.getCurrentStudentId());
+            int parsedClass = 0;
+            try {
+                parsedClass = Integer.parseInt(rawClass.replaceAll("[^0-9]", ""));
+            }catch (NumberFormatException e){
+                FirebaseCrash.log("Can't parse class name: "+rawClass);
+                FirebaseCrash.report(e);
+            }
+            params.putString(FirebaseConstants.RAW_CLASS, rawClass);
+            params.putInt(FirebaseConstants.PARSED_CLASS, parsedClass);
+        }
+        FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.LOGIN, params);
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

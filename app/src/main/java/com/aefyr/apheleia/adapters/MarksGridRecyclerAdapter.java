@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aefyr.apheleia.R;
-import com.aefyr.apheleia.Utility;
+import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.objects.major.MarksGrid;
 import com.aefyr.journalism.objects.minor.SubjectInGrid;
 

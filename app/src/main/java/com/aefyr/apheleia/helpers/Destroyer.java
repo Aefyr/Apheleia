@@ -5,11 +5,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.R;
-import com.aefyr.apheleia.Utility;
-
-import java.io.File;
+import com.aefyr.apheleia.utility.Utility;
 
 /**
  * Created by Aefyr on 21.08.2017.

@@ -23,9 +23,12 @@ import com.aefyr.apheleia.fragments.MessagesFragment;
 import com.aefyr.apheleia.fragments.ScheduleFragment;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Destroyer;
+import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.TheInitializer;
+import com.aefyr.apheleia.utility.FirebaseConstants;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
 
@@ -37,6 +40,8 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
     private DrawerLayout drawer;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +52,8 @@ public class MainActivity extends AppCompatActivity
             LoginActivity.startFromActivity(this);
             return;
         }
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -339,6 +346,7 @@ public class MainActivity extends AppCompatActivity
                 new Destroyer(MainActivity.this).destroy(new Destroyer.OnDestructionListener() {
                     @Override
                     public void onDestroyed() {
+                        mFirebaseAnalytics.logEvent(FirebaseConstants.LOGOUT, null);
                         LoginActivity.startFromActivity(MainActivity.this);
                     }
                 });

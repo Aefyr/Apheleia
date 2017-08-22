@@ -1,9 +1,6 @@
 package com.aefyr.apheleia.fragments;
 
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.aefyr.apheleia.R;
-import com.aefyr.apheleia.Utility;
+import com.aefyr.apheleia.utility.Utility;
 
 /**
  * A simple {@link Fragment} subclass.
