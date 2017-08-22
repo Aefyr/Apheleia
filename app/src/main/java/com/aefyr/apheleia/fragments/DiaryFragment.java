@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.aefyr.apheleia.ActionListener;
 import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
@@ -40,7 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, DiaryRecyclerAdapter.OnLinkOpenRequestListener {
+public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, DiaryRecyclerAdapter.OnLinkOpenRequestListener, ActionListener {
 
     private boolean firstLoad = true;
     private StringRequest currentRequest;
@@ -75,6 +76,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.diary));
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        Utility.colorRefreshLayout(refreshLayout);
         refreshLayout.setOnRefreshListener(this);
         emptyDiary = view.findViewById(R.id.emptyDiary);
 
@@ -194,13 +196,17 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private int requestedWeek;
-    public void studentSwitched(){
+    private void studentSwitched(){
         cancelRequest();
         firstLoad = true;
 
         weeks = periodsHelper.getWeeks().toArray(new String[] {});
         Arrays.sort(weeks);
         selectedWeek = Arrays.binarySearch(weeks, periodsHelper.getCurrentWeek());
+        //I dunno why, but on emulator sometimes it gets a random week from periodHelper, so just to be safe, I added this
+        if(!Utility.checkSelectedTime(selectedWeek, weeks))
+            selectedWeek = weeks.length-1;
+
         weekNames = new String[weeks.length];
 
         SimpleDateFormat parser = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
@@ -289,5 +295,17 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             emptyDiary.setVisibility(View.VISIBLE);
         else
             emptyDiary.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onAction(Action action) {
+        switch (action){
+            case STUDENT_SWITCHED:
+                studentSwitched();
+                break;
+            case UPDATE_REQUESTED:
+                loadDiary(weeks[selectedWeek]);
+                break;
+        }
     }
 }

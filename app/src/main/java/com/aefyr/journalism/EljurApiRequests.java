@@ -92,6 +92,7 @@ class EljurApiRequests {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
+                System.out.println(response);
 
                 PersonaInfo personaInfo = new PersonaInfo();
 
@@ -100,8 +101,10 @@ class EljurApiRequests {
                     MajorObjectsHelper.setPersonaInfoRole(personaInfo, PersonaInfo.Role.PARENT);
                 else if(roles.contains("student"))
                     MajorObjectsHelper.setPersonaInfoRole(personaInfo, PersonaInfo.Role.STUDENT);
-                else
+                else {
                     listener.onApiError("Unsupported role", rawResponse);
+                    return;
+                }
 
                 MajorObjectsHelper.setPersonaInfoGender(personaInfo, Utility.parseGender(response.get("gender").getAsString()));
                 MajorObjectsHelper.setPersonaInfoId(personaInfo, response.get("name").getAsString());

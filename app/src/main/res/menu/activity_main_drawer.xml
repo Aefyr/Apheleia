@@ -2,7 +2,7 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single" android:id="@+id/group_main">
         <item
             android:id="@+id/nav_diary"
             android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
@@ -24,13 +24,14 @@
             android:title="@string/messages" />
     </group>
 
-    <item android:title="@string/misc">
-        <menu>
+    <group android:checkableBehavior="none"
+        android:id="@+id/group_other">
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_clear_black_24dp"
                 android:title="@string/logout" />
-        </menu>
-    </item>
+
+    </group>
+
 
 </menu>

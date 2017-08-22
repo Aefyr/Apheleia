@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.aefyr.apheleia.ActionListener;
 import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
@@ -43,7 +44,7 @@ import java.util.Locale;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActionListener{
 
     private boolean firstLoad = true;
     private StringRequest currentRequest;
@@ -78,8 +79,8 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.schedule));
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        Utility.colorRefreshLayout(refreshLayout);
         refreshLayout.setOnRefreshListener(this);
-        refreshLayout.setColorSchemeColors(Color.RED);
 
         scheduleRecycler = (RecyclerView) view.findViewById(R.id.diaryRecycler);
         scheduleRecycler.setLayoutManager(new PreloadLayoutManager(getActivity(), 7));
@@ -201,7 +202,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
     private int requestedWeek;
-    public void studentSwitched(){
+    private void studentSwitched(){
         cancelRequest();
         firstLoad = true;
 
@@ -290,5 +291,17 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
             emptySchedule.setVisibility(View.VISIBLE);
         else
             emptySchedule.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onAction(Action action) {
+        switch (action){
+            case STUDENT_SWITCHED:
+                studentSwitched();
+                break;
+            case UPDATE_REQUESTED:
+                loadSchedule(weeks[selectedWeek]);
+                break;
+        }
     }
 }

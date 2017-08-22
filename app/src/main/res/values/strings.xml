@@ -21,9 +21,11 @@
     <string name="periods">Periods info</string>
     <string name="profile">Profile info</string>
     <string name="fetch_network_error" formatted="false">Failed to fetch %s due to a network error, please try again later</string>
-    <string name="logout">Logout</string>
-    <string name="logout_prompt">Log out?</string>
+    <string name="logout">Sign out</string>
+    <string name="logout_prompt">Sign out?</string>
     <string name="misc">Other</string>
+    <string name="refresh">Refresh</string>
+    <string name="current_student">Current Student:</string>
 
     <!-- Errors handling -->
     <string name="api_error_report_prompt">Apheleia was unable to handle response from Eljur.\n\nDo you want to send that response which contains your %s to developer, so he can resolve this error?</string>
@@ -36,7 +38,7 @@
     <string name="domain">School Domain</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="sing_in">Sing In</string>
+    <string name="sing_in">Sign In</string>
     <string name="what_is_school_domain">School domain is the part before \".eljur.ru\" in your school\'s eljur address.\n\nExample: For eljur with address \"1399.eljur.ru\" the school domain would be \"1399\"</string>
     <string name="authorization">Singing in…</string>
     <string name="invalid_credentials">Invalid Credentials</string>
@@ -46,7 +48,8 @@
     <string name="title_activity_container">Apheleia</string>
     <string name="loading_profile">Fetching profile…</string>
     <string name="loading_data">Fetching initial data…</string>
-    <string name="logging_out">Logging out…</string>
+    <string name="logging_out">Signing out…</string>
+    <string name="unupported_role">Apheleia only supports students and parents accounts</string>
 
     <!-- Re:Initialization and periods helper-->
     <string name="check_periods_failed">Failed to update weeks/periods info. Error was reported</string>

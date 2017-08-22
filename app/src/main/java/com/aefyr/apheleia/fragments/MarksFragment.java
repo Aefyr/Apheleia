@@ -12,9 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aefyr.apheleia.ActionListener;
 import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
+import com.aefyr.apheleia.Utility;
 import com.aefyr.apheleia.adapters.MarksGridRecyclerAdapter;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
@@ -32,7 +34,7 @@ import java.util.Arrays;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActionListener{
 
     private boolean firstLoad = true;
     private StringRequest currentRequest;
@@ -65,6 +67,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        Utility.colorRefreshLayout(refreshLayout);
         refreshLayout.setOnRefreshListener(this);
         emptyMarks = view.findViewById(R.id.emptyMarks);
         marksRecycler = (RecyclerView) view.findViewById(R.id.marksRecycler);
@@ -177,7 +180,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private String[] periods;
     private String[] periodsNames;
-    public void studentSwitched(){
+    private void studentSwitched(){
         cancelRequest();
         firstLoad = true;
         periods = periodsHelper.getPeriods().toArray(new String[] {});
@@ -229,5 +232,17 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             emptyMarks.setVisibility(View.VISIBLE);
         else
             emptyMarks.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onAction(Action action) {
+        switch (action){
+            case STUDENT_SWITCHED:
+                studentSwitched();
+                break;
+            case UPDATE_REQUESTED:
+                loadMarks(periods[selectedPeriod]);
+                break;
+        }
     }
 }

@@ -13,6 +13,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.aefyr.apheleia.ActionListener;
 import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
@@ -30,7 +31,7 @@ import com.android.volley.toolbox.StringRequest;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActionListener{
 
     private StringRequest currentRequest;
     private boolean firstLoad = true;
@@ -59,6 +60,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
         finalsRecycler = (RecyclerView) view.findViewById(R.id.finalsRecycler);
         finalsRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        Utility.colorRefreshLayout(refreshLayout);
         refreshLayout.setOnRefreshListener(this);
         emptyFinals = view.findViewById(R.id.emptyFinals);
 
@@ -155,5 +157,15 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     public void onDetach() {
         cancel();
         super.onDetach();
+    }
+
+    @Override
+    public void onAction(Action action) {
+        switch (action){
+            case STUDENT_SWITCHED:
+            case UPDATE_REQUESTED:
+                loadFinals();
+                break;
+        }
     }
 }

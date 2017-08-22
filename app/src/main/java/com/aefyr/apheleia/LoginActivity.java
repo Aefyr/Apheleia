@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.aefyr.apheleia.helpers.Chief;
+import com.aefyr.apheleia.helpers.Destroyer;
 import com.aefyr.apheleia.helpers.TheInitializer;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.Token;
@@ -31,7 +32,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        helper = Helper.getInstance(this);
 
         domainET = (EditText) findViewById(R.id.domain);
         domainET.requestFocus();
@@ -97,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onSuccessfulLogin(Token token) {
                         progressDialog.dismiss();
+                        helper = Helper.getInstance(LoginActivity.this);
                         helper.saveToken(token);
                         helper.saveDomain(domainET.getText().toString());
 
@@ -108,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void OnError(String m, String json, String failedWhat) {
+                                new Destroyer(LoginActivity.this).destroy(null);
                                 if(json!=null) {
                                     Chief.makeReportApiErrorDialog(LoginActivity.this,failedWhat, m, json, true);
                                 }else {

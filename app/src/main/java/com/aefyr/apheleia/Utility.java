@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.TypedValue;
 import android.widget.EditText;
 
@@ -59,5 +60,9 @@ public class Utility {
             }
         }
         file.delete();
+    }
+
+    public static void colorRefreshLayout(SwipeRefreshLayout refreshLayout){
+        refreshLayout.setColorSchemeColors(refreshLayout.getContext().getResources().getColor(R.color.colorAccent));
     }
 }

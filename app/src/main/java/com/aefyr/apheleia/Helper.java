@@ -66,5 +66,13 @@ public class Helper {
         return persona;
     }
 
+    public static void destroy(){
+        instance = null;
+    }
+
+    public void clear(){
+        preferences.edit().clear().apply();
+    }
+
 
 }

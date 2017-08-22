@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
+import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.Utility;
 
@@ -46,6 +47,7 @@ public class Destroyer {
             PeriodsHelper.destroy();
             ProfileHelper.destroy();
             ScheduleHelper.destroy();
+            Helper.destroy();
 
             Utility.deleteRecursive(c.getFilesDir());
             PreferenceManager.getDefaultSharedPreferences(c).edit().clear().commit();
@@ -56,7 +58,8 @@ public class Destroyer {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progressDialog.dismiss();
-            listener.onDestroyed();
+            if(listener!=null)
+                listener.onDestroyed();
         }
     }
 }

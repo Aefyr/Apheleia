@@ -133,11 +133,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        if(id == R.id.action_time_period_switcher){
+        if (id == R.id.action_refresh) {
+            ((ActionListener)currentFragment).onAction(ActionListener.Action.UPDATE_REQUESTED);
             return true;
         }
 
@@ -231,6 +228,7 @@ public class MainActivity extends AppCompatActivity
         if(profileHelper.getStudentsCount()==1){
             studentName.setVisibility(View.GONE);
             navHeader.findViewById(R.id.switchStudentButton).setVisibility(View.GONE);
+            navHeader.findViewById(R.id.currentStudentStaticText).setVisibility(View.GONE);
         }else {
             studentName.setText(profileHelper.getStudentName(profileHelper.getCurrentStudentId())+" ("+profileHelper.getStudentClass(profileHelper.getCurrentStudentId())+")");
 
@@ -262,19 +260,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void studentSwitched(){
-        switch (currentApheleiaFragment){
-            case DIARY:
-                ((DiaryFragment) currentFragment).studentSwitched();
-                break;
-            case MARKS:
-                ((MarksFragment)currentFragment).studentSwitched();
-                break;
-            case SCHEDULE:
-                ((ScheduleFragment)currentFragment).studentSwitched();
-                break;
-            case FINALS:
-                ((FinalsFragment)currentFragment).studentSwitched();
-        }
+        ((ActionListener)currentFragment).onAction(ActionListener.Action.STUDENT_SWITCHED);
     }
 
     private void checkPeriods(){

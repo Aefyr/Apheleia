@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aefyr.apheleia.ActionListener;
 import com.aefyr.apheleia.Helper;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.MessageComposeActivity;
@@ -35,7 +36,7 @@ import java.util.HashSet;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, MessagesAdapter.OnMessageClickListener {
+public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, MessagesAdapter.OnMessageClickListener, ActionListener {
 
     private boolean firstLoad = true;
     private StringRequest currentRequest;
@@ -67,6 +68,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null||currentFolder== MessagesList.Folder.INBOX)?R.string.inbox:R.string.sent));
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        Utility.colorRefreshLayout(refreshLayout);
         refreshLayout.setOnRefreshListener(this);
         composeFab = (FloatingActionButton) view.findViewById(R.id.composeFab);
         messagesRecycler = (RecyclerView) view.findViewById(R.id.messagesRecycler);
@@ -256,6 +258,17 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
             }
 
+        }
+    }
+
+    @Override
+    public void onAction(Action action) {
+        switch (action){
+            case STUDENT_SWITCHED:
+                break;
+            case UPDATE_REQUESTED:
+                loadMessages(currentFolder);
+                break;
         }
     }
 }

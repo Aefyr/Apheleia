@@ -254,7 +254,7 @@ public class TheInitializer {
 
                 @Override
                 public void onApiError(String message, String json) {
-                    fail(message, json, c.getString(R.string.profile));
+                    fail(c.getString(R.string.unupported_role), null, null);
                 }
             });
 
