@@ -18,6 +18,6 @@ public class PreloadLayoutManager extends LinearLayoutManager {
 
     @Override
     protected int getExtraLayoutSpace(RecyclerView.State state) {
-        return getWidth()*preloadPagesCount;
+        return getWidth() * preloadPagesCount;
     }
 }

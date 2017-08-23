@@ -29,19 +29,19 @@ import java.util.Map;
 public class DiaryAsyncParser {
     private static DiaryAsyncParser instance;
 
-    private DiaryAsyncParser(){
+    private DiaryAsyncParser() {
         instance = this;
     }
 
-    public static DiaryAsyncParser getInstance(){
-        return instance==null?new DiaryAsyncParser():instance;
+    public static DiaryAsyncParser getInstance() {
+        return instance == null ? new DiaryAsyncParser() : instance;
     }
 
-    public void parseDiary(String rawResponse, String studentId, EljurApiClient.JournalismListener<DiaryEntry> listener){
+    public void parseDiary(String rawResponse, String studentId, EljurApiClient.JournalismListener<DiaryEntry> listener) {
         new DiaryParseTask().execute(new AsyncParserParams<DiaryEntry>(rawResponse, studentId, listener));
     }
 
-    private class DiaryParseTask extends AsyncParserBase<DiaryEntry>{
+    private class DiaryParseTask extends AsyncParserBase<DiaryEntry> {
 
         @Override
         protected AsyncParserTaskResult<DiaryEntry> doInBackground(AsyncParserParams<DiaryEntry>... asyncParserParams) {
@@ -51,7 +51,7 @@ public class DiaryAsyncParser {
 
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-            if(response.size()==0||response.get("students")==null){
+            if (response.size() == 0 || response.get("students") == null) {
                 return new AsyncParserTaskResult<DiaryEntry>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
             }
 
@@ -59,9 +59,9 @@ public class DiaryAsyncParser {
 
             ArrayList<WeekDay> weekDays = new ArrayList<>(5);
 
-            for(Map.Entry<String, JsonElement> entry: weekDaysObj.entrySet()){
+            for (Map.Entry<String, JsonElement> entry : weekDaysObj.entrySet()) {
                 JsonObject weekDay = entry.getValue().getAsJsonObject();
-                if(weekDay.get("alert") != null && weekDay.get("alert").getAsString().equals("vacation")){
+                if (weekDay.get("alert") != null && weekDay.get("alert").getAsString().equals("vacation")) {
                     try {
                         weekDays.add(MinorObjectsFactory.createVacationWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString()));
                     } catch (EljurApiException e) {
@@ -71,11 +71,11 @@ public class DiaryAsyncParser {
                 }
 
                 ArrayList<Lesson> lessons = new ArrayList<Lesson>();
-                for(Map.Entry<String, JsonElement> entry2: weekDay.getAsJsonObject("items").entrySet()){
+                for (Map.Entry<String, JsonElement> entry2 : weekDay.getAsJsonObject("items").entrySet()) {
                     JsonObject lessonObj = entry2.getValue().getAsJsonObject();
                     Lesson lesson = MinorObjectsFactory.createLesson(lessonObj.get("num").getAsString(), lessonObj.get("name").getAsString(), lessonObj.get("room").getAsString(), lessonObj.get("teacher").getAsString());
 
-                    if(lessonObj.get("starttime")!=null&&lessonObj.get("endtime")!=null){
+                    if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
                         try {
                             MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
                         } catch (EljurApiException e) {
@@ -84,11 +84,11 @@ public class DiaryAsyncParser {
                     }
 
                     Homework homework = null;
-                    if(lessonObj.get("homework")!=null){
+                    if (lessonObj.get("homework") != null) {
                         homework = MinorObjectsFactory.createHomework();
 
                         ArrayList<Hometask> hometasks = new ArrayList<Hometask>();
-                        for(Map.Entry<String, JsonElement> entry3: lessonObj.getAsJsonObject("homework").entrySet()){
+                        for (Map.Entry<String, JsonElement> entry3 : lessonObj.getAsJsonObject("homework").entrySet()) {
                             JsonObject hometask = entry3.getValue().getAsJsonObject();
                             hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
                         }
@@ -97,34 +97,35 @@ public class DiaryAsyncParser {
                         MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
                     }
 
-                    if(lessonObj.get("files")!=null){
-                        if(homework==null)
+                    if (lessonObj.get("files") != null) {
+                        if (homework == null)
                             homework = MinorObjectsFactory.createHomework();
 
                         ArrayList<Attachment> attachments = new ArrayList<Attachment>();
-                        for(JsonElement attachmentEl: lessonObj.getAsJsonArray("files")){
+                        for (JsonElement attachmentEl : lessonObj.getAsJsonArray("files")) {
                             JsonObject attachment = attachmentEl.getAsJsonObject();
                             attachments.add(MinorObjectsFactory.createAttacment(attachment.get("filename").getAsString(), attachment.get("link").getAsString()));
                         }
-                        MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);;
+                        MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
+                        ;
                     }
 
-                    if(homework!=null){
+                    if (homework != null) {
                         MinorObjectsHelper.addHomeworkToLesson(lesson, homework);
                     }
 
-                    if(lessonObj.get("assessments")!=null){
+                    if (lessonObj.get("assessments") != null) {
                         ArrayList<Mark> marks = new ArrayList<Mark>();
-                        for(JsonElement markEl: lessonObj.getAsJsonArray("assessments")){
+                        for (JsonElement markEl : lessonObj.getAsJsonArray("assessments")) {
                             JsonObject mark = markEl.getAsJsonObject();
 
                             //Phantom marks filter, why do they even appear tho?
-                            if(mark.get("value").getAsString().equals(""))
+                            if (mark.get("value").getAsString().equals(""))
                                 continue;
 
-                            if(mark.get("comment")!=null&&mark.get("comment").getAsString().length()>0)
+                            if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
                                 marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("comment").getAsString()));
-                            else if(mark.get("lesson_comment")!=null&&mark.get("lesson_comment").getAsString().length()>0)
+                            else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
                                 marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("lesson_comment").getAsString()));
                             else
                                 marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString()));
@@ -135,13 +136,13 @@ public class DiaryAsyncParser {
                 }
 
                 ArrayList<Lesson> overtimeLessons = null;
-                if(weekDay.get("items_extday")!=null){
+                if (weekDay.get("items_extday") != null) {
                     overtimeLessons = new ArrayList<>();
-                    for(JsonElement otLessonEl: weekDay.getAsJsonArray("items_extday")){
+                    for (JsonElement otLessonEl : weekDay.getAsJsonArray("items_extday")) {
                         JsonObject otLessonObj = otLessonEl.getAsJsonObject();
                         Lesson otLesson = MinorObjectsFactory.createLesson("OT", otLessonObj.get("name").getAsString(), "OT", otLessonObj.get("teacher").getAsString());
 
-                        if(otLessonObj.get("starttime")!=null&&otLessonObj.get("endtime")!=null){
+                        if (otLessonObj.get("starttime") != null && otLessonObj.get("endtime") != null) {
                             try {
                                 MinorObjectsHelper.addTimesToLesson(otLesson, otLessonObj.get("starttime").getAsString(), otLessonObj.get("endtime").getAsString());
                             } catch (EljurApiException e) {
@@ -150,11 +151,11 @@ public class DiaryAsyncParser {
                         }
 
                         Homework homework = null;
-                        if(otLessonObj.get("homework")!=null){
+                        if (otLessonObj.get("homework") != null) {
                             homework = MinorObjectsFactory.createHomework();
 
                             ArrayList<Hometask> hometasks = new ArrayList<Hometask>();
-                            for(JsonElement homeworkEl: otLessonObj.getAsJsonArray("homework")){
+                            for (JsonElement homeworkEl : otLessonObj.getAsJsonArray("homework")) {
                                 JsonObject hometask = homeworkEl.getAsJsonObject();
                                 hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
                             }
@@ -163,34 +164,35 @@ public class DiaryAsyncParser {
                             MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
                         }
 
-                        if(otLessonObj.get("files")!=null){
-                            if(homework==null)
+                        if (otLessonObj.get("files") != null) {
+                            if (homework == null)
                                 homework = MinorObjectsFactory.createHomework();
 
                             ArrayList<Attachment> attachments = new ArrayList<Attachment>();
-                            for(JsonElement attachmentEl: otLessonObj.getAsJsonArray("files")){
+                            for (JsonElement attachmentEl : otLessonObj.getAsJsonArray("files")) {
                                 JsonObject attachment = attachmentEl.getAsJsonObject();
                                 attachments.add(MinorObjectsFactory.createAttacment(attachment.get("filename").getAsString(), attachment.get("link").getAsString()));
                             }
-                            MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);;
+                            MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
+                            ;
                         }
 
-                        if(homework!=null){
+                        if (homework != null) {
                             MinorObjectsHelper.addHomeworkToLesson(otLesson, homework);
                         }
 
-                        if(otLessonObj.get("assessments")!=null){
+                        if (otLessonObj.get("assessments") != null) {
                             ArrayList<Mark> marks = new ArrayList<Mark>();
-                            for(JsonElement markEl: otLessonObj.getAsJsonArray("assessments")){
+                            for (JsonElement markEl : otLessonObj.getAsJsonArray("assessments")) {
                                 JsonObject mark = markEl.getAsJsonObject();
 
                                 //Phantom marks filter, why do they even appear tho?
-                                if(mark.get("value").getAsString().equals(""))
+                                if (mark.get("value").getAsString().equals(""))
                                     continue;
 
-                                if(mark.get("comment")!=null&&mark.get("comment").getAsString().length()>0)
+                                if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
                                     marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("comment").getAsString()));
-                                else if(mark.get("lesson_comment")!=null&&mark.get("lesson_comment").getAsString().length()>0)
+                                else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
                                     marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("lesson_comment").getAsString()));
                                 else
                                     marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString()));
@@ -207,7 +209,7 @@ public class DiaryAsyncParser {
                     return new AsyncParserTaskResult<DiaryEntry>(e.getMessage(), rawResponse);
                 }
 
-                if(overtimeLessons!=null)
+                if (overtimeLessons != null)
                     MinorObjectsHelper.addOvertimeLessonsToWeekDat(day, overtimeLessons);
                 weekDays.add(day);
             }

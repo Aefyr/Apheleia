@@ -11,11 +11,11 @@ class AsyncParserParams<T> {
     String journalismParam;
     EljurApiClient.JournalismListener<T> listener;
 
-    AsyncParserParams(){
+    AsyncParserParams() {
 
     }
 
-    AsyncParserParams(String rawResponse, String journalismParam, EljurApiClient.JournalismListener<T> listener){
+    AsyncParserParams(String rawResponse, String journalismParam, EljurApiClient.JournalismListener<T> listener) {
         this.rawResponse = rawResponse;
         this.journalismParam = journalismParam;
         this.listener = listener;

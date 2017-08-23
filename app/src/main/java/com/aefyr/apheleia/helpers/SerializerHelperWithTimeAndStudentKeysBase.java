@@ -25,23 +25,23 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
 
     protected abstract String getExtension();
 
-    protected SerializerHelperWithTimeAndStudentKeysBase(Context c){
+    protected SerializerHelperWithTimeAndStudentKeysBase(Context c) {
         profileHelper = ProfileHelper.getInstance(c);
 
-        savedObjectsPath = new File(c.getFilesDir()+"/"+ getFolderName());
-        if(!savedObjectsPath.exists())
+        savedObjectsPath = new File(c.getFilesDir() + "/" + getFolderName());
+        if (!savedObjectsPath.exists())
             savedObjectsPath.mkdirs();
     }
 
 
-    protected boolean isObjectSaved(String timeKey){
-        return new File(savedObjectsPath, timeKey+"_"+profileHelper.getCurrentStudentId()+getExtension()).exists();
+    protected boolean isObjectSaved(String timeKey) {
+        return new File(savedObjectsPath, timeKey + "_" + profileHelper.getCurrentStudentId() + getExtension()).exists();
     }
 
 
-    protected boolean saveObject(T object, String timeKey){
-        try{
-            FileOutputStream fos = new FileOutputStream(savedObjectsPath +"/"+timeKey+"_"+profileHelper.getCurrentStudentId()+getExtension(), false);
+    protected boolean saveObject(T object, String timeKey) {
+        try {
+            FileOutputStream fos = new FileOutputStream(savedObjectsPath + "/" + timeKey + "_" + profileHelper.getCurrentStudentId() + getExtension(), false);
             ObjectOutputStream stream = new ObjectOutputStream(fos);
             stream.writeObject(object);
             fos.close();
@@ -54,26 +54,27 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
     }
 
     protected T loadSavedObject(String timeKey) throws Exception {
-        FileInputStream stream = new FileInputStream(savedObjectsPath +"/"+timeKey+"_"+profileHelper.getCurrentStudentId()+getExtension());
+        FileInputStream stream = new FileInputStream(savedObjectsPath + "/" + timeKey + "_" + profileHelper.getCurrentStudentId() + getExtension());
         ObjectInputStream objectInputStream = new ObjectInputStream(stream);
-        return  (T) objectInputStream.readObject();
+        return (T) objectInputStream.readObject();
     }
 
     public interface ObjectSaveListener {
         void onSaveCompleted(boolean successful);
     }
 
-    public interface ObjectLoadListener<T>{
+    public interface ObjectLoadListener<T> {
         void onLoaded(T object);
+
         void onFailed();
     }
 
-    protected void saveObjectAsync(T object, String timeKey, @Nullable ObjectSaveListener listener){
+    protected void saveObjectAsync(T object, String timeKey, @Nullable ObjectSaveListener listener) {
         ObjectSaveTask objectSaveTask = new ObjectSaveTask();
         objectSaveTask.execute(new ObjectSaveTaskParams(listener, object, timeKey));
     }
 
-    protected void loadSavedObjectAsync(String timeKey, @NonNull ObjectLoadListener<T> listener){
+    protected void loadSavedObjectAsync(String timeKey, @NonNull ObjectLoadListener<T> listener) {
         ObjectLoadTask objectLoadTask = new ObjectLoadTask();
         objectLoadTask.execute(new ObjectLoadTaskParams(timeKey, listener));
     }
@@ -83,7 +84,7 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
         String timeKey;
         ObjectSaveListener listener;
 
-        protected ObjectSaveTaskParams(ObjectSaveListener listener, T entry, String timeKey){
+        protected ObjectSaveTaskParams(ObjectSaveListener listener, T entry, String timeKey) {
             this.listener = listener;
             this.entry = entry;
             this.timeKey = timeKey;
@@ -92,6 +93,7 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
 
     protected class ObjectSaveTask extends AsyncTask<ObjectSaveTaskParams, Void, Boolean> {
         private ObjectSaveListener listener;
+
         @Override
         protected Boolean doInBackground(ObjectSaveTaskParams... params) {
             listener = params[0].listener;
@@ -101,27 +103,27 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
-            if(listener!=null)
+            if (listener != null)
                 listener.onSaveCompleted(success);
         }
     }
 
-    protected class ObjectLoadTaskParams{
+    protected class ObjectLoadTaskParams {
         String timeKey;
         ObjectLoadListener listener;
 
-        protected ObjectLoadTaskParams(String timeKey, ObjectLoadListener listener){
+        protected ObjectLoadTaskParams(String timeKey, ObjectLoadListener listener) {
             this.timeKey = timeKey;
             this.listener = listener;
         }
 
     }
 
-    protected class ObjectLoadTask extends AsyncTask<ObjectLoadTaskParams, Void, T>{
+    protected class ObjectLoadTask extends AsyncTask<ObjectLoadTaskParams, Void, T> {
 
         private ObjectLoadListener listener;
 
-        protected void bindListener(ObjectLoadListener listener){
+        protected void bindListener(ObjectLoadListener listener) {
             this.listener = listener;
         }
 
@@ -138,7 +140,7 @@ public abstract class SerializerHelperWithTimeAndStudentKeysBase<T> {
 
         @Override
         protected void onPostExecute(T object) {
-            if (object==null)
+            if (object == null)
                 listener.onFailed();
             else
                 listener.onLoaded(object);

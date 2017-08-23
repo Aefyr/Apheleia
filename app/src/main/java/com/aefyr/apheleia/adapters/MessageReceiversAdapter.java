@@ -24,7 +24,7 @@ import java.util.HashSet;
  * Created by Aefyr on 19.08.2017.
  */
 
-public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceiversAdapter.MessageReceiversGroupViewHolder>{
+public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceiversAdapter.MessageReceiversGroupViewHolder> {
     private MessageReceiversInfo receiversInfo;
     private boolean[] innerRecyclerVisibilities;
 
@@ -35,13 +35,15 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
 
     protected interface OnCheckEventListener {
         void onPersonChecked(MessageReceiversGroupAdapter adapter, MessageReceiver receiver);
+
         void onMultiCheck(MessageReceiversGroupAdapter adapter, boolean check);
+
         void onPersonForceChecked(String id);
     }
 
     private OnCheckEventListener listener;
 
-    public MessageReceiversAdapter(MessageReceiversInfo receiversInfo){
+    public MessageReceiversAdapter(MessageReceiversInfo receiversInfo) {
         this.receiversInfo = receiversInfo;
         innerRecyclerVisibilities = new boolean[receiversInfo.getGroups().size()];
         Arrays.fill(innerRecyclerVisibilities, false);
@@ -53,8 +55,8 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
         listener = new OnCheckEventListener() {
             @Override
             public void onPersonChecked(MessageReceiversGroupAdapter adapter, MessageReceiver receiver) {
-                for(MessageReceiversGroupAdapter a:adapters){
-                    if(a==adapter)
+                for (MessageReceiversGroupAdapter a : adapters) {
+                    if (a == adapter)
                         continue;
                     a.notifyPersonChecked(receiver);
                 }
@@ -63,8 +65,8 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
             @Override
             public void onMultiCheck(MessageReceiversGroupAdapter adapter, boolean check) {
 
-                for(MessageReceiver receiver: adapter.getGroup().getPeople()){
-                    if(check)
+                for (MessageReceiver receiver : adapter.getGroup().getPeople()) {
+                    if (check)
                         checkedReceivers.add(receiver.getId());
                     else
                         checkedReceivers.remove(receiver.getId());
@@ -75,24 +77,24 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
 
             @Override
             public void onPersonForceChecked(String id) {
-                for(MessageReceiversGroupAdapter a: adapters){
+                for (MessageReceiversGroupAdapter a : adapters) {
                     a.notifyPersonForceChecked(id);
                 }
             }
         };
     }
 
-    public void setReceiversInfo(MessageReceiversInfo receiversInfo){
+    public void setReceiversInfo(MessageReceiversInfo receiversInfo) {
         this.receiversInfo = receiversInfo;
         notifyDataSetChanged();
     }
 
-    public void checkReceiver(String id){
+    public void checkReceiver(String id) {
         checkedReceivers.add(id);
         listener.onPersonForceChecked(id);
     }
 
-    public HashSet<String> getCheckedReceiversIds(){
+    public HashSet<String> getCheckedReceiversIds() {
         return checkedReceivers;
     }
 
@@ -107,7 +109,7 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
         holder.name.setText(group.getName());
         holder.adapter.setGroup(group);
 
-        if(innerRecyclerVisibilities[position])
+        if (innerRecyclerVisibilities[position])
             holder.people.setVisibility(View.VISIBLE);
         else
             holder.people.setVisibility(View.GONE);
@@ -124,7 +126,7 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
         return receiversInfo.getGroups().get(position).getName().hashCode();
     }
 
-    class MessageReceiversGroupViewHolder extends RecyclerView.ViewHolder{
+    class MessageReceiversGroupViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private RecyclerView people;
         private MessageReceiversGroupAdapter adapter;
@@ -154,7 +156,7 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()){
+                            switch (item.getItemId()) {
                                 case R.id.action_select_all:
                                     listener.onMultiCheck(adapter, true);
                                     return true;
@@ -174,12 +176,12 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
                 @Override
                 public void onClick(View v) {
                     innerRecyclerVisibilities[getAdapterPosition()] = !innerRecyclerVisibilities[getAdapterPosition()];
-                    if(innerRecyclerVisibilities[getAdapterPosition()]) {
+                    if (innerRecyclerVisibilities[getAdapterPosition()]) {
                         people.setVisibility(View.VISIBLE);
-                    }else {
+                    } else {
                         people.setVisibility(View.GONE);
                     }
-                    ObjectAnimator arrowAnim = ObjectAnimator.ofFloat(arrow, View.ROTATION, innerRecyclerVisibilities[getAdapterPosition()]?180:0);
+                    ObjectAnimator arrowAnim = ObjectAnimator.ofFloat(arrow, View.ROTATION, innerRecyclerVisibilities[getAdapterPosition()] ? 180 : 0);
                     arrowAnim.setDuration(150);
                     arrowAnim.start();
                 }

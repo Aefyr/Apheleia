@@ -2,12 +2,12 @@ package com.aefyr.apheleia;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -65,11 +65,11 @@ public class MessageComposeActivity extends AppCompatActivity {
 
             @Override
             public CharSequence getPageTitle(int position) {
-                return getString(position==0?R.string.receivers:R.string.message);
+                return getString(position == 0 ? R.string.receivers : R.string.message);
             }
         });
 
-        if(replyIntent){
+        if (replyIntent) {
             receiversFragment.forceSetReceiver(getIntent().getStringExtra("receiver"));
             messageFragment.setForcedMessageSubject(String.format(getString(R.string.reply_subject_prefix), getIntent().getStringExtra("subject")));
             scrollToPage(1);
@@ -95,13 +95,13 @@ public class MessageComposeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendMessage(){
-        if(receiversFragment.getReceiversIds().size()==0){
+    private void sendMessage() {
+        if (receiversFragment.getReceiversIds().size() == 0) {
             Chief.makeAnAlert(this, getString(R.string.error_no_receivers));
             scrollToPage(0);
             return;
         }
-        if(!messageFragment.checkFields()){
+        if (!messageFragment.checkFields()) {
             scrollToPage(1);
             return;
         }
@@ -126,7 +126,7 @@ public class MessageComposeActivity extends AppCompatActivity {
                 AlertDialog networkErrorDialog = new AlertDialog.Builder(MessageComposeActivity.this).setMessage(getString(R.string.network_error_tip)).setTitle(getString(R.string.cant_send_message)).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                       finish();
+                        finish();
                     }
                 }).setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
                     @Override
@@ -153,13 +153,13 @@ public class MessageComposeActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if(messageSendRequest!=null&&!messageSendRequest.hasHadResponseDelivered())
+        if (messageSendRequest != null && !messageSendRequest.hasHadResponseDelivered())
             messageSendRequest.cancel();
         super.onDestroy();
     }
 
-    private void scrollToPage(int page){
-        if(viewPager.getCurrentItem()!=page)
+    private void scrollToPage(int page) {
+        if (viewPager.getCurrentItem() != page)
             viewPager.setCurrentItem(page, true);
     }
 

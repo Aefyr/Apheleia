@@ -21,16 +21,16 @@ import java.util.ArrayList;
 public class MessageInfoAsyncParser {
     private static MessageInfoAsyncParser instance;
 
-    private MessageInfoAsyncParser(){
+    private MessageInfoAsyncParser() {
         instance = this;
     }
 
-    public static MessageInfoAsyncParser getInstance(){
-        return instance == null?new MessageInfoAsyncParser():instance;
+    public static MessageInfoAsyncParser getInstance() {
+        return instance == null ? new MessageInfoAsyncParser() : instance;
     }
 
-    public void parseMessage(String rawMessage, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessageInfo> listener){
-        new MessageInfoParseTask().execute(new AsyncParserParams<MessageInfo>(rawMessage, folder== MessagesList.Folder.INBOX?"i":"s", listener));
+    public void parseMessage(String rawMessage, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessageInfo> listener) {
+        new MessageInfoParseTask().execute(new AsyncParserParams<MessageInfo>(rawMessage, folder == MessagesList.Folder.INBOX ? "i" : "s", listener));
     }
 
     private class MessageInfoParseTask extends AsyncParserBase<MessageInfo> {

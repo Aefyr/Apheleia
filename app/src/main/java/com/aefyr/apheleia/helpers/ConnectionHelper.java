@@ -12,17 +12,17 @@ public class ConnectionHelper {
     private static ConnectionHelper instance;
     private ConnectivityManager connectivityManager;
 
-    private ConnectionHelper(Context c){
+    private ConnectionHelper(Context c) {
         instance = this;
         connectivityManager = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
-    public static ConnectionHelper getInstance(Context c){
-        return instance==null?new ConnectionHelper(c):instance;
+    public static ConnectionHelper getInstance(Context c) {
+        return instance == null ? new ConnectionHelper(c) : instance;
     }
 
-    public boolean hasNetworkConnection(){
+    public boolean hasNetworkConnection() {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo!=null && networkInfo.isConnected();
+        return networkInfo != null && networkInfo.isConnected();
     }
 }

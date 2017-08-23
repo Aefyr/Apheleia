@@ -11,7 +11,7 @@ import android.view.ViewGroup;
  * Created by Aefyr on 15.08.2017.
  */
 
-public class SwipeRefreshWithEmptySupport extends SwipeRefreshLayout{
+public class SwipeRefreshWithEmptySupport extends SwipeRefreshLayout {
 
     private ViewGroup container;
 
@@ -43,7 +43,7 @@ public class SwipeRefreshWithEmptySupport extends SwipeRefreshLayout{
         if (container != null)
             return container;
 
-        for (int i=0; i<getChildCount(); i++) {
+        for (int i = 0; i < getChildCount(); i++) {
             if (getChildAt(i) instanceof ViewGroup) {
                 container = (ViewGroup) getChildAt(i);
                 break;

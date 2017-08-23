@@ -16,18 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aefyr.apheleia.ActionListener;
-import com.aefyr.apheleia.helpers.AnalyticsHelper;
-import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.MessageComposeActivity;
 import com.aefyr.apheleia.MessageViewActivity;
 import com.aefyr.apheleia.R;
-import com.aefyr.apheleia.utility.FirebaseConstants;
-import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.apheleia.adapters.MessagesAdapter;
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
+import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.MessagesHelper;
+import com.aefyr.apheleia.utility.FirebaseConstants;
+import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.objects.major.MessagesList;
@@ -68,7 +68,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_messages, container, false);
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null||currentFolder== MessagesList.Folder.INBOX)?R.string.inbox:R.string.sent));
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null || currentFolder == MessagesList.Folder.INBOX) ? R.string.inbox : R.string.sent));
         AnalyticsHelper.logAppSectionViewEvent(FirebaseAnalytics.getInstance(getActivity()), FirebaseConstants.SECTION_MESSAGES);
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
@@ -90,7 +90,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         tasks = new HashSet<>();
 
 
-        if(currentFolder==null)
+        if (currentFolder == null)
             currentFolder = MessagesList.Folder.INBOX;
 
 
@@ -102,7 +102,8 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     private int fabVisibilityChangeThreshold;
     private int fabVisibilitySwitcherProgress;
     private boolean composeFabShown = true;
-    private void initializeFab(){
+
+    private void initializeFab() {
         composeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,17 +116,17 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(Math.abs(fabVisibilitySwitcherProgress)<= fabVisibilityChangeThreshold){
-                    fabVisibilitySwitcherProgress = Utility.clamp(fabVisibilitySwitcherProgress +dy, -fabVisibilityChangeThreshold, fabVisibilityChangeThreshold);
+                if (Math.abs(fabVisibilitySwitcherProgress) <= fabVisibilityChangeThreshold) {
+                    fabVisibilitySwitcherProgress = Utility.clamp(fabVisibilitySwitcherProgress + dy, -fabVisibilityChangeThreshold, fabVisibilityChangeThreshold);
                 }
 
-                if(fabVisibilitySwitcherProgress >= fabVisibilityChangeThreshold) {
-                    if(composeFabShown){
+                if (fabVisibilitySwitcherProgress >= fabVisibilityChangeThreshold) {
+                    if (composeFabShown) {
                         composeFab.hide();
                         composeFabShown = false;
                     }
-                }else if(fabVisibilitySwitcherProgress <=-fabVisibilityChangeThreshold){
-                    if(!composeFabShown){
+                } else if (fabVisibilitySwitcherProgress <= -fabVisibilityChangeThreshold) {
+                    if (!composeFabShown) {
                         composeFab.show();
                         composeFabShown = true;
                     }
@@ -135,25 +136,25 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
 
-    public boolean isInboxSelected(){
+    public boolean isInboxSelected() {
         return currentFolder == MessagesList.Folder.INBOX;
     }
 
 
-    private void setMessagesToAdapter(MessagesList messagesList){
-        if(messagesAdapter==null){
+    private void setMessagesToAdapter(MessagesList messagesList) {
+        if (messagesAdapter == null) {
             messagesAdapter = new MessagesAdapter(getActivity(), messagesList.getMessages(), this);
             messagesAdapter.setHasStableIds(true);
             messagesRecycler.setAdapter(messagesAdapter);
-        }else
+        } else
             messagesAdapter.setMessages(messagesList.getMessages());
         checkEmptiness(messagesList);
     }
 
-    private void loadMessages(final MessagesList.Folder folder){
+    private void loadMessages(final MessagesList.Folder folder) {
         refreshLayout.setRefreshing(true);
 
-        if(folderToggled||firstLoad||!connectionHelper.hasNetworkConnection()){
+        if (folderToggled || firstLoad || !connectionHelper.hasNetworkConnection()) {
             tasks.add(messagesHelper.loadMessages(folder == MessagesList.Folder.INBOX, new MessagesHelper.LoadMessagesTaskResultListener() {
                 @Override
                 public void onSuccess(MessagesList list) {
@@ -196,14 +197,15 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private boolean folderToggled;
-    public void toggleFolder(){
-        if(!currentRequest.hasHadResponseDelivered())
+
+    public void toggleFolder() {
+        if (!currentRequest.hasHadResponseDelivered())
             currentRequest.cancel();
-        if(currentFolder == MessagesList.Folder.INBOX)
+        if (currentFolder == MessagesList.Folder.INBOX)
             currentFolder = MessagesList.Folder.SENT;
         else
             currentFolder = MessagesList.Folder.INBOX;
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString(currentFolder == MessagesList.Folder.INBOX?R.string.inbox:R.string.sent));
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(currentFolder == MessagesList.Folder.INBOX ? R.string.inbox : R.string.sent));
         folderToggled = true;
         loadMessages(currentFolder);
     }
@@ -215,6 +217,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private static final int OPEN_MESSAGE = 222;
     private int openedMessage;
+
     @Override
     public void onMessageClick(int index, String messageId, boolean inbox) {
         openedMessage = index;
@@ -231,19 +234,19 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         super.onDetach();
     }
 
-    private void cancelRequest(){
-        if(currentRequest != null && !currentRequest.hasHadResponseDelivered())
+    private void cancelRequest() {
+        if (currentRequest != null && !currentRequest.hasHadResponseDelivered())
             currentRequest.cancel();
     }
 
-    private void cancelTasks(){
-        for(AsyncTask task: tasks)
+    private void cancelTasks() {
+        for (AsyncTask task : tasks)
             task.cancel(true);
         tasks.clear();
     }
 
-    private void checkEmptiness(MessagesList list){
-        if(list.getMessages().size()==0)
+    private void checkEmptiness(MessagesList list) {
+        if (list.getMessages().size() == 0)
             emptyMessages.setVisibility(View.VISIBLE);
         else
             emptyMessages.setVisibility(View.GONE);
@@ -253,9 +256,9 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==OPEN_MESSAGE){
-            if(resultCode== AppCompatActivity.RESULT_OK) {
-                if(messagesAdapter.markAsRead(openedMessage))
+        if (requestCode == OPEN_MESSAGE) {
+            if (resultCode == AppCompatActivity.RESULT_OK) {
+                if (messagesAdapter.markAsRead(openedMessage))
                     messagesHelper.saveMessages(messagesList, currentFolder == MessagesList.Folder.INBOX, null);
                 /*This performance tho... But keeping ShortMessages as individual files is an even worse idea, right?
                 Well, it's and AsyncTask anyway, but still this can really badly affect users with tons of messages and weak devices*/
@@ -267,7 +270,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onAction(Action action) {
-        switch (action){
+        switch (action) {
             case STUDENT_SWITCHED:
                 break;
             case UPDATE_REQUESTED:

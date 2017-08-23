@@ -4,10 +4,10 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,7 +64,7 @@ public class MessageViewActivity extends AppCompatActivity {
         text = (TextView) findViewById(R.id.text);
         attachmentsContainer = (LinearLayout) findViewById(R.id.attachmentsContainer);
         replyFab = (FloatingActionButton) findViewById(R.id.replyFab);
-        if(!inbox)
+        if (!inbox)
             replyFab.hide();
 
         loadingDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
@@ -86,7 +86,7 @@ public class MessageViewActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setMessage(final MessageInfo message){
+    private void setMessage(final MessageInfo message) {
         AnalyticsHelper.logMessageViewEvent(FirebaseAnalytics.getInstance(this));
         messageLayout.setVisibility(View.VISIBLE);
 
@@ -97,16 +97,16 @@ public class MessageViewActivity extends AppCompatActivity {
 
         int receiversCount = message.getReceivers().size();
         String receiversInfo;
-        if(inbox){
+        if (inbox) {
             sender.setText(String.format(getString(R.string.from), message.getSender().getCompositeName(true, true, true)));
-            if(receiversCount>3){
-                receiversInfo = String.format(getString(R.string.to_many), getString(R.string.you), receiversCount-1);
-            }else {
+            if (receiversCount > 3) {
+                receiversInfo = String.format(getString(R.string.to_many), getString(R.string.you), receiversCount - 1);
+            } else {
                 StringBuilder receiversBuilder = new StringBuilder();
-                for(MessagePerson receiver: message.getReceivers()){
+                for (MessagePerson receiver : message.getReceivers()) {
                     receiversBuilder.append(receiver.getCompositeName(true, false, true)).append(", ");
                 }
-                receiversInfo = String.format(getString(R.string.to), receiversBuilder.toString().substring(0, receiversBuilder.length()-2));
+                receiversInfo = String.format(getString(R.string.to), receiversBuilder.toString().substring(0, receiversBuilder.length() - 2));
             }
 
             replyFab.setOnClickListener(new View.OnClickListener() {
@@ -120,24 +120,24 @@ public class MessageViewActivity extends AppCompatActivity {
                 }
             });
 
-        }else {
+        } else {
             sender.setText(String.format(getString(R.string.from), getString(R.string.you)));
-            if(receiversCount>3){
-                receiversInfo = String.format(getString(R.string.to_many), message.getReceivers().get(0).getCompositeName(true, false, true), receiversCount-1);
-            }else {
+            if (receiversCount > 3) {
+                receiversInfo = String.format(getString(R.string.to_many), message.getReceivers().get(0).getCompositeName(true, false, true), receiversCount - 1);
+            } else {
                 StringBuilder receiversBuilder = new StringBuilder();
-                for(MessagePerson receiver: message.getReceivers()){
+                for (MessagePerson receiver : message.getReceivers()) {
                     receiversBuilder.append(receiver.getCompositeName(true, false, true)).append(", ");
                 }
-                receiversInfo = String.format(getString(R.string.to), receiversBuilder.toString().substring(0, receiversBuilder.length()-2));
+                receiversInfo = String.format(getString(R.string.to), receiversBuilder.toString().substring(0, receiversBuilder.length() - 2));
             }
         }
 
         receivers.setText(receiversInfo);
 
-        if(message.hasAttachments()){
+        if (message.hasAttachments()) {
             LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-            for(final Attachment attachment: message.getAttachments()){
+            for (final Attachment attachment : message.getAttachments()) {
                 View attachmentView = inflater.inflate(R.layout.attachment, attachmentsContainer);
                 Button attachmentButton = (Button) attachmentView.findViewById(R.id.attachmentButton);
                 attachmentButton.setText(attachment.getName());
@@ -156,7 +156,7 @@ public class MessageViewActivity extends AppCompatActivity {
         loadingDialog.dismiss();
     }
 
-    private void getMessage(){
+    private void getMessage() {
         loadingDialog.show();
 
         messageGetRequest = EljurApiClient.getInstance(this).getMessageInfo(Helper.getInstance(this).getPersona(), inbox ? MessagesList.Folder.INBOX : MessagesList.Folder.SENT, messageId, new EljurApiClient.JournalismListener<MessageInfo>() {
@@ -202,18 +202,18 @@ public class MessageViewActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if(!messageGetRequest.hasHadResponseDelivered())
+        if (!messageGetRequest.hasHadResponseDelivered())
             messageGetRequest.cancel();
         super.onDestroy();
     }
 
     @Override
     public void finish() {
-        setResult(gotMessage?RESULT_OK:RESULT_CANCELED);
+        setResult(gotMessage ? RESULT_OK : RESULT_CANCELED);
         super.finish();
     }
 
-    private void openLink(String uri){
+    private void openLink(String uri) {
         Intent linkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         startActivity(linkIntent);
     }

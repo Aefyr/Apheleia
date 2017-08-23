@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Apheleia</string>
+    <string name="app_name" translatable="false">Apheleia</string>
 
 
     <!-- Commons -->
@@ -29,7 +29,7 @@
 
     <!-- Errors handling -->
     <string name="api_error_report_prompt">Apheleia was unable to handle response from Eljur.\n\nDo you want to send that response which contains your %s to developer, so he can resolve this error?</string>
-    <string name="api_error_reported">Thanks for the report! I will try to resolve the error ASAP, watch out for updates!</string>
+    <string name="api_error_reported">Thanks for the report! I will try to resolve the error ASAP!</string>
     <string name="api_error_prompt_declined">I won\'t be able to resolve this problem, until someone else reports the same problem then.\n\nAre you sure you don\'t want to report? This data will only be used to make Apheleia work for you</string>
     <string name="report">Report</string>
     <string name="dont_report">Don\'t report</string>
@@ -45,7 +45,7 @@
     <string name="invalid_credentials_desc">Invalid username or password</string>
     <string name="invalid_domain">Invalid school domain</string>
     <string name="invalid_domain_desc">Entered school domain doesn\'t exist</string>
-    <string name="title_activity_container">Apheleia</string>
+    <string name="title_activity_container" translatable="false">Apheleia</string>
     <string name="loading_profile">Fetching profile…</string>
     <string name="loading_data">Fetching initial data…</string>
     <string name="logging_out">Signing out…</string>
@@ -53,7 +53,7 @@
 
     <!-- Re:Initialization and periods helper-->
     <string name="check_periods_failed">Failed to update weeks/periods info. Error was reported</string>
-    <string name="check_periods_updated">Found new week/period, updating.</string>
+    <string name="check_periods_updated">Found new week/period, updating data</string>
     <string name="reinitialization_title">Possible school year change</string>
     <string name="reinitialization_prompt">Apheleia has detected, that Eljur returned less weeks than it did last time.\n\nThat may have happened due to the start of a new school year.\n\nDo you want to perform a reinitialization, so that you can see the new school year?\n\nIf you believe that this is an error, you may ignore this</string>
     <string name="reinitialization_warning">If network to be disconnected or server error occurs during reinitialization, you will be logged off from the app and will have to log in again.</string>
@@ -101,7 +101,7 @@
     <string name="deselect_all">Deselect All</string>
     <string name="fetching_receivers">Fetching receivers…</string>
     <string name="subject">Subject</string>
-    <string name="text">Text</string>
+    <string name="text">Message</string>
     <string name="error_no_receivers">You have to select at least one receiver</string>
     <string name="sending_message">Sending message…</string>
     <string name="message_sent">Message was sent</string>

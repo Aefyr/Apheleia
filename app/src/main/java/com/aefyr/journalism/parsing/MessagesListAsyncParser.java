@@ -20,28 +20,28 @@ import java.util.ArrayList;
 public class MessagesListAsyncParser {
     private static MessagesListAsyncParser instance;
 
-    private MessagesListAsyncParser(){
+    private MessagesListAsyncParser() {
         instance = this;
     }
 
-    public static MessagesListAsyncParser getInstance(){
-        return instance == null?new MessagesListAsyncParser():instance;
+    public static MessagesListAsyncParser getInstance() {
+        return instance == null ? new MessagesListAsyncParser() : instance;
     }
 
-    public void parseMessages(String rawMessages, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessagesList> listener){
+    public void parseMessages(String rawMessages, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessagesList> listener) {
         new MessagesParseTask().execute(new MessagesParseTaskParams(rawMessages, folder, listener));
     }
 
-    private class MessagesParseTaskParams extends AsyncParserParams<MessagesList>{
+    private class MessagesParseTaskParams extends AsyncParserParams<MessagesList> {
         private MessagesList.Folder folder;
 
-        private MessagesParseTaskParams(String rawResponse, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessagesList> listener){
+        private MessagesParseTaskParams(String rawResponse, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessagesList> listener) {
             super(rawResponse, null, listener);
             this.folder = folder;
         }
     }
 
-    private class MessagesParseTask extends AsyncParserBase<MessagesList>{
+    private class MessagesParseTask extends AsyncParserBase<MessagesList> {
 
         @Override
         protected AsyncParserTaskResult<MessagesList> doInBackground(AsyncParserParams<MessagesList>... asyncParserParamses) {
@@ -52,36 +52,36 @@ public class MessagesListAsyncParser {
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
             MessagesList.Folder folder = messagesParseTaskParams.folder;
 
-            if(response.size()==0||response.get("messages")==null){
+            if (response.size() == 0 || response.get("messages") == null) {
                 return new AsyncParserTaskResult<MessagesList>(MajorObjectsFactory.createMessagesList(response.get("total").getAsInt(), response.get("count").getAsInt(), new ArrayList<ShortMessage>(0), folder));
             }
 
             ArrayList<ShortMessage> shortMessages = new ArrayList<>();
-            for(JsonElement messageEl: response.getAsJsonArray("messages")){
+            for (JsonElement messageEl : response.getAsJsonArray("messages")) {
                 JsonObject message = messageEl.getAsJsonObject();
 
-                if(folder == MessagesList.Folder.INBOX){
+                if (folder == MessagesList.Folder.INBOX) {
                     JsonObject sender = message.getAsJsonObject("user_from");
                     try {
-                        shortMessages.add(MinorObjectsFactory.createInboxShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(),MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
+                        shortMessages.add(MinorObjectsFactory.createInboxShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(), MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
                     } catch (EljurApiException e) {
                         return new AsyncParserTaskResult<MessagesList>(e.getMessage(), rawResponse);
                     }
-                }else {
+                } else {
                     //Eljur sure likes phantoms ^^
                     //Phantom receivers list filter
-                    if(message.get("users_to")==null)
+                    if (message.get("users_to") == null)
                         continue;
 
                     ArrayList<MessagePerson> receivers = new ArrayList<>();
 
-                    for(JsonElement receiverEl: message.getAsJsonArray("users_to")){
+                    for (JsonElement receiverEl : message.getAsJsonArray("users_to")) {
 
                         JsonObject receiver = receiverEl.getAsJsonObject();
                         receivers.add(MinorObjectsFactory.createMessagePerson(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString()));
                     }
                     try {
-                        shortMessages.add(MinorObjectsFactory.createSentShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(),receivers, message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
+                        shortMessages.add(MinorObjectsFactory.createSentShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(), receivers, message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
                     } catch (EljurApiException e) {
                         return new AsyncParserTaskResult<MessagesList>(e.getMessage(), rawResponse);
                     }

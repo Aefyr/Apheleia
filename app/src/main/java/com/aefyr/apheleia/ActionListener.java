@@ -5,7 +5,7 @@ package com.aefyr.apheleia;
  */
 
 public interface ActionListener {
-    public enum Action{
+    public enum Action {
         STUDENT_SWITCHED, UPDATE_REQUESTED
     }
 

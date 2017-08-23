@@ -23,25 +23,28 @@ public class PeriodsHelper {
     private SharedPreferences preferences;
     private Context c;
 
-    public interface OnPeriodsChangeDetectedListener{
+    public interface OnPeriodsChangeDetectedListener {
         void OnFoundMoreWeeks();
+
         void OnFoundMorePeriods();
+
         void OnFoundLessWeeks();
+
         void OnFoundLessPeriods();
     }
 
-    private PeriodsHelper(Context c){
+    private PeriodsHelper(Context c) {
         instance = this;
         this.c = c;
         preferences = PreferenceManager.getDefaultSharedPreferences(c);
         profileHelper = ProfileHelper.getInstance(c);
     }
 
-    public static PeriodsHelper getInstance(Context c){
-        return instance==null?new PeriodsHelper(c):instance;
+    public static PeriodsHelper getInstance(Context c) {
+        return instance == null ? new PeriodsHelper(c) : instance;
     }
 
-    public void checkPeriods(final OnPeriodsChangeDetectedListener listener){
+    public void checkPeriods(final OnPeriodsChangeDetectedListener listener) {
         EljurApiClient.getInstance(c).getPeriods(Helper.getInstance(c).getPersona(), profileHelper.getCurrentStudentId(), new EljurApiClient.JournalismListener<PeriodsInfo>() {
             @Override
             public void onSuccess(PeriodsInfo result) {
@@ -50,23 +53,23 @@ public class PeriodsHelper {
 
                 int newPeriodsCount = result.getPeriods().size();
                 int newWeeksCount = 0;
-                for(ActualPeriod p: result.getPeriods()){
-                    newWeeksCount+=p.getWeeks().size();
+                for (ActualPeriod p : result.getPeriods()) {
+                    newWeeksCount += p.getWeeks().size();
                 }
 
-                if(prevPeriodsCount<newPeriodsCount) {
+                if (prevPeriodsCount < newPeriodsCount) {
                     savePeriodsInfo(result);
                     listener.OnFoundMorePeriods();
                     return;
-                }else if(prevPeriodsCount>newPeriodsCount) {
+                } else if (prevPeriodsCount > newPeriodsCount) {
                     listener.OnFoundLessPeriods();
                     return;
                 }
 
-                if(prevWeeksCount<newWeeksCount) {
+                if (prevWeeksCount < newWeeksCount) {
                     savePeriodsInfo(result);
                     listener.OnFoundMoreWeeks();
-                }else if(prevWeeksCount>newWeeksCount)
+                } else if (prevWeeksCount > newWeeksCount)
                     listener.OnFoundLessWeeks();
 
             }
@@ -84,71 +87,71 @@ public class PeriodsHelper {
         });
     }
 
-    public void savePeriods(Set<String> periods){
-        preferences.edit().putStringSet("periods_"+profileHelper.getCurrentStudentId(), periods).apply();
+    public void savePeriods(Set<String> periods) {
+        preferences.edit().putStringSet("periods_" + profileHelper.getCurrentStudentId(), periods).apply();
     }
 
-    public Set<String> getPeriods(){
-        return preferences.getStringSet("periods_"+profileHelper.getCurrentStudentId(), null);
+    public Set<String> getPeriods() {
+        return preferences.getStringSet("periods_" + profileHelper.getCurrentStudentId(), null);
     }
 
-    public String getCurrentPeriod(){
-        return preferences.getString("current_period_"+profileHelper.getCurrentStudentId(), "0");
+    public String getCurrentPeriod() {
+        return preferences.getString("current_period_" + profileHelper.getCurrentStudentId(), "0");
     }
 
-    public void setCurrentPeriod(String period){
-        preferences.edit().putString("current_period_"+profileHelper.getCurrentStudentId(), period).apply();
+    public void setCurrentPeriod(String period) {
+        preferences.edit().putString("current_period_" + profileHelper.getCurrentStudentId(), period).apply();
     }
 
-    public String getPeriodName(String period){
-        return preferences.getString("period_name_"+profileHelper.getCurrentStudentId()+"_"+period, "nani");
+    public String getPeriodName(String period) {
+        return preferences.getString("period_name_" + profileHelper.getCurrentStudentId() + "_" + period, "nani");
     }
 
-    public int getPeriodsCount(){
-        return preferences.getInt("periods_count_"+profileHelper.getCurrentStudentId(), 0);
+    public int getPeriodsCount() {
+        return preferences.getInt("periods_count_" + profileHelper.getCurrentStudentId(), 0);
     }
 
-    public void setPeriodsCount(int count){
-        preferences.edit().putInt("periods_count_"+profileHelper.getCurrentStudentId(), count).apply();
+    public void setPeriodsCount(int count) {
+        preferences.edit().putInt("periods_count_" + profileHelper.getCurrentStudentId(), count).apply();
     }
 
-    public void setPeriodName(String period, String name){
-        preferences.edit().putString("period_name_"+profileHelper.getCurrentStudentId()+"_"+period, name).apply();
+    public void setPeriodName(String period, String name) {
+        preferences.edit().putString("period_name_" + profileHelper.getCurrentStudentId() + "_" + period, name).apply();
     }
 
-    public void saveWeeks(Set<String> weeks){
-        preferences.edit().putStringSet("weeks_"+profileHelper.getCurrentStudentId(), weeks).apply();
+    public void saveWeeks(Set<String> weeks) {
+        preferences.edit().putStringSet("weeks_" + profileHelper.getCurrentStudentId(), weeks).apply();
     }
 
-    public Set<String> getWeeks(){
-        return preferences.getStringSet("weeks_"+profileHelper.getCurrentStudentId(), null);
+    public Set<String> getWeeks() {
+        return preferences.getStringSet("weeks_" + profileHelper.getCurrentStudentId(), null);
     }
 
-    public String getCurrentWeek(){
-        return preferences.getString("current_week_"+profileHelper.getCurrentStudentId(), "0");
+    public String getCurrentWeek() {
+        return preferences.getString("current_week_" + profileHelper.getCurrentStudentId(), "0");
     }
 
-    public void setCurrentWeek(String weeks){
-        preferences.edit().putString("current_week_"+profileHelper.getCurrentStudentId(), weeks).apply();
+    public void setCurrentWeek(String weeks) {
+        preferences.edit().putString("current_week_" + profileHelper.getCurrentStudentId(), weeks).apply();
     }
 
-    public int getWeeksCount(){
-        return preferences.getInt("weeks_count_"+profileHelper.getCurrentStudentId(), 0);
+    public int getWeeksCount() {
+        return preferences.getInt("weeks_count_" + profileHelper.getCurrentStudentId(), 0);
     }
 
-    public void setWeeksCount(int count){
-        preferences.edit().putInt("weeks_count_"+profileHelper.getCurrentStudentId(), count).apply();
+    public void setWeeksCount(int count) {
+        preferences.edit().putInt("weeks_count_" + profileHelper.getCurrentStudentId(), count).apply();
     }
 
-    public void setCurrentScheduleWeek(String weeks){
-        preferences.edit().putString("current_schedule_week_"+profileHelper.getCurrentStudentId(), weeks).apply();
+    public void setCurrentScheduleWeek(String weeks) {
+        preferences.edit().putString("current_schedule_week_" + profileHelper.getCurrentStudentId(), weeks).apply();
     }
 
-    public String getCurrentScheduleWeek(){
-        return preferences.getString("current_schedule_week_"+profileHelper.getCurrentStudentId(), "0");
+    public String getCurrentScheduleWeek() {
+        return preferences.getString("current_schedule_week_" + profileHelper.getCurrentStudentId(), "0");
     }
 
-    public void savePeriodsInfo(PeriodsInfo periodsInfo){
+    public void savePeriodsInfo(PeriodsInfo periodsInfo) {
         HashSet<String> periods = new HashSet<>();
         String lastPeriod = null;
 
@@ -157,13 +160,13 @@ public class PeriodsHelper {
         HashSet<String> weeks = new HashSet<>();
         String lastWeek = null;
 
-        for(ActualPeriod period: periodsInfo.getPeriods()){
-            lastPeriod = timeLord.getWeekOrPeriodDate(period.getStartTime())+"-"+timeLord.getWeekOrPeriodDate(period.getEndTime());
+        for (ActualPeriod period : periodsInfo.getPeriods()) {
+            lastPeriod = timeLord.getWeekOrPeriodDate(period.getStartTime()) + "-" + timeLord.getWeekOrPeriodDate(period.getEndTime());
             periods.add(lastPeriod);
             setPeriodName(lastPeriod, period.getFullName());
 
-            for(Week week: period.getWeeks()){
-                lastWeek = timeLord.getWeekOrPeriodDate(week.getStartTime())+"-"+timeLord.getWeekOrPeriodDate(week.getEndTime());
+            for (Week week : period.getWeeks()) {
+                lastWeek = timeLord.getWeekOrPeriodDate(week.getStartTime()) + "-" + timeLord.getWeekOrPeriodDate(week.getEndTime());
                 weeks.add(lastWeek);
             }
 
@@ -178,7 +181,7 @@ public class PeriodsHelper {
         setCurrentScheduleWeek(lastWeek);
     }
 
-    static void destroy(){
+    static void destroy() {
         instance = null;
     }
 }

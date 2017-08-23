@@ -16,8 +16,8 @@ public class FinalsHelper extends SerializerHelperWithTimeAndStudentKeysBase<Fin
         instance = this;
     }
 
-    public static FinalsHelper getInstance(Context c){
-        return instance==null?new FinalsHelper(c):instance;
+    public static FinalsHelper getInstance(Context c) {
+        return instance == null ? new FinalsHelper(c) : instance;
     }
 
     @Override
@@ -34,15 +34,15 @@ public class FinalsHelper extends SerializerHelperWithTimeAndStudentKeysBase<Fin
         return loadSavedObject("");
     }
 
-    public void saveFinalsAsync(Finals finals, ObjectSaveListener listener){
+    public void saveFinalsAsync(Finals finals, ObjectSaveListener listener) {
         saveObjectAsync(finals, "", listener);
     }
 
-    public boolean saveFinals(Finals finals){
+    public boolean saveFinals(Finals finals) {
         return saveObject(finals, "");
     }
 
-    static void destroy(){
+    static void destroy() {
         instance = null;
     }
 }

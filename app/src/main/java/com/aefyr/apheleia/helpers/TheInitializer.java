@@ -87,11 +87,11 @@ public class TheInitializer {
                             @Override
                             public void onSuccess(PeriodsInfo periods) {
                                 profileHelper.setCurrentStudent(s.id());
-                                System.out.println("Set student "+s.id());
+                                System.out.println("Set student " + s.id());
                                 final PeriodsHelper periodsHelper = PeriodsHelper.getInstance(c);
                                 periodsHelper.savePeriodsInfo(periods);
-                                System.out.println("Saved periods for "+s.id());
-                                System.out.println("period "+s.id()+ " "+periodsHelper.getCurrentWeek());
+                                System.out.println("Saved periods for " + s.id());
+                                System.out.println("period " + s.id() + " " + periodsHelper.getCurrentWeek());
 
                                 publishProgress(++i);
 
@@ -189,7 +189,7 @@ public class TheInitializer {
                             @Override
                             public void onSuccess(Finals finals) {
                                 profileHelper.setCurrentStudent(s.id());
-                                if(!FinalsHelper.getInstance(c).saveFinals(finals))
+                                if (!FinalsHelper.getInstance(c).saveFinals(finals))
                                     fail("Критическая ошибка. Не удалось сериализовать расписание", null, null);
 
                                 if (++i == actionsGoal) {
@@ -330,7 +330,7 @@ public class TheInitializer {
         requests.add(EljurApiClient.getInstance(c).getMessages(persona, MessagesList.Folder.SENT, false, listener));
     }
 
-    private void loadFinals(EljurPersona persona, String studentId, EljurApiClient.JournalismListener<Finals> listener){
+    private void loadFinals(EljurPersona persona, String studentId, EljurApiClient.JournalismListener<Finals> listener) {
         requests.add(EljurApiClient.getInstance(c).getFinals(persona, studentId, listener));
     }
 }

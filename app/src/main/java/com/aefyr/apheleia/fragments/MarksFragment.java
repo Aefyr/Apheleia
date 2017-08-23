@@ -13,19 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aefyr.apheleia.ActionListener;
-import com.aefyr.apheleia.helpers.AnalyticsHelper;
-import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
-import com.aefyr.apheleia.utility.FirebaseConstants;
-import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.apheleia.adapters.MarksGridRecyclerAdapter;
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
+import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.MarksHelper;
 import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.SerializerHelperWithTimeAndStudentKeysBase;
+import com.aefyr.apheleia.utility.FirebaseConstants;
+import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.objects.major.MarksGrid;
@@ -37,7 +37,7 @@ import java.util.Arrays;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActionListener{
+public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActionListener {
 
     private boolean firstLoad = true;
     private StringRequest currentRequest;
@@ -67,7 +67,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_marks, container, false);
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
         AnalyticsHelper.logAppSectionViewEvent(FirebaseAnalytics.getInstance(getActivity()), FirebaseConstants.SECTION_MARKS);
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
@@ -92,11 +92,12 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private boolean loadedFromMemory = false;
-    private void loadMarks(final String days){
+
+    private void loadMarks(final String days) {
         loadedFromMemory = false;
         refreshLayout.setRefreshing(true);
 
-        if(selectedPeriod!=requestedPeriod||firstLoad||!connectionHelper.hasNetworkConnection()) {
+        if (selectedPeriod != requestedPeriod || firstLoad || !connectionHelper.hasNetworkConnection()) {
             if (marksHelper.isGridSaved(days)) {
                 try {
                     setGridToAdapter(marksHelper.loadSavedGrid(days));
@@ -109,19 +110,19 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             }
         }
 
-        if(loadedFromMemory){
+        if (loadedFromMemory) {
             selectedPeriod = requestedPeriod;
             periodsHelper.setCurrentPeriod(days);
         }
 
-        if(!connectionHelper.hasNetworkConnection()){
-            if(loadedFromMemory) {
+        if (!connectionHelper.hasNetworkConnection()) {
+            if (loadedFromMemory) {
                 View v = getView();
                 if (v == null)
                     v = getActivity().getWindow().getDecorView();
 
                 Chief.makeASnack(v, getString(R.string.offline_mode));
-            }else {
+            } else {
                 antiScroll();
                 Chief.makeAnAlert(getActivity(), getString(R.string.error_grid_not_saved));
             }
@@ -137,7 +138,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 marksHelper.saveGridAsync(result, days, new SerializerHelperWithTimeAndStudentKeysBase.ObjectSaveListener() {
                     @Override
                     public void onSaveCompleted(boolean successful) {
-                        if(successful)
+                        if (successful)
                             periodsHelper.setCurrentPeriod(days);
                     }
                 });
@@ -150,7 +151,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
             @Override
             public void onNetworkError() {
-                if(!loadedFromMemory)
+                if (!loadedFromMemory)
                     antiScroll();
                 Chief.makeASnack(getActivity().getCurrentFocus(), String.format(getString(R.string.fetch_network_error), getString(R.string.marks)));
                 refreshLayout.setRefreshing(false);
@@ -158,7 +159,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
             @Override
             public void onApiError(String message, String json) {
-                if(!loadedFromMemory)
+                if (!loadedFromMemory)
                     antiScroll();
                 Chief.makeReportApiErrorDialog(getActivity(), getString(R.string.marks), message, json, true);
                 refreshLayout.setRefreshing(false);
@@ -166,17 +167,17 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         });
     }
 
-    private void antiScroll(){
+    private void antiScroll() {
         periodsPickerDialog.getListView().setItemChecked(selectedPeriod, true);
         periodsPickerDialog.getListView().setSelection(requestedPeriod);
     }
 
-    private void setGridToAdapter(MarksGrid grid){
-        if(gridRecyclerAdapter == null){
+    private void setGridToAdapter(MarksGrid grid) {
+        if (gridRecyclerAdapter == null) {
             gridRecyclerAdapter = new MarksGridRecyclerAdapter(getActivity(), grid);
             gridRecyclerAdapter.setHasStableIds(true);
             marksRecycler.setAdapter(gridRecyclerAdapter);
-        }else {
+        } else {
             gridRecyclerAdapter.setGrid(grid);
         }
         checkEmptiness(grid);
@@ -184,16 +185,17 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private String[] periods;
     private String[] periodsNames;
-    private void studentSwitched(){
+
+    private void studentSwitched() {
         cancelRequest();
         firstLoad = true;
-        periods = periodsHelper.getPeriods().toArray(new String[] {});
+        periods = periodsHelper.getPeriods().toArray(new String[]{});
         Arrays.sort(periods);
         selectedPeriod = Arrays.binarySearch(periods, periodsHelper.getCurrentPeriod());
         periodsNames = new String[periods.length];
 
         int i = 0;
-        for(String period:periods){
+        for (String period : periods) {
             periodsNames[i++] = periodsHelper.getPeriodName(period);
         }
 
@@ -211,7 +213,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         loadMarks(periods[selectedPeriod]);
     }
 
-    public void showTimePeriodSwitcherDialog(){
+    public void showTimePeriodSwitcherDialog() {
         periodsPickerDialog.show();
     }
 
@@ -226,13 +228,13 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         super.onDetach();
     }
 
-    private void cancelRequest(){
-        if(currentRequest != null && !currentRequest.hasHadResponseDelivered())
+    private void cancelRequest() {
+        if (currentRequest != null && !currentRequest.hasHadResponseDelivered())
             currentRequest.cancel();
     }
 
-    private void checkEmptiness(MarksGrid grid){
-        if(grid.getLessons().size()==0)
+    private void checkEmptiness(MarksGrid grid) {
+        if (grid.getLessons().size() == 0)
             emptyMarks.setVisibility(View.VISIBLE);
         else
             emptyMarks.setVisibility(View.GONE);
@@ -240,7 +242,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Override
     public void onAction(Action action) {
-        switch (action){
+        switch (action) {
             case STUDENT_SWITCHED:
                 studentSwitched();
                 break;

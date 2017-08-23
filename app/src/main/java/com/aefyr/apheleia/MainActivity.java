@@ -2,13 +2,13 @@ package com.aefyr.apheleia;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         helper = Helper.getInstance(this);
-        if(!helper.isLoggedIn()||helper.isTokenExpired()){
+        if (!helper.isLoggedIn() || helper.isTokenExpired()) {
             LoginActivity.startFromActivity(this);
             return;
         }
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity
 
     private MenuItem timePeriodSwitchButton;
     private MenuItem mailFolderSwitchButton;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -98,15 +99,15 @@ public class MainActivity extends AppCompatActivity
         timePeriodSwitchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (currentApheleiaFragment){
+                switch (currentApheleiaFragment) {
                     case DIARY:
-                        ((DiaryFragment)currentFragment).showTimePeriodSwitcherDialog();
+                        ((DiaryFragment) currentFragment).showTimePeriodSwitcherDialog();
                         break;
                     case MARKS:
-                        ((MarksFragment)currentFragment).showTimePeriodSwitcherDialog();
+                        ((MarksFragment) currentFragment).showTimePeriodSwitcherDialog();
                         break;
                     case SCHEDULE:
-                        ((ScheduleFragment)currentFragment).showTimePeriodSwitcherDialog();
+                        ((ScheduleFragment) currentFragment).showTimePeriodSwitcherDialog();
                         break;
                 }
                 return true;
@@ -117,9 +118,9 @@ public class MainActivity extends AppCompatActivity
         mailFolderSwitchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(currentApheleiaFragment==ApheleiaFragment.MESSAGES){
+                if (currentApheleiaFragment == ApheleiaFragment.MESSAGES) {
                     ((MessagesFragment) currentFragment).toggleFolder();
-                    if(((MessagesFragment)currentFragment).isInboxSelected())
+                    if (((MessagesFragment) currentFragment).isInboxSelected())
                         mailFolderSwitchButton.setIcon(R.drawable.ic_send_white_36dp);
                     else
                         mailFolderSwitchButton.setIcon(R.drawable.ic_inbox_white_36dp);
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            ((ActionListener)currentFragment).onAction(ActionListener.Action.UPDATE_REQUESTED);
+            ((ActionListener) currentFragment).onAction(ActionListener.Action.UPDATE_REQUESTED);
             return true;
         }
 
@@ -160,9 +161,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_marks) {
             setFragment(ApheleiaFragment.MARKS);
 
-        }else if(id == R.id.nav_finals){
+        } else if (id == R.id.nav_finals) {
             setFragment(ApheleiaFragment.FINALS);
-        }else if (id == R.id.nav_schedule) {
+        } else if (id == R.id.nav_schedule) {
             setFragment(ApheleiaFragment.SCHEDULE);
 
         } else if (id == R.id.nav_messages) {
@@ -173,25 +174,26 @@ public class MainActivity extends AppCompatActivity
             doNotClose = true;
         }
 
-        if(!doNotClose) {
+        if (!doNotClose) {
             drawer.closeDrawer(GravityCompat.START);
         }
         return true;
     }
 
-    private enum ApheleiaFragment{
+    private enum ApheleiaFragment {
         DIARY, MARKS, SCHEDULE, MESSAGES, FINALS
     }
 
     private Fragment currentFragment;
     private ApheleiaFragment currentApheleiaFragment = ApheleiaFragment.DIARY;
-    private void setFragment(ApheleiaFragment fragment){
-        if(fragment == currentApheleiaFragment)
+
+    private void setFragment(ApheleiaFragment fragment) {
+        if (fragment == currentApheleiaFragment)
             return;
 
         currentApheleiaFragment = fragment;
         fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("C")).commit();
-        switch (fragment){
+        switch (fragment) {
             case DIARY:
                 currentFragment = new DiaryFragment();
                 timePeriodSwitchButton.setVisible(true);
@@ -225,25 +227,26 @@ public class MainActivity extends AppCompatActivity
 
     private TextView studentName;
     private AlertDialog studentPickerDialog;
-    private void initializeUserSwitcher(View navHeader){
+
+    private void initializeUserSwitcher(View navHeader) {
         final ProfileHelper profileHelper = ProfileHelper.getInstance(this);
 
-        ((TextView)navHeader.findViewById(R.id.usernameText)).setText(profileHelper.getName());
-        ((TextView)navHeader.findViewById(R.id.emailText)).setText(profileHelper.getEmail());
+        ((TextView) navHeader.findViewById(R.id.usernameText)).setText(profileHelper.getName());
+        ((TextView) navHeader.findViewById(R.id.emailText)).setText(profileHelper.getEmail());
         studentName = (TextView) navHeader.findViewById(R.id.studentNameText);
 
-        if(profileHelper.getStudentsCount()==1){
+        if (profileHelper.getStudentsCount() == 1) {
             studentName.setVisibility(View.GONE);
             navHeader.findViewById(R.id.switchStudentButton).setVisibility(View.GONE);
             navHeader.findViewById(R.id.currentStudentStaticText).setVisibility(View.GONE);
-        }else {
-            studentName.setText(profileHelper.getStudentName(profileHelper.getCurrentStudentId())+" ("+profileHelper.getStudentClass(profileHelper.getCurrentStudentId())+")");
+        } else {
+            studentName.setText(profileHelper.getStudentName(profileHelper.getCurrentStudentId()) + " (" + profileHelper.getStudentClass(profileHelper.getCurrentStudentId()) + ")");
 
             final String[] studentsIds = profileHelper.getStudentsIds().toArray(new String[]{});
             final String[] studentsNames = new String[studentsIds.length];
             int i = 0;
-            for(String id: studentsIds){
-                studentsNames[i++] = profileHelper.getStudentName(id)+" ("+profileHelper.getStudentClass(id)+")";
+            for (String id : studentsIds) {
+                studentsNames[i++] = profileHelper.getStudentName(id) + " (" + profileHelper.getStudentClass(id) + ")";
             }
 
             studentPickerDialog = new AlertDialog.Builder(this).setTitle(getString(R.string.pick_student)).setSingleChoiceItems(studentsNames, Arrays.asList(studentsIds).indexOf(profileHelper.getCurrentStudentId()), new DialogInterface.OnClickListener() {
@@ -266,11 +269,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void studentSwitched(){
-        ((ActionListener)currentFragment).onAction(ActionListener.Action.STUDENT_SWITCHED);
+    private void studentSwitched() {
+        ((ActionListener) currentFragment).onAction(ActionListener.Action.STUDENT_SWITCHED);
     }
 
-    private void checkPeriods(){
+    private void checkPeriods() {
         PeriodsHelper.getInstance(this).checkPeriods(new PeriodsHelper.OnPeriodsChangeDetectedListener() {
             @Override
             public void OnFoundMoreWeeks() {
@@ -296,7 +299,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void showReinitializePrompt(){
+    private void showReinitializePrompt() {
         new AlertDialog.Builder(this).setTitle(getString(R.string.reinitialization_title)).setMessage(getString(R.string.reinitialization_prompt)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -310,7 +313,7 @@ public class MainActivity extends AppCompatActivity
         }).setNegativeButton(getString(R.string.no), null).create().show();
     }
 
-    private void reInitialize(){
+    private void reInitialize() {
         helper.setLoggedIn(false);
         TheInitializer initializer = new TheInitializer(this, new TheInitializer.OnInitializationListener() {
             @Override
@@ -321,9 +324,9 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void OnError(String m, String json, String failedWhat) {
-                if(json!=null){
+                if (json != null) {
                     Chief.makeReportApiErrorDialog(MainActivity.this, failedWhat, m, json, true);
-                }else {
+                } else {
                     AlertDialog d = new AlertDialog.Builder(MainActivity.this).setTitle(getString(R.string.network_error)).setMessage(getString(R.string.reinitialize_failed)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -339,7 +342,7 @@ public class MainActivity extends AppCompatActivity
         initializer.initialize();
     }
 
-    private void logout(){
+    private void logout() {
         new AlertDialog.Builder(this).setMessage(getString(R.string.logout_prompt)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

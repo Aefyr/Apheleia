@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.TypedValue;
 import android.widget.EditText;
@@ -17,27 +18,28 @@ import java.io.File;
  */
 
 public class Utility {
-    public static float dpToPx(int dp, Resources r){
+
+    public static float dpToPx(int dp, Resources r) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     }
 
-    public static float displayWidth(Resources r){
+    public static float displayWidth(Resources r) {
         return r.getDisplayMetrics().widthPixels;
     }
 
-    public static boolean checkSelectedTime(int i, String[] a){
-        return i<a.length&&i>=0;
+    public static boolean checkSelectedTime(int i, String[] a) {
+        return i < a.length && i >= 0;
     }
 
-    public static int clamp(int a, int min, int max){
-        if(a<min)
+    public static int clamp(int a, int min, int max) {
+        if (a < min)
             return min;
-        if(a>max)
+        if (a > max)
             return max;
         return a;
     }
 
-    public static void highLightET(Resources r, final EditText et){
+    public static void highLightET(Resources r, final EditText et) {
         ValueAnimator colorAnimator = new ValueAnimator();
         colorAnimator.setIntValues(Color.RED, r.getColor(R.color.colorEditTextHint));
         colorAnimator.setEvaluator(new ArgbEvaluator());
@@ -54,7 +56,7 @@ public class Utility {
         colorAnimator.start();
     }
 
-    public static void deleteRecursive(File file){
+    public static void deleteRecursive(File file) {
         File[] contents = file.listFiles();
         if (contents != null) {
             for (File f : contents) {
@@ -64,7 +66,8 @@ public class Utility {
         file.delete();
     }
 
-    public static void colorRefreshLayout(SwipeRefreshLayout refreshLayout){
+    public static void colorRefreshLayout(SwipeRefreshLayout refreshLayout) {
         refreshLayout.setColorSchemeColors(refreshLayout.getContext().getResources().getColor(R.color.colorAccent));
     }
+
 }

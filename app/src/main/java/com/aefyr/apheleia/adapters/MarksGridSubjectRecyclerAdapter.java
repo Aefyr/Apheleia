@@ -18,22 +18,22 @@ import com.aefyr.journalism.objects.minor.SubjectInGrid;
  * Created by Aefyr on 14.08.2017.
  */
 
-class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubjectRecyclerAdapter.MarksGridSubjectViewHolder>{
+class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubjectRecyclerAdapter.MarksGridSubjectViewHolder> {
 
     private SubjectInGrid subject;
     private static LayoutInflater inflater;
     private static TimeLord timeLord;
 
-    MarksGridSubjectRecyclerAdapter(SubjectInGrid subject, LayoutInflater inflater2){
+    MarksGridSubjectRecyclerAdapter(SubjectInGrid subject, LayoutInflater inflater2) {
         this.subject = subject;
 
-        if(inflater==null) {
+        if (inflater == null) {
             inflater = inflater2;
             timeLord = TimeLord.getInstance();
         }
     }
 
-    void setSubject(SubjectInGrid subject){
+    void setSubject(SubjectInGrid subject) {
         this.subject = subject;
         notifyDataSetChanged();
     }
@@ -50,15 +50,15 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
         holder.date.setText(timeLord.getGridMarkDate(mark.getDate()));
         holder.mark.setText(mark.getValue());
 
-        if(mark.hasComment()){
+        if (mark.hasComment()) {
             holder.mark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Chief.makeAnAlert(view.getContext(), mark.getComment());
+                    Chief.makeAnAlert(inflater.getContext(), mark.getComment());
                 }
             });
             holder.mark.setBackgroundResource(R.drawable.mark_circle);
-        }else {
+        } else {
             holder.mark.setOnClickListener(null);
             holder.mark.setBackgroundColor(Color.TRANSPARENT);
         }
@@ -66,14 +66,14 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
 
     @Override
     public int getItemCount() {
-        if(subject==null)
+        if (subject == null)
             return 0;
         return subject.getMarks().size();
     }
 
     @Override
     public long getItemId(int position) {
-        return (subject.getMarks().get(position).getDate()+subject.getMarks().get(position).getValue()).hashCode()+position;
+        return (subject.getMarks().get(position).getDate() + subject.getMarks().get(position).getValue()).hashCode() + position;
     }
 
     @Override
@@ -81,10 +81,11 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
         return 1337;
     }
 
-    public class MarksGridSubjectViewHolder extends RecyclerView.ViewHolder{
+    public class MarksGridSubjectViewHolder extends RecyclerView.ViewHolder {
 
         private TextView date;
         private Button mark;
+
         MarksGridSubjectViewHolder(View itemView) {
             super(itemView);
             date = (TextView) itemView.findViewById(R.id.gridMarkDate);

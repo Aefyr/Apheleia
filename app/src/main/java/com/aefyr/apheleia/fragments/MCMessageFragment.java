@@ -38,18 +38,18 @@ public class MCMessageFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(forcedSubject!=null) {
+        if (forcedSubject != null) {
             subject.setText(forcedSubject);
             text.requestFocus();
         }
     }
 
-    public boolean checkFields(){
-        if(subject.length()==0){
+    public boolean checkFields() {
+        if (subject.length() == 0) {
             Utility.highLightET(getResources(), subject);
             return false;
         }
-        if(text.length() == 0){
+        if (text.length() == 0) {
             Utility.highLightET(getResources(), text);
             return false;
         }
@@ -57,20 +57,19 @@ public class MCMessageFragment extends Fragment {
         return true;
     }
 
-    public String getMessageSubject(){
+    public String getMessageSubject() {
         return subject.getText().toString();
     }
 
-    public String getMessageText(){
+    public String getMessageText() {
         return text.getText().toString();
     }
 
     private String forcedSubject;
-    public void setForcedMessageSubject(String subjectText){
+
+    public void setForcedMessageSubject(String subjectText) {
         forcedSubject = subjectText;
     }
-
-
 
 
 }

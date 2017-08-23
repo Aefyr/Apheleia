@@ -24,7 +24,7 @@ import com.aefyr.journalism.objects.minor.WeekDay;
  * Created by Aefyr on 12.08.2017.
  */
 
-class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapter.LessonViewHolder>{
+class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapter.LessonViewHolder> {
     private WeekDay day;
     private static TimeLord timeLord;
     private static DiaryRecyclerAdapter.OnLinkOpenRequestListener linkOpenRequestListener;
@@ -37,30 +37,29 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
     private static String TIME_UNKNOWN;
 
 
-
-    DiaryDayRecyclerAdapter(WeekDay day, LayoutInflater inflater2){
+    DiaryDayRecyclerAdapter(WeekDay day, LayoutInflater inflater2) {
         this.day = day;
 
-        if(inflater == null) {
+        if (inflater == null) {
             inflater = inflater2;
             timeLord = TimeLord.getInstance();
             initializeStaticResources(inflater2.getContext().getResources());
         }
     }
 
-    private void initializeStaticResources(Resources r){
+    private void initializeStaticResources(Resources r) {
         COLOR_NORMAL_LESSON = r.getColor(R.color.colorAccent);
         COLOR_OT_LESSON = r.getColor(R.color.colorOvertimeLesson);
         OVERTIME = r.getString(R.string.overtime);
         TIME_UNKNOWN = r.getString(R.string.time_unknown);
     }
 
-    void setDay(WeekDay day){
+    void setDay(WeekDay day) {
         this.day = day;
         notifyDataSetChanged();
     }
 
-    void setOnLinkOpenRequestListener(DiaryRecyclerAdapter.OnLinkOpenRequestListener listener){
+    void setOnLinkOpenRequestListener(DiaryRecyclerAdapter.OnLinkOpenRequestListener listener) {
         linkOpenRequestListener = listener;
     }
 
@@ -72,50 +71,50 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
     @Override
     public void onBindViewHolder(final LessonViewHolder holder, int position) {
         boolean overtimeLesson = position >= day.getLessons().size();
-        Lesson lesson = overtimeLesson?day.getOvertimeLessons().get(position-day.getLessons().size()):day.getLessons().get(position);
+        Lesson lesson = overtimeLesson ? day.getOvertimeLessons().get(position - day.getLessons().size()) : day.getLessons().get(position);
 
-        if(overtimeLesson) {
+        if (overtimeLesson) {
             holder.lessonNumber.setText(OVERTIME);
             holder.lessonNumber.setTextColor(COLOR_OT_LESSON);
-        }else {
+        } else {
             holder.lessonNumber.setText(lesson.getNumber());
             holder.lessonNumber.setTextColor(COLOR_NORMAL_LESSON);
         }
 
         holder.lessonName.setText(lesson.getName());
 
-        if(lesson.hasTimes()) {
+        if (lesson.hasTimes()) {
             holder.lessonTimes.setText(String.format("%s - %s", timeLord.getLessonTime(lesson.getStartTime()), timeLord.getLessonTime(lesson.getEndTime())));
-        }else
+        } else
             holder.lessonTimes.setText(TIME_UNKNOWN);
 
-        if(lesson.hasHomework()){
+        if (lesson.hasHomework()) {
             Homework homework = lesson.getHomework();
 
-            if(homework.hasTasks()) {
+            if (homework.hasTasks()) {
                 StringBuilder homeworkBuilder = new StringBuilder();
 
                 int t = 0;
                 for (Hometask task : homework.getTasks()) {
                     homeworkBuilder.append("● ");
                     homeworkBuilder.append(task.getTask());
-                    if(task.isPersonal()) {
+                    if (task.isPersonal()) {
                         homeworkBuilder.append(" ");
                         homeworkBuilder.append(holder.itemView.getContext().getString(R.string.personal));
                     }
-                    if (t++ < lesson.getHomework().getTasks().size()-1)
+                    if (t++ < lesson.getHomework().getTasks().size() - 1)
                         homeworkBuilder.append("\n");
                 }
 
                 holder.lessonHomework.setText(homeworkBuilder.toString());
-            }else {
+            } else {
                 holder.lessonHomework.setText(holder.itemView.getContext().getString(R.string.no_homework));
             }
 
-            if(homework.hasAttachments()){
+            if (homework.hasAttachments()) {
                 //Show and populate attachments container !!
                 holder.attachmentsContainer.removeAllViews();
-                for(final Attachment attachment: homework.getAttachments()){
+                for (final Attachment attachment : homework.getAttachments()) {
                     View view = inflater.inflate(R.layout.attachment, null);
 
                     Button button = (Button) view.findViewById(R.id.attachmentButton);
@@ -134,32 +133,32 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
                 }
                 holder.attachmentsContainer.setVisibility(View.VISIBLE);
 
-            }else {
+            } else {
                 holder.attachmentsContainer.setVisibility(View.GONE);
                 holder.attachmentsContainer.removeAllViews();
             }
 
-        }else {
+        } else {
             holder.lessonHomework.setText(holder.itemView.getContext().getString(R.string.no_homework));
             //Hide attachments container !!
         }
 
-        if(lesson.hasMarks()){
+        if (lesson.hasMarks()) {
             holder.marksContainer.removeAllViews();
 
-            for(final Mark mark: lesson.getMarks()){
+            for (final Mark mark : lesson.getMarks()) {
                 View markView = inflater.inflate(R.layout.diary_day_lesson_mark, null);
                 final Button markButton = (Button) markView.findViewById(R.id.markButton);
                 markButton.setText(mark.getValue());
 
-                if(mark.hasComment()){
+                if (mark.hasComment()) {
                     markButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Chief.makeAnAlert(holder.itemView.getContext(), mark.getComment());
+                            Chief.makeAnAlert(inflater.getContext(), mark.getComment());
                         }
                     });
-                }else {
+                } else {
                     markButton.setBackgroundColor(Color.TRANSPARENT);
                 }
 
@@ -167,7 +166,7 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
             }
 
             holder.marksContainer.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             holder.marksContainer.setVisibility(View.GONE);
             holder.marksContainer.removeAllViews();
 
@@ -177,23 +176,23 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
 
     @Override
     public int getItemCount() {
-        if(day==null)
+        if (day == null)
             return 0;
-        if(day.hasOvertimeLessons())
-            return day.getLessons().size()+day.getOvertimeLessons().size();
+        if (day.hasOvertimeLessons())
+            return day.getLessons().size() + day.getOvertimeLessons().size();
         return day.getLessons().size();
     }
 
     @Override
     public long getItemId(int position) {
         boolean overtimeLesson = position >= day.getLessons().size();
-        Lesson lesson = overtimeLesson?day.getOvertimeLessons().get(position-day.getLessons().size()):day.getLessons().get(position);
+        Lesson lesson = overtimeLesson ? day.getOvertimeLessons().get(position - day.getLessons().size()) : day.getLessons().get(position);
 
 
-        if(lesson.hasTimes())
+        if (lesson.hasTimes())
             return lesson.getStartTime();
         else
-            return (lesson.getName()+position).hashCode();
+            return (lesson.getName() + position).hashCode();
     }
 
     @Override
@@ -201,7 +200,7 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
         return 444;
     }
 
-    class LessonViewHolder extends RecyclerView.ViewHolder{
+    class LessonViewHolder extends RecyclerView.ViewHolder {
         private TextView lessonNumber;
         private TextView lessonName;
         private TextView lessonTimes;
@@ -209,6 +208,7 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
 
         private LinearLayout marksContainer;
         private LinearLayout attachmentsContainer;
+
         LessonViewHolder(View itemView) {
             super(itemView);
             lessonNumber = (TextView) itemView.findViewById(R.id.lessonNumber);
@@ -220,8 +220,8 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
         }
     }
 
-    private void openLink(String uri){
-        if(linkOpenRequestListener!=null)
+    private void openLink(String uri) {
+        if (linkOpenRequestListener != null)
             linkOpenRequestListener.onLinkOpenRequest(uri);
     }
 }

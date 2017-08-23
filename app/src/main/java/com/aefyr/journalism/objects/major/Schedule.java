@@ -6,10 +6,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Schedule implements Serializable{
-	ArrayList<WeekDay> days;
-	
-	public ArrayList<WeekDay> getDays(){
-		return days;
-	}
+public class Schedule implements Serializable {
+    ArrayList<WeekDay> days;
+
+    public ArrayList<WeekDay> getDays() {
+        return days;
+    }
 }

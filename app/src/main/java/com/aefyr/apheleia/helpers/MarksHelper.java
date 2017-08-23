@@ -12,7 +12,7 @@ public class MarksHelper extends SerializerHelperWithTimeAndStudentKeysBase<Mark
     private static MarksHelper instance;
 
 
-    private MarksHelper(Context c){
+    private MarksHelper(Context c) {
         super(c);
         instance = this;
     }
@@ -28,16 +28,16 @@ public class MarksHelper extends SerializerHelperWithTimeAndStudentKeysBase<Mark
     }
 
 
-    public static MarksHelper getInstance(Context c){
-        return instance==null?new MarksHelper(c): instance;
+    public static MarksHelper getInstance(Context c) {
+        return instance == null ? new MarksHelper(c) : instance;
     }
 
-    public boolean isGridSaved(String weeks){
+    public boolean isGridSaved(String weeks) {
         return isObjectSaved(weeks);
     }
 
 
-    public boolean saveGrid(MarksGrid grid, String weeks){
+    public boolean saveGrid(MarksGrid grid, String weeks) {
         return saveObject(grid, weeks);
     }
 
@@ -45,11 +45,11 @@ public class MarksHelper extends SerializerHelperWithTimeAndStudentKeysBase<Mark
         return loadSavedObject(weeks);
     }
 
-    public void saveGridAsync(MarksGrid grid, String weeks, ObjectSaveListener listener){
+    public void saveGridAsync(MarksGrid grid, String weeks, ObjectSaveListener listener) {
         saveObjectAsync(grid, weeks, listener);
     }
 
-    static void destroy(){
+    static void destroy() {
         instance = null;
     }
 

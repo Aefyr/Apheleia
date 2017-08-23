@@ -17,22 +17,22 @@ import com.aefyr.journalism.objects.minor.SubjectInGrid;
  * Created by Aefyr on 14.08.2017.
  */
 
-public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecyclerAdapter.MarksGridViewHolder>{
+public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecyclerAdapter.MarksGridViewHolder> {
 
     private MarksGrid grid;
     private LayoutInflater inflater;
     private static RecyclerView.RecycledViewPool marksPool;
 
-    public MarksGridRecyclerAdapter(Context c, MarksGrid grid){
+    public MarksGridRecyclerAdapter(Context c, MarksGrid grid) {
         this.grid = grid;
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(marksPool==null) {
+        if (marksPool == null) {
             marksPool = new RecyclerView.RecycledViewPool();
             marksPool.setMaxRecycledViews(1337, 322);
         }
     }
 
-    public void setGrid(MarksGrid grid){
+    public void setGrid(MarksGrid grid) {
         this.grid = grid;
         notifyDataSetChanged();
     }
@@ -55,7 +55,7 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
 
     @Override
     public long getItemId(int position) {
-        return (grid.getLessons().get(position).getName()+grid.getLessons().get(position).getAverageMark()).hashCode();
+        return (grid.getLessons().get(position).getName() + grid.getLessons().get(position).getAverageMark()).hashCode();
     }
 
     @Override
@@ -68,10 +68,11 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
         return 322;
     }
 
-    public class MarksGridViewHolder extends RecyclerView.ViewHolder{
+    public class MarksGridViewHolder extends RecyclerView.ViewHolder {
         private MarksGridSubjectRecyclerAdapter subjectRecyclerAdapter;
         private TextView subjectName;
         private TextView subjectAverage;
+
         public MarksGridViewHolder(View itemView) {
             super(itemView);
             subjectName = (TextView) itemView.findViewById(R.id.gridSubjectName);
@@ -83,7 +84,7 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
             subjectRecyclerAdapter = new MarksGridSubjectRecyclerAdapter(null, inflater);
             subjectRecyclerAdapter.setHasStableIds(true);
 
-            GridLayoutManager m = new GridLayoutManager(itemView.getContext(), (int) (Utility.displayWidth(itemView.getResources())/ Utility.dpToPx(46, itemView.getResources())));
+            GridLayoutManager m = new GridLayoutManager(itemView.getContext(), (int) (Utility.displayWidth(itemView.getResources()) / Utility.dpToPx(46, itemView.getResources())));
             m.setInitialPrefetchItemCount(128);
             subjectRecycler.setLayoutManager(m);
             subjectRecycler.setAdapter(subjectRecyclerAdapter);

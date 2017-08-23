@@ -17,23 +17,23 @@ public class Destroyer {
     private OnDestructionListener listener;
     private ProgressDialog progressDialog;
 
-    public Destroyer(Context c){
+    public Destroyer(Context c) {
         this.c = c;
         progressDialog = new ProgressDialog(c, ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage(c.getString(R.string.logging_out));
     }
 
-    public void destroy(OnDestructionListener listener){
+    public void destroy(OnDestructionListener listener) {
         this.listener = listener;
         progressDialog.show();
         new DestructionTask().execute();
     }
 
-    public interface OnDestructionListener{
+    public interface OnDestructionListener {
         void onDestroyed();
     }
 
-    private class DestructionTask extends AsyncTask<Void, Void, Void>{
+    private class DestructionTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -55,7 +55,7 @@ public class Destroyer {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progressDialog.dismiss();
-            if(listener!=null)
+            if (listener != null)
                 listener.onDestroyed();
         }
     }

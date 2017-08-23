@@ -13,6 +13,7 @@
 
     <color name="colorShadowStart">#000000</color>
     <color name="colorShadowEnd">#00bdbdbd</color>
+    <color name="colorMarkCircleHighlight">#b2ebf2</color>
 
 
 </resources>

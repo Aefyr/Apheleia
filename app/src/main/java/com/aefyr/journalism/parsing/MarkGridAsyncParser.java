@@ -21,19 +21,19 @@ import java.util.ArrayList;
 public class MarkGridAsyncParser {
     private static MarkGridAsyncParser instance;
 
-    private MarkGridAsyncParser(){
+    private MarkGridAsyncParser() {
         instance = this;
     }
 
-    public static MarkGridAsyncParser getInstance(){
-        return instance==null?new MarkGridAsyncParser():instance;
+    public static MarkGridAsyncParser getInstance() {
+        return instance == null ? new MarkGridAsyncParser() : instance;
     }
 
-    public void parseGrid(String rawResponse, String studentId, EljurApiClient.JournalismListener<MarksGrid> listener){
+    public void parseGrid(String rawResponse, String studentId, EljurApiClient.JournalismListener<MarksGrid> listener) {
         new MarksParseTask().execute(new AsyncParserParams<>(rawResponse, studentId, listener));
     }
 
-    private class MarksParseTask extends AsyncParserBase<MarksGrid>{
+    private class MarksParseTask extends AsyncParserBase<MarksGrid> {
 
         @Override
         protected AsyncParserTaskResult<MarksGrid> doInBackground(AsyncParserParams<MarksGrid>... asyncParserParams) {
@@ -43,7 +43,7 @@ public class MarkGridAsyncParser {
 
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-            if(response.size()==0||response.get("students")==null){
+            if (response.size() == 0 || response.get("students") == null) {
                 return new AsyncParserTaskResult<MarksGrid>(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
             }
 
@@ -51,17 +51,17 @@ public class MarkGridAsyncParser {
 
             ArrayList<SubjectInGrid> subjects = new ArrayList<>();
 
-            for(JsonElement lessonEl: lessons){
+            for (JsonElement lessonEl : lessons) {
                 JsonObject lesson = lessonEl.getAsJsonObject();
 
                 ArrayList<GridMark> marks = new ArrayList<>();
 
-                if(lesson.get("marks")!=null&&lesson.getAsJsonArray("marks").size()>0){
-                    for(JsonElement markEl: lesson.getAsJsonArray("marks")){
+                if (lesson.get("marks") != null && lesson.getAsJsonArray("marks").size() > 0) {
+                    for (JsonElement markEl : lesson.getAsJsonArray("marks")) {
                         JsonObject mark = markEl.getAsJsonObject();
 
                         //Phantom marks filter, why do they even appear tho?
-                        if(mark.get("value").getAsString().equals(""))
+                        if (mark.get("value").getAsString().equals(""))
                             continue;
 
                         GridMark gridMark;
@@ -74,14 +74,14 @@ public class MarkGridAsyncParser {
                             } else {
                                 gridMark = MinorObjectsFactory.createGridMark(mark.get("value").getAsString(), mark.get("date").getAsString());
                             }
-                        }catch (EljurApiException e){
+                        } catch (EljurApiException e) {
                             return new AsyncParserTaskResult<MarksGrid>(e.getMessage(), rawResponse);
                         }
 
                         marks.add(gridMark);
                     }
                     subjects.add(MinorObjectsFactory.createSubjectInGrid(lesson.get("name").getAsString(), lesson.get("average").getAsString(), marks));
-                }else {
+                } else {
                     subjects.add(MinorObjectsFactory.createSubjectInGrid(lesson.get("name").getAsString(), lesson.get("average").getAsString(), null));
                 }
 

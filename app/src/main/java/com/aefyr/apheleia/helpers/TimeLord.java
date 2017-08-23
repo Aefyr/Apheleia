@@ -12,7 +12,6 @@ public class TimeLord {
     private static TimeLord instance;
 
     private SimpleDateFormat dayTitleSDF;
-    private DateFormatSymbols russianDFS;
 
     private SimpleDateFormat lessonTimesSDF;
 
@@ -24,17 +23,9 @@ public class TimeLord {
 
     private SimpleDateFormat fullMessageSDF;
 
-    private TimeLord(){
+    private TimeLord() {
         instance = this;
 
-        russianDFS = new DateFormatSymbols(){
-            private final String[] months = {"января", "февраля", "марта", "апреля", "мая", "июня",
-                    "июля", "августа", "сентября", "октября", "ноября", "декабря"};
-            @Override
-            public String[] getMonths() {
-                return months;
-            }
-        };
         dayTitleSDF = new SimpleDateFormat("EEEE, dd MMMM", Locale.getDefault());
 
         lessonTimesSDF = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -48,31 +39,32 @@ public class TimeLord {
         fullMessageSDF = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
     }
 
-    public static TimeLord getInstance(){
-       return instance==null?new TimeLord():instance;
+    public static TimeLord getInstance() {
+        return instance == null ? new TimeLord() : instance;
     }
 
-    public String getDayTitle(long date){
-        return dayTitleSDF.format(date);
+    public String getDayTitle(long date) {
+        String d = dayTitleSDF.format(date);
+        return d.replaceFirst(String.valueOf(d.charAt(0)), String.valueOf(d.charAt(0)).toUpperCase());
     }
 
-    public String getLessonTime(long time){
-        return  lessonTimesSDF.format(time);
+    public String getLessonTime(long time) {
+        return lessonTimesSDF.format(time);
     }
 
-    public String getWeekOrPeriodDate(long date){
-        return  weeksAndPeriodsSDF.format(date);
+    public String getWeekOrPeriodDate(long date) {
+        return weeksAndPeriodsSDF.format(date);
     }
 
-    public String getGridMarkDate(long date){
-        return  gridMarkSDF.format(date);
+    public String getGridMarkDate(long date) {
+        return gridMarkSDF.format(date);
     }
 
-    public String getMessageDate(long date){
+    public String getMessageDate(long date) {
         return messageSDF.format(date);
     }
 
-    public String getFullMessageDate(long date){
-        return  fullMessageSDF.format(date);
+    public String getFullMessageDate(long date) {
+        return fullMessageSDF.format(date);
     }
 }

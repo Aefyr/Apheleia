@@ -11,7 +11,7 @@ import com.aefyr.journalism.objects.major.DiaryEntry;
 public class DiaryHelper extends SerializerHelperWithTimeAndStudentKeysBase<DiaryEntry> {
     private static DiaryHelper instance;
 
-    private DiaryHelper(Context c){
+    private DiaryHelper(Context c) {
         super(c);
         instance = this;
     }
@@ -26,31 +26,31 @@ public class DiaryHelper extends SerializerHelperWithTimeAndStudentKeysBase<Diar
         return ".ade";
     }
 
-    public static DiaryHelper getInstance(Context c){
-        return instance==null?new DiaryHelper(c):instance;
+    public static DiaryHelper getInstance(Context c) {
+        return instance == null ? new DiaryHelper(c) : instance;
     }
 
-    public boolean saveEntry(DiaryEntry entry, String weeks){
+    public boolean saveEntry(DiaryEntry entry, String weeks) {
         return saveObject(entry, weeks);
     }
 
-    public boolean isEntrySaved(String weeks){
+    public boolean isEntrySaved(String weeks) {
         return isObjectSaved(weeks);
     }
 
     public DiaryEntry loadSavedEntry(String weeks) throws Exception {
-            return loadSavedObject(weeks);
+        return loadSavedObject(weeks);
     }
 
-    public void saveEntryAsync(DiaryEntry grid, String weeks, ObjectSaveListener listener){
+    public void saveEntryAsync(DiaryEntry grid, String weeks, ObjectSaveListener listener) {
         saveObjectAsync(grid, weeks, listener);
     }
 
-    public void loadEntryAsync(String weeks, ObjectLoadListener listener){
+    public void loadEntryAsync(String weeks, ObjectLoadListener listener) {
         loadSavedObjectAsync(weeks, listener);
     }
 
-    static void destroy(){
+    static void destroy() {
         instance = null;
     }
 

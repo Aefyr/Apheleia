@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 
 public class MessageReceiversInfo {
-	ArrayList<MessageReceiversGroup> groups;
-	
-	public ArrayList<MessageReceiversGroup> getGroups(){
-		return groups;
-	}
+    ArrayList<MessageReceiversGroup> groups;
+
+    public ArrayList<MessageReceiversGroup> getGroups() {
+        return groups;
+    }
 
 }

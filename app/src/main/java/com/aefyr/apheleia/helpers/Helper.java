@@ -16,7 +16,7 @@ public class Helper {
     private SharedPreferences preferences;
 
     public static Helper getInstance(Context c) {
-        return instance==null?new Helper(c):instance;
+        return instance == null ? new Helper(c) : instance;
     }
 
     private Helper(Context c) {
@@ -25,51 +25,51 @@ public class Helper {
     }
 
     //Logging in...
-    public boolean isTokenSaved(){
+    public boolean isTokenSaved() {
         return !preferences.getString("token", "nope").equals("nope");
     }
 
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         return preferences.getBoolean("logged_in", false);
     }
 
-    public void setLoggedIn(boolean loggedIn){
+    public void setLoggedIn(boolean loggedIn) {
         preferences.edit().putBoolean("logged_in", loggedIn).apply();
     }
 
-    public void saveDomain(String domain){
+    public void saveDomain(String domain) {
         preferences.edit().putString("domain", domain).apply();
     }
 
-    public String getDomain(){
+    public String getDomain() {
         return preferences.getString("domain", "nande");
     }
 
     //Token
-    public void saveToken(Token token){
+    public void saveToken(Token token) {
         preferences.edit().putString("token", token.getToken()).putLong("token_expires", token.getExpirationTime()).apply();
     }
 
-    public boolean isTokenExpired(){
+    public boolean isTokenExpired() {
         return System.currentTimeMillis() > preferences.getLong("token_expires", 0);
     }
 
-    String getToken(){
+    String getToken() {
         return preferences.getString("token", "nani");
     }
 
     //Persona
     private EljurPersona persona;
-    public EljurPersona getPersona(){
-        if(persona == null)
+
+    public EljurPersona getPersona() {
+        if (persona == null)
             persona = new EljurPersona(getToken(), getDomain());
         return persona;
     }
 
-    public static void destroy(){
+    public static void destroy() {
         instance = null;
     }
-
 
 
 }

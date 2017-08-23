@@ -28,6 +28,7 @@
         android:layout_marginTop="@dimen/login_activity_edit_texts_margin"
         android:backgroundTint="@color/colorAccent"
         android:ems="10"
+        android:fontFamily="sans-serif"
         android:gravity="center"
         android:hint="@string/password"
         android:inputType="textPassword"

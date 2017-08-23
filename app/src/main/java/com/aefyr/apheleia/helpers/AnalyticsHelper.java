@@ -11,17 +11,17 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class AnalyticsHelper {
 
-    public static void logAppSectionViewEvent(FirebaseAnalytics mFirebaseAnalytics, String section){
+    public static void logAppSectionViewEvent(FirebaseAnalytics mFirebaseAnalytics, String section) {
         Bundle params = new Bundle();
         params.putString(FirebaseConstants.APP_SECTION, section);
         mFirebaseAnalytics.logEvent(FirebaseConstants.VIEW_SECTION, params);
     }
 
-    public static void logMessageViewEvent(FirebaseAnalytics mFirebaseAnalytics){
+    public static void logMessageViewEvent(FirebaseAnalytics mFirebaseAnalytics) {
         mFirebaseAnalytics.logEvent(FirebaseConstants.MESSAGE_VIEWED, null);
     }
 
-    public static void logMessageSentEvent(FirebaseAnalytics mFirebaseAnalytics){
+    public static void logMessageSentEvent(FirebaseAnalytics mFirebaseAnalytics) {
         mFirebaseAnalytics.logEvent(FirebaseConstants.MESSAGE_SENT, null);
     }
 

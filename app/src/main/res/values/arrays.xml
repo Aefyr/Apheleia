@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="periods_palette">
+        <item>-41378</item>
+        <item>-27352</item>
+        <item>-1321440</item>
+        <item>-7281035</item>
+        <item>-9376018</item>
+        <item>-10791960</item>
+        <item>-6601985</item>
+    </integer-array>
+</resources>

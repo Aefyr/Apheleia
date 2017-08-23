@@ -3,10 +3,14 @@ package com.aefyr.apheleia;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameET;
     private EditText passwordET;
     private ImageButton passwordVisibilitySwitch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         setupLoginSystem();
     }
 
-    private void setupDomainHelpButton(){
+    private void setupDomainHelpButton() {
         findViewById(R.id.schoolDomainHelp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,15 +61,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean passwordShown = false;
-    private void setupPasswordVisibilitySwitcher(){
+
+    private void setupPasswordVisibilitySwitcher() {
         passwordVisibilitySwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int selection = passwordET.getSelectionEnd();
-                if(passwordShown){
+                if (passwordShown) {
                     passwordET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     passwordVisibilitySwitch.setImageResource(R.drawable.ic_visibility_black_24dp);
-                }else {
+                } else {
                     passwordET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                     passwordVisibilitySwitch.setImageResource(R.drawable.ic_visibility_off_black_24dp);
                 }
@@ -74,21 +80,28 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void setupLoginSystem(){
+    private void setupLoginSystem() {
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+
+        domainET.setFilters(new InputFilter[]{new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                return (source.toString()).replaceAll("[^a-zA-Z0-9_-]", "");
+            }
+        }});
 
         findViewById(R.id.singIn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(domainET.getText().length()==0) {
+                if (domainET.getText().length() == 0) {
                     Utility.highLightET(getResources(), domainET);
                     return;
                 }
-                if(usernameET.getText().length()==0) {
+                if (usernameET.getText().length() == 0) {
                     Utility.highLightET(getResources(), usernameET);
                     return;
                 }
-                if(passwordET.getText().length()==0) {
+                if (passwordET.getText().length() == 0) {
                     Utility.highLightET(getResources(), passwordET);
                     return;
                 }
@@ -112,9 +125,9 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void OnError(String m, String json, String failedWhat) {
                                 new Destroyer(LoginActivity.this).destroy(null);
-                                if(json!=null) {
-                                    Chief.makeReportApiErrorDialog(LoginActivity.this,failedWhat, m, json, true);
-                                }else {
+                                if (json != null) {
+                                    Chief.makeReportApiErrorDialog(LoginActivity.this, failedWhat, m, json, true);
+                                } else {
                                     Chief.makeAnAlert(LoginActivity.this, m);
                                 }
                             }
@@ -156,11 +169,11 @@ public class LoginActivity extends AppCompatActivity {
 
     ProgressDialog progressDialog;
 
-    private void showAlert(String title, String message){
+    private void showAlert(String title, String message) {
         new AlertDialog.Builder(this).setTitle(title).setMessage(message).setPositiveButton(getString(R.string.ok), null).create().show();
     }
 
-    private void loggedIn(){
+    private void loggedIn() {
         helper.setLoggedIn(true);
 
         //Btw, this may be used to identify person in unique cases like only male/female student in class or so. Does that mean this is personal data? Actually, I guess school life doesn't count as personal/family life, right?
@@ -169,15 +182,15 @@ public class LoginActivity extends AppCompatActivity {
         params.putString(FirebaseConstants.SCHOOL_DOMAIN, helper.getDomain());
         params.putString(FirebaseConstants.ROLE, profileHelper.getRole());
         params.putString(FirebaseConstants.GENDER, profileHelper.getGender());
-        if(profileHelper.getRole().equals(ProfileHelper.Role.PARENT))
+        if (profileHelper.getRole().equals(ProfileHelper.Role.PARENT))
             params.putInt(FirebaseConstants.STUDENTS_COUNT, profileHelper.getStudentsCount());
         else {
             String rawClass = profileHelper.getStudentClass(profileHelper.getCurrentStudentId());
             int parsedClass = 0;
             try {
                 parsedClass = Integer.parseInt(rawClass.replaceAll("[^0-9]", ""));
-            }catch (NumberFormatException e){
-                FirebaseCrash.log("Can't parse class name: "+rawClass);
+            } catch (NumberFormatException e) {
+                FirebaseCrash.log("Can't parse class name: " + rawClass);
                 FirebaseCrash.report(e);
             }
             params.putString(FirebaseConstants.RAW_CLASS, rawClass);
@@ -190,7 +203,7 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    public static void startFromActivity(Activity activity){
+    public static void startFromActivity(Activity activity) {
         Intent i = new Intent(activity, LoginActivity.class);
         activity.startActivity(i);
         activity.finish();

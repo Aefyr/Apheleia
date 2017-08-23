@@ -13,9 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MessageReceiversAdapter;
+import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.objects.major.MessageReceiversInfo;
 import com.android.volley.toolbox.StringRequest;
@@ -58,26 +58,27 @@ public class MCReceiversFragment extends Fragment {
     }
 
     private String forcedReceiver;
-    public void forceSetReceiver(String id){
+
+    public void forceSetReceiver(String id) {
         forcedReceiver = id;
     }
 
-    public HashSet<String> getReceiversIds(){
+    public HashSet<String> getReceiversIds() {
         return receiversAdapter.getCheckedReceiversIds();
     }
 
-    private void setReceiversInfoToAdapter(MessageReceiversInfo receiversInfo){
-        if(receiversAdapter == null) {
+    private void setReceiversInfoToAdapter(MessageReceiversInfo receiversInfo) {
+        if (receiversAdapter == null) {
             receiversAdapter = new MessageReceiversAdapter(receiversInfo);
             receiversAdapter.setHasStableIds(true);
             receiversRecycler.setAdapter(receiversAdapter);
-        }else
+        } else
             receiversAdapter.setReceiversInfo(receiversInfo);
-        if(forcedReceiver!=null)
+        if (forcedReceiver != null)
             receiversAdapter.checkReceiver(forcedReceiver);
     }
 
-    private void loadReceivers(){
+    private void loadReceivers() {
         progressDialog.show();
         receiversGetRequest = EljurApiClient.getInstance(getActivity()).getMessagesReceivers(Helper.getInstance(getActivity()).getPersona(), new EljurApiClient.JournalismListener<MessageReceiversInfo>() {
             @Override
@@ -116,7 +117,7 @@ public class MCReceiversFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        if(!receiversGetRequest.hasHadResponseDelivered())
+        if (!receiversGetRequest.hasHadResponseDelivered())
             receiversGetRequest.cancel();
         super.onDetach();
     }

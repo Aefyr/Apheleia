@@ -12,9 +12,9 @@ public class WeekDaysComparator implements Comparator<WeekDay> {
 
     @Override
     public int compare(WeekDay day1, WeekDay day2) {
-        if(day1.getDate()>day2.getDate())
+        if (day1.getDate() > day2.getDate())
             return 1;
-        if(day1.getDate()<day2.getDate())
+        if (day1.getDate() < day2.getDate())
             return -1;
         return 0;
     }

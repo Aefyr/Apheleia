@@ -6,10 +6,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Finals implements Serializable{
-	ArrayList<FinalSubject> subjects;
-	
-	public ArrayList<FinalSubject> getSubjects(){
-		return subjects;
-	}
+public class Finals implements Serializable {
+    ArrayList<FinalSubject> subjects;
+
+    public ArrayList<FinalSubject> getSubjects() {
+        return subjects;
+    }
 }

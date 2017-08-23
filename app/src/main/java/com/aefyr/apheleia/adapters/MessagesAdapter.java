@@ -13,15 +13,13 @@ import com.aefyr.apheleia.helpers.TimeLord;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.ShortMessage;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 /**
  * Created by Aefyr on 16.08.2017.
  */
 
-public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>{
+public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
 
     private ArrayList<ShortMessage> messages;
     private LayoutInflater inflater;
@@ -34,7 +32,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     private OnMessageClickListener listener;
 
-    public MessagesAdapter(Context c, ArrayList<ShortMessage> messages, OnMessageClickListener listener){
+    public MessagesAdapter(Context c, ArrayList<ShortMessage> messages, OnMessageClickListener listener) {
         this.messages = messages;
         this.listener = listener;
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -46,17 +44,17 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         COLOR_PRIMARY = c.getResources().getColor(R.color.colorPrimary);
     }
 
-    public void setMessages(ArrayList<ShortMessage> messages){
+    public void setMessages(ArrayList<ShortMessage> messages) {
         this.messages = messages;
         notifyDataSetChanged();
     }
 
-    public boolean markAsRead(int index){
-        if(messages.get(index).isUnread()) {
+    public boolean markAsRead(int index) {
+        if (messages.get(index).isUnread()) {
             messages.get(index).read();
             notifyItemChanged(index);
             return true;
-        }else
+        } else
             return false;
     }
 
@@ -72,24 +70,24 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         holder.date.setText(timeLord.getMessageDate(message.getDate()));
         holder.subject.setText(message.getSubject());
         holder.preview.setText(message.getText());
-        holder.hasFilesIcon.setVisibility(message.hasFiles()?View.VISIBLE:View.GONE);
+        holder.hasFilesIcon.setVisibility(message.hasFiles() ? View.VISIBLE : View.GONE);
 
-        if(message.getFolder()== MessagesList.Folder.INBOX){
+        if (message.getFolder() == MessagesList.Folder.INBOX) {
             holder.name.setText(message.getSender().getCompositeName(true, false, true));
-        }else {
-            if(message.getReceivers().size()==1)
+        } else {
+            if (message.getReceivers().size() == 1)
                 holder.name.setText(message.getReceivers().get(0).getCompositeName(true, false, true));
             else
                 holder.name.setText(String.format(MULTIPLE_RECEIVERS, message.getReceivers().size()));
         }
 
-        if(message.isUnread()){
+        if (message.isUnread()) {
             holder.name.setTypeface(Typeface.DEFAULT_BOLD);
             holder.subject.setTypeface(Typeface.DEFAULT_BOLD);
             holder.subject.setTextColor(COLOR_UNREAD);
             holder.date.setTypeface(Typeface.DEFAULT_BOLD);
             holder.date.setTextColor(COLOR_PRIMARY);
-        }else {
+        } else {
             holder.name.setTypeface(Typeface.DEFAULT);
             holder.subject.setTypeface(Typeface.DEFAULT);
             holder.subject.setTextColor(COLOR_READ);
@@ -108,7 +106,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         return messages.get(position).getDate();
     }
 
-    class MessageViewHolder extends RecyclerView.ViewHolder{
+    class MessageViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private TextView subject;
         private TextView preview;
@@ -127,14 +125,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 @Override
                 public void onClick(View view) {
                     int index = getAdapterPosition();
-                    if(index<messages.size())
-                        listener.onMessageClick(index, messages.get(index).getId(), messages.get(index).getFolder()== MessagesList.Folder.INBOX);
+                    if (index < messages.size())
+                        listener.onMessageClick(index, messages.get(index).getId(), messages.get(index).getFolder() == MessagesList.Folder.INBOX);
                 }
             });
         }
     }
 
-    public interface OnMessageClickListener{
+    public interface OnMessageClickListener {
         void onMessageClick(int index, String messageId, boolean inbox);
     }
 }

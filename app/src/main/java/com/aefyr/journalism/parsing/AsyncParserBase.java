@@ -12,13 +12,13 @@ abstract class AsyncParserBase<T> extends AsyncTask<AsyncParserParams<T>, Void, 
 
     private EljurApiClient.JournalismListener<T> listener;
 
-    protected void bindJournalismListener(EljurApiClient.JournalismListener<T> listener){
+    protected void bindJournalismListener(EljurApiClient.JournalismListener<T> listener) {
         this.listener = listener;
     }
 
     @Override
     protected void onPostExecute(AsyncParserTaskResult asyncParserTaskResult) {
-        if(asyncParserTaskResult.failed)
+        if (asyncParserTaskResult.failed)
             listener.onApiError(asyncParserTaskResult.errorMessage, asyncParserTaskResult.rawResponse);
         else
             listener.onSuccess((T) asyncParserTaskResult.journalismMajorObject);

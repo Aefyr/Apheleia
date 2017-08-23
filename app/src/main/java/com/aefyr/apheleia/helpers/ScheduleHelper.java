@@ -11,7 +11,7 @@ import com.aefyr.journalism.objects.major.Schedule;
 public class ScheduleHelper extends SerializerHelperWithTimeAndStudentKeysBase<Schedule> {
     private static ScheduleHelper instance;
 
-    private ScheduleHelper(Context c){
+    private ScheduleHelper(Context c) {
         super(c);
         instance = this;
     }
@@ -26,16 +26,16 @@ public class ScheduleHelper extends SerializerHelperWithTimeAndStudentKeysBase<S
         return ".as";
     }
 
-    public static ScheduleHelper getInstance(Context c){
-        return instance==null?new ScheduleHelper(c):instance;
+    public static ScheduleHelper getInstance(Context c) {
+        return instance == null ? new ScheduleHelper(c) : instance;
     }
 
-    public boolean isScheduleSaved(String weeks){
+    public boolean isScheduleSaved(String weeks) {
         return isObjectSaved(weeks);
     }
 
 
-    public boolean saveSchedule(Schedule schedule, String weeks){
+    public boolean saveSchedule(Schedule schedule, String weeks) {
         return saveObject(schedule, weeks);
     }
 
@@ -44,11 +44,11 @@ public class ScheduleHelper extends SerializerHelperWithTimeAndStudentKeysBase<S
     }
 
 
-    public void saveScheduleAsync(Schedule schedule, String weeks, ObjectSaveListener listener){
+    public void saveScheduleAsync(Schedule schedule, String weeks, ObjectSaveListener listener) {
         saveObjectAsync(schedule, weeks, listener);
     }
 
-    static void destroy(){
+    static void destroy() {
         instance = null;
     }
 
