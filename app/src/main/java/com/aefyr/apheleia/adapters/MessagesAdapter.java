@@ -49,10 +49,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         notifyDataSetChanged();
     }
 
-    public boolean markAsRead(int index) {
-        if (messages.get(index).isUnread()) {
-            messages.get(index).read();
-            notifyItemChanged(index);
+    public boolean markAsRead(ShortMessage message) {
+        if (message.isUnread()) {
+            message.read();
+            notifyItemChanged(messages.indexOf(message));
             return true;
         } else
             return false;
@@ -125,14 +125,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 @Override
                 public void onClick(View view) {
                     int index = getAdapterPosition();
-                    if (index < messages.size())
-                        listener.onMessageClick(index, messages.get(index).getId(), messages.get(index).getFolder() == MessagesList.Folder.INBOX);
+                    if (index < messages.size()&&index>=0)
+                        listener.onMessageClick(messages.get(index), messages.get(index).getId(), messages.get(index).getFolder() == MessagesList.Folder.INBOX);
                 }
             });
         }
     }
 
     public interface OnMessageClickListener {
-        void onMessageClick(int index, String messageId, boolean inbox);
+        void onMessageClick(ShortMessage message, String messageId, boolean inbox);
     }
 }

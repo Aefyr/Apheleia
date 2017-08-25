@@ -31,6 +31,7 @@ import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.objects.major.MessagesList;
+import com.aefyr.journalism.objects.minor.ShortMessage;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -216,11 +217,11 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private static final int OPEN_MESSAGE = 222;
-    private int openedMessage;
+    private ShortMessage openedMessage;
 
     @Override
-    public void onMessageClick(int index, String messageId, boolean inbox) {
-        openedMessage = index;
+    public void onMessageClick(ShortMessage message, String messageId, boolean inbox) {
+        openedMessage = message;
         Intent messageViewIntent = new Intent(getActivity(), MessageViewActivity.class);
         messageViewIntent.putExtra("messageId", messageId);
         messageViewIntent.putExtra("inbox", inbox);

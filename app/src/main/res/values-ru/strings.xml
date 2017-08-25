@@ -20,9 +20,9 @@
     <string name="diary">Дневник</string>
     <string name="domain">Адрес школы на Eljur.ru</string>
     <string name="dont_report">Не отправлять</string>
-    <string name="error_grid_not_saved">Нету подключения к сети и выбранный период не сохранён!</string>
+    <string name="error_grid_not_saved">Нет подключения к сети и выбранный период не сохранён!</string>
     <string name="error_no_receivers">Необходимо выбрать хотя бы одного получателя</string>
-    <string name="error_week_not_saved">Нету подключения к сети и выбранная неделя не сохранена!</string>
+    <string name="error_week_not_saved">Нет подключения к сети и выбранная неделя не сохранена!</string>
     <string name="fetch_network_error">Не удалось получить %s из-за ошибки сети, пожалуйста попробуйте позже</string>
     <string name="fetching_message">Получение сообщения…</string>
     <string name="fetching_receivers">Получение списка получателей…</string>
@@ -55,7 +55,7 @@
     <string name="no_finals">Итоговых оценок не найдено</string>
     <string name="no_homework">● Нет задания</string>
     <string name="no_marks">Оценок для выбранного периода не найдено</string>
-    <string name="no_messages">В этой папке нету сообщений</string>
+    <string name="no_messages">В этой папке нет сообщений</string>
     <string name="no_schedule">Расписание на выбранную неделю не задано</string>
     <string name="offline_mode">Нет подключения. Загружена сохраненная копия</string>
     <string name="overtime">ВП</string>

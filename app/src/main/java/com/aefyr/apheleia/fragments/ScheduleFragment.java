@@ -145,7 +145,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         if (loadedFromMemory) {
             selectedWeek = requestedWeek;
-            periodsHelper.setCurrentWeek(days);
+            periodsHelper.setCurrentScheduleWeek(days);
         }
 
         if (!connectionHelper.hasNetworkConnection()) {
