@@ -108,6 +108,8 @@
     <string name="cant_get_receivers">Unable to fetch receivers</string>
     <string name="cant_send_message">Unable to send message</string>
     <string name="reply_subject_prefix" formatted="false">Re: %s</string>
+    <string name="multiple_new_messages" formatted="false">%d new messages</string>
+    <string name="pref_enable_watcher">New messages monitoring service</string>
 
     <!-- Finals -->
     <string name="finals">Finals</string>

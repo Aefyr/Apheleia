@@ -27,6 +27,11 @@
     <group android:checkableBehavior="none"
         android:id="@+id/group_other">
             <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_build_black_24dp"
+                android:title="@string/action_settings"/>
+
+            <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_clear_black_24dp"
                 android:title="@string/logout" />

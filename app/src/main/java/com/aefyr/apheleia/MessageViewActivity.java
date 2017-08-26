@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.text.util.LinkifyCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ import com.aefyr.journalism.objects.minor.MessageInfo;
 import com.aefyr.journalism.objects.minor.MessagePerson;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.analytics.FirebaseAnalytics;
+
+import java.util.regex.Pattern;
 
 public class MessageViewActivity extends AppCompatActivity {
 
@@ -113,7 +116,6 @@ public class MessageViewActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent replyIntent = new Intent(MessageViewActivity.this, MessageComposeActivity.class);
-                    replyIntent.putExtra("replyIntent", true);
                     replyIntent.putExtra("receiver", message.getSender().getId());
                     replyIntent.putExtra("subject", message.getSubject());
                     startActivity(replyIntent);

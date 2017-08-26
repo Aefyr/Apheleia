@@ -95,4 +95,6 @@
     <string name="what_is_school_domain">Адрес школы - это часть адреса сайта журнала вашей школы перед \".eljur.ru\".\n\nНапример: Для журнала с адресом \"example1.eljur.ru\", адрес будет \"example1\"</string>
     <string name="yes">Да</string>
     <string name="you">Вы</string>
+    <string name="multiple_new_messages">Новых сообщений: %d</string>
+    <string name="pref_enable_watcher">Следить за новыми сообщениями</string>
 </resources>

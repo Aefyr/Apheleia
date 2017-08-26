@@ -18,7 +18,7 @@ import com.google.firebase.crash.FirebaseCrash;
 
 public class Chief {
     public static void makeASnack(View view, String message) {
-        final Snackbar snackbar = Snackbar.make(view, message, 3000);
+        final Snackbar snackbar = Snackbar.make(view, message, 2500);
         snackbar.setAction(view.getContext().getString(R.string.ok), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -36,9 +36,8 @@ public class Chief {
         AlertDialog reportDialog = new AlertDialog.Builder(c).setTitle(c.getString(R.string.api_error)).setMessage(String.format(c.getString(R.string.api_error_report_prompt), containsWhat)).setPositiveButton(c.getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //Send message and json to firebase
                 makeAnAlert(c, c.getString(R.string.api_error_reported));
-                System.out.println("Reported");
+                FirebaseCrash.log("ApiError: " + message + "\nRaw response: " + json);
             }
         }).setNegativeButton(c.getString(R.string.no), addAreYouSurePrompt ? new DialogInterface.OnClickListener() {
             @Override

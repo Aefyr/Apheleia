@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
         domainET.setFilters(new InputFilter[]{new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                return (source.toString()).replaceAll("[^a-zA-Z0-9_-]", "");
+                return (source.toString()).replaceAll("[^a-zA-Z0-9-]", "");
             }
         }});
 

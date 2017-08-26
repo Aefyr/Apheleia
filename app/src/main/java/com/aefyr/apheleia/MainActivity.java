@@ -1,6 +1,7 @@
 package com.aefyr.apheleia;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,7 @@ import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.TheInitializer;
 import com.aefyr.apheleia.utility.FirebaseConstants;
+import com.aefyr.apheleia.watcher.WatcherHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
@@ -71,9 +73,17 @@ public class MainActivity extends AppCompatActivity
 
         fragmentManager = getSupportFragmentManager();
 
-        currentFragment = new DiaryFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
-        navigationView.setCheckedItem(R.id.nav_diary);
+        if(getIntent().getStringExtra("requested_fragment")!=null){
+            if(getIntent().getStringExtra("requested_fragment").equals("messages")){
+                currentFragment = new MessagesFragment();
+                fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
+                navigationView.setCheckedItem(R.id.nav_messages);
+            }
+        }else {
+            currentFragment = new DiaryFragment();
+            fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
+            navigationView.setCheckedItem(R.id.nav_diary);
+        }
 
         checkPeriods();
     }
@@ -172,6 +182,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             logout();
             doNotClose = true;
+        }else if(id == R.id.nav_settings){
+            startActivity(new Intent(this, PreferencesActivity.class));
         }
 
         if (!doNotClose) {
@@ -253,6 +265,10 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     studentPickerDialog.dismiss();
+                    if(studentsIds[i].equals(profileHelper.getCurrentStudentId())){
+                        drawer.closeDrawer(GravityCompat.START);
+                        return;
+                    }
                     studentName.setText(studentsNames[i]);
                     profileHelper.setCurrentStudent(studentsIds[i]);
                     studentSwitched();

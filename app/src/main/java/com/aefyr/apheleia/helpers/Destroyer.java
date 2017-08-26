@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.utility.Utility;
 
+import java.io.File;
+
 /**
  * Created by Aefyr on 21.08.2017.
  */
@@ -46,7 +48,11 @@ public class Destroyer {
             ScheduleHelper.destroy();
             Helper.destroy();
 
-            Utility.deleteRecursive(c.getFilesDir());
+            Utility.deleteRecursive(new File(c.getFilesDir(),"diary"));
+            Utility.deleteRecursive(new File(c.getFilesDir(),"marks"));
+            Utility.deleteRecursive(new File(c.getFilesDir(),"messages"));
+            Utility.deleteRecursive(new File(c.getFilesDir(),"schedule"));
+            Utility.deleteRecursive(new File(c.getFilesDir(),"finals"));
             PreferenceManager.getDefaultSharedPreferences(c).edit().clear().commit();
             return null;
         }

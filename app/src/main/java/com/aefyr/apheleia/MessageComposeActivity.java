@@ -38,7 +38,7 @@ public class MessageComposeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_compose);
 
-        boolean replyIntent = getIntent().getBooleanExtra("replyIntent", false);
+        boolean replyIntent = getIntent().getStringExtra("receiver")!=null;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.compose_message));
