@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +88,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         refreshLayout.setOnRefreshListener(this);
 
         scheduleRecycler = (RecyclerView) view.findViewById(R.id.diaryRecycler);
-        scheduleRecycler.setLayoutManager(new PreloadLayoutManager(getActivity(), 7));
+        scheduleRecycler.setLayoutManager(Utility.displayWidthDp(getResources())>=720?new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL):new PreloadLayoutManager(getActivity(), 7));
         scheduleRecycler.setItemViewCacheSize(7);
 
         emptySchedule = view.findViewById(R.id.emptyDiary);

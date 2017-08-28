@@ -25,4 +25,10 @@ public class ConnectionHelper {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
+
+    public boolean connectedViaWifi(){
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return networkInfo !=null && networkInfo.isConnected() && networkInfo.getType()==ConnectivityManager.TYPE_WIFI;
+    }
 }

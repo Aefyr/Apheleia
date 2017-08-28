@@ -36,12 +36,14 @@ public class WatcherIntentService extends IntentService {
         super("WatcherIntentService");
     }
 
+    SharedPreferences prefs;
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         System.out.println("Checking for new messages >-<");
-        if(!ConnectionHelper.getInstance(this).hasNetworkConnection()){
-            System.out.println("Whoops, no connection, dying!");
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!ConnectionHelper.getInstance(this).hasNetworkConnection()||(!ConnectionHelper.getInstance(this).connectedViaWifi())&&!prefs.getBoolean("allow_watcher_with_cell", false)) {
             die();
+            return;
         }
         checkMessages();
     }
@@ -51,7 +53,6 @@ public class WatcherIntentService extends IntentService {
             @Override
             public void onSuccess(MessagesList result) {
                 checkMessages(result);
-                Chief.makeAToast(WatcherIntentService.this, "And context is still alive!");
             }
 
             @Override
@@ -68,12 +69,10 @@ public class WatcherIntentService extends IntentService {
 
     private void checkMessages(MessagesList messages){
         //Should we use watcher's own shared prefs here?
-        if(messages.getCount()==0) {
-            System.out.println("No new messages");
+        if(messages.getCount()==0)
             die();
-        }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         long lastMessageTimeWas = prefs.getLong("last_message_time", 0);
         ArrayList<ShortMessage> newMessages = new ArrayList<>();
         for(ShortMessage m: messages.getMessages()){
@@ -83,10 +82,9 @@ public class WatcherIntentService extends IntentService {
                 break;
         }
 
-        if(newMessages.size()==0) {
-            System.out.println("No new messages");
+        if(newMessages.size()==0)
             die();
-        }
+
 
         prefs.edit().putLong("last_message_time", newMessages.get(0).getDate()).apply();
         if(newMessages.size()==1)
@@ -94,6 +92,7 @@ public class WatcherIntentService extends IntentService {
         else
             notifyAboutMultipleNewMessages(newMessages.size());
 
+        prefs.edit().putLong("last_watcher_update_time", System.currentTimeMillis()).apply();
         die();
     }
 

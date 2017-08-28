@@ -7,6 +7,7 @@
     <string name="yes">Yes</string>
     <string name="no">Nope</string>
     <string name="help">Help</string>
+    <string name="got_it">Got it</string>
     <string name="network_error">Network Error</string>
     <string name="network_error_tip">Check your Internet connection or try again later</string>
     <string name="api_error">Critical Error</string>
@@ -26,6 +27,9 @@
     <string name="misc">Other</string>
     <string name="refresh">Refresh</string>
     <string name="current_student">Current Student:</string>
+    <string name="warning">Warning</string>
+    <string name="enable">Enable</string>
+    <string name="dont_enable">Don\'t enable</string>
 
     <!-- Errors handling -->
     <string name="api_error_report_prompt">Apheleia was unable to handle response from Eljur.\n\nDo you want to send that response which contains your %s to developer, so he can resolve this error?</string>
@@ -58,6 +62,9 @@
     <string name="reinitialization_prompt">Apheleia has detected, that Eljur returned less weeks than it did last time.\n\nThat may have happened due to the start of a new school year.\n\nDo you want to perform a reinitialization, so that you can see the new school year?\n\nIf you believe that this is an error, you may ignore this</string>
     <string name="reinitialization_warning">If network to be disconnected or server error occurs during reinitialization, you will be logged off from the app and will have to log in again.</string>
     <string name="reinitialize_failed">During reinitialization, connection to Eljur was lost. Check your Internet connection or try again later.\n\nYou will have to log into Apheleia again. The app will now be closed</string>
+    <string name="check_periods_no_change">No new weeks/periods found</string>
+    <string name="check_periods_error">Unable to sync weeks/periods due to a network error</string>
+    <string name="check_periods">Sync weeks/periods</string>
 
 
     <!-- Diary -->
@@ -110,6 +117,11 @@
     <string name="reply_subject_prefix" formatted="false">Re: %s</string>
     <string name="multiple_new_messages" formatted="false">%d new messages</string>
     <string name="pref_enable_watcher">New messages monitoring service</string>
+    <string name="pref_watcher_allow_cell">Messages monitoring via mobile network</string>
+    <string name="watcher_desc">Apheleia can\'t use instant new messages notifications like the official Eljur app\n\nNonetheless, Apheleia can once in a while check your inbox for new messages and notify you if there are any. Though it will increase battery usage insignificantly and traffic usage proportionally to the total count of unread messages you have, hence this will work only with WIFI connection by, until you allow to use cell network in settings.\n\nIf you have many unread messages, and want to use this option, I highly recommend you use \"Read All\" option on the Eljur website.\n\nDo you want to enable this option? You can always turn it on/off in settings</string>
+    <string name="watcher_first_check_warning">First new messages check will count all you unread messages as new</string>
+    <string name="watcher_traffic_warning">Allowing messages check via cell network will increase your mobile traffic usage significantly.\n\nEach unread message in your inbox will cost you approximately 1.5 megabytes of traffic per month, this includes all of the unread messages you have, not only new ones.</string>
+
 
     <!-- Finals -->
     <string name="finals">Finals</string>

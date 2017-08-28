@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +87,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         emptyDiary = view.findViewById(R.id.emptyDiary);
 
         diaryRecycler = (RecyclerView) view.findViewById(R.id.diaryRecycler);
-        diaryRecycler.setLayoutManager(new PreloadLayoutManager(getActivity(), 7));
+        diaryRecycler.setLayoutManager(Utility.displayWidthDp(getResources())>=720?new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL):new PreloadLayoutManager(getActivity(), 7));
         diaryRecycler.setItemViewCacheSize(7);
 
         apiClient = EljurApiClient.getInstance(getActivity());

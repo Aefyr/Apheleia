@@ -59,7 +59,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
         AnalyticsHelper.logAppSectionViewEvent(FirebaseAnalytics.getInstance(getActivity()), FirebaseConstants.SECTION_FINALS);
 
         finalsRecycler = (RecyclerView) view.findViewById(R.id.finalsRecycler);
-        finalsRecycler.setLayoutManager(new StaggeredGridLayoutManager((int) (Utility.displayWidth(getResources())/Utility.dpToPx(180, getResources())), StaggeredGridLayoutManager.VERTICAL));
+        finalsRecycler.setLayoutManager(new StaggeredGridLayoutManager((int) (Utility.displayWidthPx(getResources())/Utility.dpToPx(180, getResources())), StaggeredGridLayoutManager.VERTICAL));
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);
         refreshLayout.setOnRefreshListener(this);

@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,8 +76,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         refreshLayout.setOnRefreshListener(this);
         emptyMarks = view.findViewById(R.id.emptyMarks);
         marksRecycler = (RecyclerView) view.findViewById(R.id.marksRecycler);
-        LinearLayoutManager m = new LinearLayoutManager(getActivity());
-        marksRecycler.setLayoutManager(m);
+        marksRecycler.setLayoutManager(Utility.displayWidthDp(getResources())>=720?new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL):new LinearLayoutManager(getActivity()));
         marksRecycler.setItemViewCacheSize(24);
 
         apiClient = EljurApiClient.getInstance(getActivity());

@@ -27,5 +27,15 @@ public class PreferencesFragment extends PreferenceFragment {
                 return false;
             }
         });
+
+        findPreference("allow_watcher_with_cell").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if(((SwitchPreference)preference).isChecked())
+                    WatcherHelper.showNetworkWarning(getActivity());
+
+                return false;
+            }
+        });
     }
 }

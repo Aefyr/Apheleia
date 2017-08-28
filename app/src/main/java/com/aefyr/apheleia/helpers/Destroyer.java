@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.utility.Utility;
+import com.aefyr.apheleia.watcher.WatcherHelper;
 
 import java.io.File;
 
@@ -47,6 +48,7 @@ public class Destroyer {
             ProfileHelper.destroy();
             ScheduleHelper.destroy();
             Helper.destroy();
+            WatcherHelper.setWatcherEnabled(c, false);
 
             Utility.deleteRecursive(new File(c.getFilesDir(),"diary"));
             Utility.deleteRecursive(new File(c.getFilesDir(),"marks"));

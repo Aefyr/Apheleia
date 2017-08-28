@@ -23,8 +23,12 @@ public class Utility {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     }
 
-    public static float displayWidth(Resources r) {
+    public static float displayWidthPx(Resources r) {
         return r.getDisplayMetrics().widthPixels;
+    }
+
+    public static int displayWidthDp(Resources r) {
+        return (int) (displayWidthPx(r)/r.getDisplayMetrics().density);
     }
 
     public static boolean checkSelectedTime(int i, String[] a) {

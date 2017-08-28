@@ -31,6 +31,10 @@ public class PeriodsHelper {
         void OnFoundLessWeeks();
 
         void OnFoundLessPeriods();
+
+        void onNothingChanged();
+
+        void onNetworkError();
     }
 
     private PeriodsHelper(Context c) {
@@ -57,6 +61,15 @@ public class PeriodsHelper {
                     newWeeksCount += p.getWeeks().size();
                 }
 
+                if (prevWeeksCount < newWeeksCount) {
+                    savePeriodsInfo(result);
+                    listener.OnFoundMoreWeeks();
+                    return;
+                } else if (prevWeeksCount > newWeeksCount) {
+                    listener.OnFoundLessWeeks();
+                    return;
+                }
+
                 if (prevPeriodsCount < newPeriodsCount) {
                     savePeriodsInfo(result);
                     listener.OnFoundMorePeriods();
@@ -66,17 +79,12 @@ public class PeriodsHelper {
                     return;
                 }
 
-                if (prevWeeksCount < newWeeksCount) {
-                    savePeriodsInfo(result);
-                    listener.OnFoundMoreWeeks();
-                } else if (prevWeeksCount > newWeeksCount)
-                    listener.OnFoundLessWeeks();
-
+                listener.onNothingChanged();
             }
 
             @Override
             public void onNetworkError() {
-
+                listener.onNetworkError();
             }
 
             @Override

@@ -3,6 +3,7 @@ package com.aefyr.apheleia;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -55,6 +56,11 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("first_launch", true)){
+            WatcherHelper.showPrompt(this);
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("first_launch", false).apply();
+        }
+
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -85,7 +91,7 @@ public class MainActivity extends AppCompatActivity
             navigationView.setCheckedItem(R.id.nav_diary);
         }
 
-        checkPeriods();
+        checkPeriods(false);
     }
 
     @Override
@@ -103,12 +109,44 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
         timePeriodSwitchButton = menu.findItem(R.id.action_time_period_switcher);
-        timePeriodSwitchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
+        mailFolderSwitchButton = menu.findItem(R.id.action_mail_folder_switch);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch (id){
+            case R.id.action_refresh:
+
+                ((ActionListener) currentFragment).onAction(ActionListener.Action.UPDATE_REQUESTED);
+                return true;
+            case R.id.action_check_periods:
+
+                checkPeriods(true);
+                return true;
+            case R.id.action_mail_folder_switch:
+
+                if (currentApheleiaFragment == ApheleiaFragment.MESSAGES) {
+                    ((MessagesFragment) currentFragment).toggleFolder();
+                    if (((MessagesFragment) currentFragment).isInboxSelected())
+                        mailFolderSwitchButton.setIcon(R.drawable.ic_send_white_36dp);
+                    else
+                        mailFolderSwitchButton.setIcon(R.drawable.ic_inbox_white_36dp);
+
+                    return true;
+                }
+                return false;
+            case R.id.action_time_period_switcher:
+
                 switch (currentApheleiaFragment) {
                     case DIARY:
                         ((DiaryFragment) currentFragment).showTimePeriodSwitcherDialog();
@@ -121,40 +159,9 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
                 return true;
-            }
-        });
 
-        mailFolderSwitchButton = menu.findItem(R.id.action_mail_folder_switch);
-        mailFolderSwitchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                if (currentApheleiaFragment == ApheleiaFragment.MESSAGES) {
-                    ((MessagesFragment) currentFragment).toggleFolder();
-                    if (((MessagesFragment) currentFragment).isInboxSelected())
-                        mailFolderSwitchButton.setIcon(R.drawable.ic_send_white_36dp);
-                    else
-                        mailFolderSwitchButton.setIcon(R.drawable.ic_inbox_white_36dp);
-
-                    return true;
-                }
-                return false;
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            ((ActionListener) currentFragment).onAction(ActionListener.Action.UPDATE_REQUESTED);
-            return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -289,7 +296,7 @@ public class MainActivity extends AppCompatActivity
         ((ActionListener) currentFragment).onAction(ActionListener.Action.STUDENT_SWITCHED);
     }
 
-    private void checkPeriods() {
+    private void checkPeriods(final boolean requestedByUser) {
         PeriodsHelper.getInstance(this).checkPeriods(new PeriodsHelper.OnPeriodsChangeDetectedListener() {
             @Override
             public void OnFoundMoreWeeks() {
@@ -311,6 +318,18 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void OnFoundLessPeriods() {
                 showReinitializePrompt();
+            }
+
+            @Override
+            public void onNothingChanged() {
+                if(requestedByUser)
+                    Chief.makeAToast(MainActivity.this, getString(R.string.check_periods_no_change));
+            }
+
+            @Override
+            public void onNetworkError() {
+                if(requestedByUser)
+                    Chief.makeAToast(MainActivity.this, getString(R.string.check_periods_error));
             }
         });
     }

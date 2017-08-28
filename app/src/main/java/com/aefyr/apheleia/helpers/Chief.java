@@ -32,6 +32,10 @@ public class Chief {
         new AlertDialog.Builder(c).setMessage(message).setPositiveButton(c.getString(R.string.ok), null).create().show();
     }
 
+    public static void makeWarning(Context c, String warningMessage){
+        new AlertDialog.Builder(c).setTitle(c.getString(R.string.warning)).setMessage(warningMessage).setPositiveButton(c.getString(R.string.got_it), null).create().show();
+    }
+
     public static android.support.v7.app.AlertDialog makeReportApiErrorDialog(final Context c, final String containsWhat, final String message, final String json, boolean addAreYouSurePrompt) {
         AlertDialog reportDialog = new AlertDialog.Builder(c).setTitle(c.getString(R.string.api_error)).setMessage(String.format(c.getString(R.string.api_error_report_prompt), containsWhat)).setPositiveButton(c.getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
