@@ -72,9 +72,7 @@ public class WatcherHelper extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction().equals("android.intent.action.BOOT_COMPLETED")){
-            if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("watcher_enabled", false))
-                startWatcher(context);
-        }
+        if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("watcher_enabled", false))
+            startWatcher(context);
     }
 }
