@@ -2,6 +2,7 @@ package com.aefyr.apheleia.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -71,9 +72,13 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
         finalsHelper = FinalsHelper.getInstance(getActivity());
         connectionHelper = ConnectionHelper.getInstance(getActivity());
 
-        loadFinals();
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        loadFinals();
     }
 
     private void setFinalsToAdapter(Finals finals) {

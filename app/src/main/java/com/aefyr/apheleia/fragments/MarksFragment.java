@@ -3,6 +3,7 @@ package com.aefyr.apheleia.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -86,9 +87,13 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         connectionHelper = ConnectionHelper.getInstance(getActivity());
         persona = Helper.getInstance(getActivity()).getPersona();
 
-        studentSwitched();
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        studentSwitched();
     }
 
     private boolean loadedFromMemory = false;

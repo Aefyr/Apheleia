@@ -4,6 +4,7 @@ package com.aefyr.apheleia.fragments;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -90,13 +91,16 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         messagesHelper = MessagesHelper.getInstance(getActivity());
         tasks = new HashSet<>();
 
-
         if (currentFolder == null)
             currentFolder = MessagesList.Folder.INBOX;
 
-
-        loadMessages(currentFolder);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        loadMessages(currentFolder);
     }
 
     private static final int COMPOSE_FAB_VISIBILITY_CHANGE_THRESHOLD_IN_DP = 4;

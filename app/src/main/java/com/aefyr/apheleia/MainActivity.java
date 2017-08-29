@@ -1,7 +1,10 @@
 package com.aefyr.apheleia;
 
+import android.app.ActivityManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -16,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aefyr.apheleia.fragments.DiaryFragment;
@@ -29,6 +33,7 @@ import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.TheInitializer;
+import com.aefyr.apheleia.helpers.Tutorial;
 import com.aefyr.apheleia.utility.FirebaseConstants;
 import com.aefyr.apheleia.watcher.WatcherHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -58,10 +63,15 @@ public class MainActivity extends AppCompatActivity
 
         if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("first_launch", true)){
             WatcherHelper.showPrompt(this);
+            Tutorial.showTutorial(this);
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("first_launch", false).apply();
         }
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name), BitmapFactory.decodeResource(getResources(), R.mipmap.icon), getResources().getColor(R.color.colorRecentsTab)));
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,7 +85,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        initializeUserSwitcher(navigationView.getHeaderView(0));
+        initializeNavHeader(navigationView.getHeaderView(0));
 
         fragmentManager = getSupportFragmentManager();
 
@@ -247,11 +257,13 @@ public class MainActivity extends AppCompatActivity
     private TextView studentName;
     private AlertDialog studentPickerDialog;
 
-    private void initializeUserSwitcher(View navHeader) {
+    private void initializeNavHeader(View navHeader) {
         final ProfileHelper profileHelper = ProfileHelper.getInstance(this);
 
         ((TextView) navHeader.findViewById(R.id.usernameText)).setText(profileHelper.getName());
         ((TextView) navHeader.findViewById(R.id.emailText)).setText(profileHelper.getEmail());
+        System.out.println(profileHelper.getRole());
+        ((ImageView)navHeader.findViewById(R.id.roleIcon)).setImageResource(profileHelper.getRole().equals(ProfileHelper.Role.PARENT)?R.drawable.ic_business_center_white_24dp:R.drawable.ic_school_white_24dp);
         studentName = (TextView) navHeader.findViewById(R.id.studentNameText);
 
         if (profileHelper.getStudentsCount() == 1) {

@@ -59,4 +59,12 @@
         android:text="juvadadzu@weeb.jp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
+    <ImageView
+        android:id="@+id/roleIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:srcCompat="@drawable/ic_business_center_white_24dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

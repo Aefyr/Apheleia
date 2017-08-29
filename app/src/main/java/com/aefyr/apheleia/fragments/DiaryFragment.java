@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -99,9 +100,13 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         quickDayPickBar = (LinearLayout) view.findViewById(R.id.quickDayPickBar);
 
-        studentSwitched();
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        studentSwitched();
     }
 
     private AlertDialog weeksPickerDialog;

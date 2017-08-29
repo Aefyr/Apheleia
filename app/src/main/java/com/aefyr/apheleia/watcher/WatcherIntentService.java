@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
@@ -112,7 +113,7 @@ public class WatcherIntentService extends IntentService {
     }
 
     private Notification.Builder createNotification(String title, String message){
-        return new Notification.Builder(WatcherIntentService.this).setContentTitle(title).setContentText(message).setSmallIcon(android.R.drawable.sym_def_app_icon).setVibrate(new long[]{500, 500, 500}).setLights(getResources().getColor(R.color.colorPrimary), 200, 3000).setAutoCancel(true);
+        return new Notification.Builder(this).setContentTitle(title).setContentText(message).setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icon)).setSmallIcon(R.drawable.ic_email_black_24dp).setVibrate(new long[]{500, 500, 500}).setLights(getResources().getColor(R.color.colorPrimary), 200, 3000).setAutoCancel(true);
     }
 
     private void postNotification(Notification.Builder notificationBuilder){

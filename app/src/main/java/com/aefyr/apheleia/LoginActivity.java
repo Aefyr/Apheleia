@@ -182,9 +182,9 @@ public class LoginActivity extends AppCompatActivity {
         params.putString(FirebaseConstants.SCHOOL_DOMAIN, helper.getDomain());
         params.putString(FirebaseConstants.ROLE, profileHelper.getRole());
         params.putString(FirebaseConstants.GENDER, profileHelper.getGender());
-        if (profileHelper.getRole().equals(ProfileHelper.Role.PARENT))
-            params.putInt(FirebaseConstants.STUDENTS_COUNT, profileHelper.getStudentsCount());
-        else {
+        boolean parent = profileHelper.getRole().equals(ProfileHelper.Role.PARENT);
+        params.putInt(FirebaseConstants.STUDENTS_COUNT, parent?profileHelper.getStudentsCount():-1);
+        if(!parent){
             String rawClass = profileHelper.getStudentClass(profileHelper.getCurrentStudentId());
             int parsedClass = 0;
             try {
@@ -195,6 +195,9 @@ public class LoginActivity extends AppCompatActivity {
             }
             params.putString(FirebaseConstants.RAW_CLASS, rawClass);
             params.putInt(FirebaseConstants.PARSED_CLASS, parsedClass);
+        }else {
+            params.putString(FirebaseConstants.RAW_CLASS, "-1");
+            params.putInt(FirebaseConstants.PARSED_CLASS, -1);
         }
         FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.LOGIN, params);
 

@@ -3,6 +3,7 @@ package com.aefyr.apheleia.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -103,9 +104,13 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         quickDayPickBar = (LinearLayout) view.findViewById(R.id.quickDayPickBar);
 
-        studentSwitched();
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        studentSwitched();
     }
 
     @Override

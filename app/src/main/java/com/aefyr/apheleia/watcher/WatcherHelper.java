@@ -54,12 +54,10 @@ public class WatcherHelper extends BroadcastReceiver{
     private static void startWatcher(Context c){
         AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()+10000, AlarmManager.INTERVAL_HALF_HOUR, getWatcherPendingIntent(c));
-        Chief.makeAToast(c, "The watcher is now watching.");
     }
 
     private static void killWatcher(Context c){
         ((AlarmManager) c.getSystemService(Context.ALARM_SERVICE)).cancel(getWatcherPendingIntent(c));
-        Chief.makeAToast(c, "The Watcher... has fallen...");
     }
 
     private static void setWatcherOnBootBCReceiverEnabled(Context c, boolean enabled){
