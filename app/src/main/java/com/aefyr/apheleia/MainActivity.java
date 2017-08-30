@@ -34,9 +34,7 @@ import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.TheInitializer;
 import com.aefyr.apheleia.helpers.Tutorial;
-import com.aefyr.apheleia.utility.FirebaseConstants;
 import com.aefyr.apheleia.watcher.WatcherHelper;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
 
@@ -48,8 +46,6 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
     private DrawerLayout drawer;
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +53,7 @@ public class MainActivity extends AppCompatActivity
 
         helper = Helper.getInstance(this);
         if (!helper.isLoggedIn() || helper.isTokenExpired()) {
-            LoginActivity.startFromActivity(this);
+            LoginActivity.startFromActivity(this, helper.isTokenExpired()&&helper.isLoggedIn()? LoginActivity.Reason.TOKEN_EXPIRED:null);
             return;
         }
 
@@ -67,7 +63,6 @@ public class MainActivity extends AppCompatActivity
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("first_launch", false).apply();
         }
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name), BitmapFactory.decodeResource(getResources(), R.mipmap.icon), getResources().getColor(R.color.colorRecentsTab)));
@@ -393,11 +388,10 @@ public class MainActivity extends AppCompatActivity
         new AlertDialog.Builder(this).setMessage(getString(R.string.logout_prompt)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                new Destroyer(MainActivity.this).destroy(new Destroyer.OnDestructionListener() {
+                new Destroyer(MainActivity.this).destroy(false, new Destroyer.OnDestructionListener() {
                     @Override
                     public void onDestroyed() {
-                        mFirebaseAnalytics.logEvent(FirebaseConstants.LOGOUT, null);
-                        LoginActivity.startFromActivity(MainActivity.this);
+                        LoginActivity.startFromActivity(MainActivity.this, null);
                     }
                 });
             }

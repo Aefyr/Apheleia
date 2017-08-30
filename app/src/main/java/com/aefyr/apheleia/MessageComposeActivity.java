@@ -13,7 +13,6 @@ import android.view.MenuItem;
 
 import com.aefyr.apheleia.fragments.MCMessageFragment;
 import com.aefyr.apheleia.fragments.MCReceiversFragment;
-import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
@@ -115,14 +114,17 @@ public class MessageComposeActivity extends AppCompatActivity {
         messageSendRequest = EljurApiClient.getInstance(this).sendMessage(Helper.getInstance(this).getPersona(), messageFragment.getMessageSubject(), messageFragment.getMessageText(), receiversFragment.getReceiversIds(), new EljurApiClient.JournalismListener<SentMessageResponse>() {
             @Override
             public void onSuccess(SentMessageResponse result) {
-                AnalyticsHelper.logMessageSentEvent(FirebaseAnalytics.getInstance(MessageComposeActivity.this));
                 sendingDialog.dismiss();
                 Chief.makeAToast(MessageComposeActivity.this, getString(R.string.message_sent));
                 finish();
             }
 
             @Override
-            public void onNetworkError() {
+            public void onNetworkError(boolean tokenIsWrong) {
+                if(tokenIsWrong){
+                    LoginActivity.tokenExpired(MessageComposeActivity.this);
+                    return;
+                }
                 AlertDialog networkErrorDialog = new AlertDialog.Builder(MessageComposeActivity.this).setMessage(getString(R.string.network_error_tip)).setTitle(getString(R.string.cant_send_message)).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

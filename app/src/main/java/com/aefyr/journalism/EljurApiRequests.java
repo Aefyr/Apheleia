@@ -117,7 +117,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 
@@ -172,7 +172,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 
@@ -196,7 +196,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 
@@ -216,7 +216,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 
@@ -313,7 +313,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 
@@ -334,7 +334,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 
@@ -354,7 +354,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 
@@ -406,7 +406,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 
@@ -433,7 +433,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 
@@ -479,7 +479,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError();
+                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
             }
         });
 

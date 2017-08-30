@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.text.util.LinkifyCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.TimeLord;
@@ -27,8 +25,6 @@ import com.aefyr.journalism.objects.minor.MessageInfo;
 import com.aefyr.journalism.objects.minor.MessagePerson;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
-import java.util.regex.Pattern;
 
 public class MessageViewActivity extends AppCompatActivity {
 
@@ -90,7 +86,6 @@ public class MessageViewActivity extends AppCompatActivity {
     }
 
     private void setMessage(final MessageInfo message) {
-        AnalyticsHelper.logMessageViewEvent(FirebaseAnalytics.getInstance(this));
         messageLayout.setVisibility(View.VISIBLE);
 
         subject.setText(message.getSubject());
@@ -169,7 +164,11 @@ public class MessageViewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNetworkError() {
+            public void onNetworkError(boolean tokenIsWrong) {
+                if(tokenIsWrong){
+                    LoginActivity.tokenExpired(MessageViewActivity.this);
+                    return;
+                }
                 loadingDialog.dismiss();
                 new AlertDialog.Builder(MessageViewActivity.this).setMessage(getString(R.string.network_error_tip)).setTitle(getString(R.string.cant_get_message)).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override

@@ -6,12 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
-import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -34,21 +33,27 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameET;
     private EditText passwordET;
     private ImageButton passwordVisibilitySwitch;
+    private Button signIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        checkReason(getIntent());
+
         domainET = (EditText) findViewById(R.id.domain);
         domainET.requestFocus();
         usernameET = (EditText) findViewById(R.id.username);
         passwordET = (EditText) findViewById(R.id.password);
         passwordVisibilitySwitch = (ImageButton) findViewById(R.id.passwordVisibilitySwitch);
+        signIn = (Button) findViewById(R.id.signIn);
 
         setupDomainHelpButton();
         setupPasswordVisibilitySwitcher();
         setupLoginSystem();
+
+        Chief.makeWarning(this ,getString(R.string.beta_warn));
     }
 
     private void setupDomainHelpButton() {
@@ -90,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }});
 
-        findViewById(R.id.singIn).setOnClickListener(new View.OnClickListener() {
+        signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (domainET.getText().length() == 0) {
@@ -108,6 +113,8 @@ public class LoginActivity extends AppCompatActivity {
                 progressDialog.setMessage(getString(R.string.authorization));
                 progressDialog.show();
 
+                signIn.setEnabled(false);
+
                 EljurApiClient.getInstance(LoginActivity.this).requestToken(domainET.getText().toString(), usernameET.getText().toString(), passwordET.getText().toString(), new EljurApiClient.LoginRequestListener() {
                     @Override
                     public void onSuccessfulLogin(Token token) {
@@ -119,12 +126,14 @@ public class LoginActivity extends AppCompatActivity {
                         TheInitializer t = new TheInitializer(LoginActivity.this, new TheInitializer.OnInitializationListener() {
                             @Override
                             public void OnSuccess() {
+                                signIn.setEnabled(true);
                                 loggedIn();
                             }
 
                             @Override
                             public void OnError(String m, String json, String failedWhat) {
-                                new Destroyer(LoginActivity.this).destroy(null);
+                                signIn.setEnabled(true);
+                                new Destroyer(LoginActivity.this).destroy(false, null);
                                 if (json != null) {
                                     Chief.makeReportApiErrorDialog(LoginActivity.this, failedWhat, m, json, true);
                                 } else {
@@ -140,24 +149,28 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onInvalidCredentialsError() {
+                        signIn.setEnabled(true);
                         progressDialog.hide();
                         showAlert(getString(R.string.invalid_credentials), getString(R.string.invalid_credentials_desc));
                     }
 
                     @Override
                     public void onInvalidDomainError() {
+                        signIn.setEnabled(true);
                         progressDialog.hide();
                         showAlert(getString(R.string.invalid_domain), getString(R.string.invalid_domain_desc));
                     }
 
                     @Override
                     public void onNetworkError() {
+                        signIn.setEnabled(true);
                         progressDialog.hide();
                         showAlert(getString(R.string.network_error), getString(R.string.network_error_tip));
                     }
 
                     @Override
                     public void onApiError(String message, String json) {
+                        signIn.setEnabled(true);
                         progressDialog.hide();
                         showAlert(getString(R.string.api_error), message);
                     }
@@ -177,7 +190,7 @@ public class LoginActivity extends AppCompatActivity {
         helper.setLoggedIn(true);
 
         //Btw, this may be used to identify person in unique cases like only male/female student in class or so. Does that mean this is personal data? Actually, I guess school life doesn't count as personal/family life, right?
-        ProfileHelper profileHelper = ProfileHelper.getInstance(this);
+        /*ProfileHelper profileHelper = ProfileHelper.getInstance(this);
         Bundle params = new Bundle();
         params.putString(FirebaseConstants.SCHOOL_DOMAIN, helper.getDomain());
         params.putString(FirebaseConstants.ROLE, profileHelper.getRole());
@@ -199,16 +212,43 @@ public class LoginActivity extends AppCompatActivity {
             params.putString(FirebaseConstants.RAW_CLASS, "-1");
             params.putInt(FirebaseConstants.PARSED_CLASS, -1);
         }
-        FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.LOGIN, params);
+        FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.LOGIN, params);*/
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
-    public static void startFromActivity(Activity activity) {
+    private void checkReason(Intent i){
+        String reason = i.getStringExtra("reason");
+        if(reason!=null){
+            switch (reason){
+                case Reason.TOKEN_EXPIRED:
+                    Chief.makeWarning(this, getString(R.string.token_expired));
+                    break;
+            }
+        }
+    }
+
+    public class Reason{
+        public static final String TOKEN_EXPIRED = "token_expired";
+    }
+
+    public static void startFromActivity(Activity activity, String reason) {
         Intent i = new Intent(activity, LoginActivity.class);
+        if(reason!=null)
+            i.putExtra("reason", reason);
         activity.startActivity(i);
         activity.finish();
+    }
+
+    public static void tokenExpired(final Activity a){
+        Helper.getInstance(a).setLoggedIn(false);
+        new Destroyer(a).destroy(true, new Destroyer.OnDestructionListener() {
+            @Override
+            public void onDestroyed() {
+                startFromActivity(a, Reason.TOKEN_EXPIRED);
+            }
+        });
     }
 }

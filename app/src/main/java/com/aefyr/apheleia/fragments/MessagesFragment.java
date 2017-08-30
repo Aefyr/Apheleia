@@ -17,12 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aefyr.apheleia.ActionListener;
+import com.aefyr.apheleia.LoginActivity;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.MessageComposeActivity;
 import com.aefyr.apheleia.MessageViewActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MessagesAdapter;
-import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.Helper;
@@ -71,7 +71,6 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_messages, container, false);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null || currentFolder == MessagesList.Folder.INBOX) ? R.string.inbox : R.string.sent));
-        AnalyticsHelper.logAppSectionViewEvent(FirebaseAnalytics.getInstance(getActivity()), FirebaseConstants.SECTION_MESSAGES);
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);
@@ -188,7 +187,11 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
 
             @Override
-            public void onNetworkError() {
+            public void onNetworkError(boolean tokenIsWrong) {
+                if(tokenIsWrong){
+                    LoginActivity.tokenExpired(getActivity());
+                    return;
+                }
                 refreshLayout.setRefreshing(false);
                 Chief.makeASnack(getView(), getString(R.string.offline_mode));
             }

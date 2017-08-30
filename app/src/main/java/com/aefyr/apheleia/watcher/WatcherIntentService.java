@@ -7,14 +7,13 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.MessageViewActivity;
 import com.aefyr.apheleia.R;
-import com.aefyr.apheleia.fragments.MessagesFragment;
-import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
@@ -57,7 +56,7 @@ public class WatcherIntentService extends IntentService {
             }
 
             @Override
-            public void onNetworkError() {
+            public void onNetworkError(boolean tokenIsWrong) {
                 //who cares
             }
 
@@ -112,8 +111,11 @@ public class WatcherIntentService extends IntentService {
         postNotification(createNotification(message.getSender().getCompositeName(true, false, true), message.getSubject()).setContentIntent(messageViewPendingIntent));
     }
 
-    private Notification.Builder createNotification(String title, String message){
-        return new Notification.Builder(this).setContentTitle(title).setContentText(message).setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icon)).setSmallIcon(R.drawable.ic_email_black_24dp).setVibrate(new long[]{500, 500, 500}).setLights(getResources().getColor(R.color.colorPrimary), 200, 3000).setAutoCancel(true);
+    public Notification.Builder createNotification(String title, String message){
+        Notification.Builder builder = new Notification.Builder(this).setContentTitle(title).setContentText(message).setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icon)).setSmallIcon(R.drawable.ic_email_white_24dp).setVibrate(new long[]{0, 500, 500, 500}).setLights(getResources().getColor(R.color.colorPrimary), 200, 3000).setAutoCancel(true);
+        if(Build.VERSION.SDK_INT>=21)
+            builder.setColor(getResources().getColor(R.color.colorAccent));
+        return builder;
     }
 
     private void postNotification(Notification.Builder notificationBuilder){

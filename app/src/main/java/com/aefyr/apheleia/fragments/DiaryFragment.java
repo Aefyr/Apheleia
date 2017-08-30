@@ -19,11 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.aefyr.apheleia.ActionListener;
+import com.aefyr.apheleia.LoginActivity;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.DiaryRecyclerAdapter;
 import com.aefyr.apheleia.custom.PreloadLayoutManager;
-import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.DiaryHelper;
@@ -32,14 +32,12 @@ import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.SerializerHelperWithTimeAndStudentKeysBase;
 import com.aefyr.apheleia.helpers.TimeLord;
-import com.aefyr.apheleia.utility.FirebaseConstants;
 import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.minor.WeekDay;
 import com.android.volley.toolbox.StringRequest;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,8 +63,6 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private LinearLayout quickDayPickBar;
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-
     public DiaryFragment() {
         // Required empty public constructor
     }
@@ -80,7 +76,6 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_diary, container, false);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.diary));
-        AnalyticsHelper.logAppSectionViewEvent(FirebaseAnalytics.getInstance(getActivity()), FirebaseConstants.SECTION_DIARY);
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);
@@ -174,7 +169,11 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             }
 
             @Override
-            public void onNetworkError() {
+            public void onNetworkError(boolean tokenIsWrong) {
+                if(tokenIsWrong){
+                    LoginActivity.tokenExpired(getActivity());
+                    return;
+                }
                 if (!loadedFromMemory)
                     antiScroll();
                 Chief.makeASnack(getActivity().getCurrentFocus(), String.format(getString(R.string.fetch_network_error), getString(R.string.diary)));

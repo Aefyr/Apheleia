@@ -19,6 +19,7 @@ public class Destroyer {
     private Context c;
     private OnDestructionListener listener;
     private ProgressDialog progressDialog;
+    private boolean keepCache;
 
     public Destroyer(Context c) {
         this.c = c;
@@ -26,7 +27,8 @@ public class Destroyer {
         progressDialog.setMessage(c.getString(R.string.logging_out));
     }
 
-    public void destroy(OnDestructionListener listener) {
+    public void destroy(boolean keepCache, OnDestructionListener listener) {
+        this.keepCache = keepCache;
         this.listener = listener;
         progressDialog.show();
         new DestructionTask().execute();
@@ -50,12 +52,16 @@ public class Destroyer {
             Helper.destroy();
             WatcherHelper.setWatcherEnabled(c, false);
 
+            PreferenceManager.getDefaultSharedPreferences(c).edit().clear().commit();
+
+            if(keepCache)
+                return null;
+
             Utility.deleteRecursive(new File(c.getFilesDir(),"diary"));
             Utility.deleteRecursive(new File(c.getFilesDir(),"marks"));
             Utility.deleteRecursive(new File(c.getFilesDir(),"messages"));
             Utility.deleteRecursive(new File(c.getFilesDir(),"schedule"));
             Utility.deleteRecursive(new File(c.getFilesDir(),"finals"));
-            PreferenceManager.getDefaultSharedPreferences(c).edit().clear().commit();
             return null;
         }
 

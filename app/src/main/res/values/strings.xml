@@ -54,6 +54,8 @@
     <string name="loading_data">Fetching initial data…</string>
     <string name="logging_out">Signing out…</string>
     <string name="unupported_role">Apheleia only supports students and parents accounts</string>
+    <string name="token_expired">Your access token is no longer valid, you need to sign in again</string>
+    <string name="beta_warn">This is the first release of Apheleia, and it hasn\'t been tested on real users. So if you notice any problems, report them on the Google Play Apheleia page</string>
 
     <!-- Re:Initialization and periods helper-->
     <string name="check_periods_failed">Failed to update weeks/periods info. Error was reported</string>

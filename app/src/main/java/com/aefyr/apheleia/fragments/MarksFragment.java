@@ -15,10 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aefyr.apheleia.ActionListener;
+import com.aefyr.apheleia.LoginActivity;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MarksGridRecyclerAdapter;
-import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.Helper;
@@ -70,7 +70,6 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_marks, container, false);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
-        AnalyticsHelper.logAppSectionViewEvent(FirebaseAnalytics.getInstance(getActivity()), FirebaseConstants.SECTION_MARKS);
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);
@@ -155,7 +154,11 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             }
 
             @Override
-            public void onNetworkError() {
+            public void onNetworkError(boolean tokenIsWrong) {
+                if(tokenIsWrong){
+                    LoginActivity.tokenExpired(getActivity());
+                    return;
+                }
                 if (!loadedFromMemory)
                     antiScroll();
                 Chief.makeASnack(getActivity().getCurrentFocus(), String.format(getString(R.string.fetch_network_error), getString(R.string.marks)));

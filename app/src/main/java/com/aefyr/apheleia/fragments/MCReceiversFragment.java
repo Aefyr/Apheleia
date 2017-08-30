@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aefyr.apheleia.LoginActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MessageReceiversAdapter;
 import com.aefyr.apheleia.helpers.Helper;
@@ -88,7 +89,11 @@ public class MCReceiversFragment extends Fragment {
             }
 
             @Override
-            public void onNetworkError() {
+            public void onNetworkError(boolean tokenIsWrong) {
+                if(tokenIsWrong){
+                    LoginActivity.tokenExpired(getActivity());
+                    return;
+                }
                 progressDialog.dismiss();
                 new AlertDialog.Builder(getActivity()).setMessage(getString(R.string.network_error_tip)).setTitle(getString(R.string.cant_get_receivers)).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override

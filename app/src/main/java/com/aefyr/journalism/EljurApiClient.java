@@ -29,7 +29,7 @@ public class EljurApiClient {
     public interface JournalismListener<T> {
         void onSuccess(T result);
 
-        void onNetworkError();
+        void onNetworkError(boolean tokenIsWrong);
 
         void onApiError(String message, String json);
     }

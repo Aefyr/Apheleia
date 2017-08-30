@@ -112,7 +112,7 @@ public class TheInitializer {
                                     }
 
                                     @Override
-                                    public void onNetworkError() {
+                                    public void onNetworkError(boolean tokenIsWrong) {
                                         fail(c.getString(R.string.network_error_tip), null, null);
                                     }
 
@@ -137,7 +137,7 @@ public class TheInitializer {
                                     }
 
                                     @Override
-                                    public void onNetworkError() {
+                                    public void onNetworkError(boolean tokenIsWrong) {
                                         fail(c.getString(R.string.network_error_tip), null, null);
                                     }
 
@@ -162,7 +162,7 @@ public class TheInitializer {
                                     }
 
                                     @Override
-                                    public void onNetworkError() {
+                                    public void onNetworkError(boolean tokenIsWrong) {
                                         fail(c.getString(R.string.network_error_tip), null, null);
                                     }
 
@@ -175,7 +175,7 @@ public class TheInitializer {
                             }
 
                             @Override
-                            public void onNetworkError() {
+                            public void onNetworkError(boolean tokenIsWrong) {
                                 fail(c.getString(R.string.network_error_tip), null, null);
                             }
 
@@ -200,7 +200,7 @@ public class TheInitializer {
                             }
 
                             @Override
-                            public void onNetworkError() {
+                            public void onNetworkError(boolean tokenIsWrong) {
                                 fail(c.getString(R.string.network_error_tip), null, null);
                             }
 
@@ -234,7 +234,7 @@ public class TheInitializer {
                         }
 
                         @Override
-                        public void onNetworkError() {
+                        public void onNetworkError(boolean tokenIsWrong) {
                             fail(c.getString(R.string.network_error_tip), null, null);
                         }
 
@@ -247,7 +247,7 @@ public class TheInitializer {
                 }
 
                 @Override
-                public void onNetworkError() {
+                public void onNetworkError(boolean tokenIsWrong) {
                     fail(c.getString(R.string.network_error_tip), null, null);
                 }
 

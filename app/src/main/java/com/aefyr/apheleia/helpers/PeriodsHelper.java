@@ -83,7 +83,7 @@ public class PeriodsHelper {
             }
 
             @Override
-            public void onNetworkError() {
+            public void onNetworkError(boolean tokenIsWrong) {
                 listener.onNetworkError();
             }
 

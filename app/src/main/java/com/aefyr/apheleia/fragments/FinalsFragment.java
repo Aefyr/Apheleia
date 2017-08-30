@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aefyr.apheleia.ActionListener;
+import com.aefyr.apheleia.LoginActivity;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.FinalsAdapter;
-import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.FinalsHelper;
@@ -57,7 +57,6 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_finals, container, false);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.finals));
-        AnalyticsHelper.logAppSectionViewEvent(FirebaseAnalytics.getInstance(getActivity()), FirebaseConstants.SECTION_FINALS);
 
         finalsRecycler = (RecyclerView) view.findViewById(R.id.finalsRecycler);
         finalsRecycler.setLayoutManager(new StaggeredGridLayoutManager((int) (Utility.displayWidthPx(getResources())/Utility.dpToPx(180, getResources())), StaggeredGridLayoutManager.VERTICAL));
@@ -125,7 +124,11 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
             }
 
             @Override
-            public void onNetworkError() {
+            public void onNetworkError(boolean tokenIsWrong) {
+                if(tokenIsWrong){
+                    LoginActivity.tokenExpired(getActivity());
+                    return;
+                }
                 refreshLayout.setRefreshing(false);
                 Chief.makeASnack(getActivity().getCurrentFocus(), String.format(getString(R.string.fetch_network_error), getString(R.string.finals)));
             }
