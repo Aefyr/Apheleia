@@ -16,7 +16,7 @@
     <string name="check_periods_updated">Найден новый период/неделя, обновление данных</string>
     <string name="compose_message">Написать</string>
     <string name="current_student">Текущий ученик:</string>
-    <string name="deselect_all">Снять выделение со всех</string>
+    <string name="deselect_all">Снять выбор со всех</string>
     <string name="diary">Дневник</string>
     <string name="domain">Адрес школы на Eljur.ru</string>
     <string name="dont_report">Не отправлять</string>
@@ -28,13 +28,12 @@
     <string name="fetching_receivers">Получение списка получателей…</string>
     <string name="finals">Итоговые оценки</string>
     <string name="from" formatted="false">От кого: %s</string>
-    <string name="hello_blank_fragment"></string>
     <string name="help">Помощь</string>
     <string name="inbox">Входящие</string>
     <string name="invalid_credentials">Неверные данные</string>
     <string name="invalid_credentials_desc">Неверные имя пользователя или пароль</string>
     <string name="invalid_domain">Неверный адрес школы</string>
-    <string name="invalid_domain_desc">Введённый адрес школы не существует</string>
+    <string name="invalid_domain_desc">Введённый адрес школы не существует или временно недоступен. Пожалуйста, проверьте его корректность</string>
     <string name="loading_data">Получение первоначальных данных…</string>
     <string name="loading_profile">Получение профиля…</string>
     <string name="logging_out">Выход…</string>
@@ -99,7 +98,7 @@
     <string name="pref_enable_watcher">Следить за новыми сообщениями</string>
     <string name="check_periods">Синхронизировать недели/периоды</string>
     <string name="check_periods_error">Не удалось синхронизировать недели/периоды из-за ошибки сети</string>
-    <string name="check_periods_no_change">Новых неделей/периодов не найдено</string>
+    <string name="check_periods_no_change">Изменений в неделях/периодах не обнаружено</string>
     <string name="dont_enable">Не включать</string>
     <string name="enable">Включить</string>
     <string name="got_it">Понятно</string>
@@ -112,7 +111,7 @@
     <string name="tut">Обучение</string>
     <string name="tut_short">1. Оценки с комментарием обведены в круг, нажмите на них, чтобы увидеть комментарий\n\n2. Если началась новая неделя, но её не видно в Apheleia, попробуйте выбрать \"Синхронизировать недели/периоды\" в меню (которое открывается нажатием на три точки сверху справа)\n\n3. Чтобы переключать папки сообщений (входящие/исходящие), нажмите на кнопку сверху справа возле \"троеточия\"\n\n4. Если вы родитель, то чтобы сменить текущего ученика, нажмите на кнопку возле имени текущего ученика в боковой панели\n\nВы всегда можете открыть это обучение из настроек</string>
     <string name="token_expired">Ключ доступа истёк, требуется повторная авторизация</string>
-    <string name="beta_warn">Это первая версия Apheleia, она может содержать ошибки. Если вы их заметите, пожалуйста сообщите о них на странице Apheleia в Google Play в комментариях</string>
+    <string name="beta_warn"><b>Бета:</b>\nЭто первая версия Apheleia, она может содержать ошибки. Если вы их заметите, пожалуйста сообщите о них на странице Apheleia в Google Play в комментариях\n\n<b>Аналитика и конфиденциальность:</b>\nApheleia использует Google Analytics, чтобы собирать анонимные данные об использовании программы и сообщать разработчику об ошибках. Никаких личных данных не передаётся. Собранные данные используются для улучшения Apheleia.</string>
 
 
 </resources>

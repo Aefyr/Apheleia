@@ -3,6 +3,7 @@ package com.aefyr.apheleia;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +41,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        SharedPreferences l = getSharedPreferences("l", 0);
+        if(!l.getBoolean("start_warn_shown", false)) {
+            Chief.makeWarning(this, getText(R.string.beta_warn)).setCancelable(false);
+            l.edit().putBoolean("start_warn_shown", true).apply();
+        }
+
         checkReason(getIntent());
 
         domainET = (EditText) findViewById(R.id.domain);
@@ -52,8 +59,6 @@ public class LoginActivity extends AppCompatActivity {
         setupDomainHelpButton();
         setupPasswordVisibilitySwitcher();
         setupLoginSystem();
-
-        Chief.makeWarning(this ,getString(R.string.beta_warn));
     }
 
     private void setupDomainHelpButton() {
@@ -188,31 +193,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loggedIn() {
         helper.setLoggedIn(true);
-
-        //Btw, this may be used to identify person in unique cases like only male/female student in class or so. Does that mean this is personal data? Actually, I guess school life doesn't count as personal/family life, right?
-        /*ProfileHelper profileHelper = ProfileHelper.getInstance(this);
-        Bundle params = new Bundle();
-        params.putString(FirebaseConstants.SCHOOL_DOMAIN, helper.getDomain());
-        params.putString(FirebaseConstants.ROLE, profileHelper.getRole());
-        params.putString(FirebaseConstants.GENDER, profileHelper.getGender());
-        boolean parent = profileHelper.getRole().equals(ProfileHelper.Role.PARENT);
-        params.putInt(FirebaseConstants.STUDENTS_COUNT, parent?profileHelper.getStudentsCount():-1);
-        if(!parent){
-            String rawClass = profileHelper.getStudentClass(profileHelper.getCurrentStudentId());
-            int parsedClass = 0;
-            try {
-                parsedClass = Integer.parseInt(rawClass.replaceAll("[^0-9]", ""));
-            } catch (NumberFormatException e) {
-                FirebaseCrash.log("Can't parse class name: " + rawClass);
-                FirebaseCrash.report(e);
-            }
-            params.putString(FirebaseConstants.RAW_CLASS, rawClass);
-            params.putInt(FirebaseConstants.PARSED_CLASS, parsedClass);
-        }else {
-            params.putString(FirebaseConstants.RAW_CLASS, "-1");
-            params.putInt(FirebaseConstants.PARSED_CLASS, -1);
-        }
-        FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.LOGIN, params);*/
+        Bundle b = new Bundle();
+        b.putString(FirebaseConstants.SCHOOL_DOMAIN, helper.getDomain());
+        FirebaseAnalytics.getInstance(this).logEvent(FirebaseConstants.LOGIN, b);
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

@@ -48,14 +48,14 @@
     <string name="invalid_credentials">Invalid Credentials</string>
     <string name="invalid_credentials_desc">Invalid username or password</string>
     <string name="invalid_domain">Invalid school domain</string>
-    <string name="invalid_domain_desc">Entered school domain doesn\'t exist</string>
+    <string name="invalid_domain_desc">Entered school domain doesn\'t exist or is temporary unavailable. Please check if you\'ve entered it right</string>
     <string name="title_activity_container" translatable="false">Apheleia</string>
     <string name="loading_profile">Fetching profile…</string>
     <string name="loading_data">Fetching initial data…</string>
     <string name="logging_out">Signing out…</string>
     <string name="unupported_role">Apheleia only supports students and parents accounts</string>
     <string name="token_expired">Your access token is no longer valid, you need to sign in again</string>
-    <string name="beta_warn">This is the first release of Apheleia, and it hasn\'t been tested on real users. So if you notice any problems, report them on the Google Play Apheleia page</string>
+    <string name="beta_warn"><b>Beta:</b>\nThis is the first release of Apheleia, and it hasn\'t been tested on real users. So if you notice any problems, report them on the Google Play Apheleia page\n\n<b>Analytics and Privacy Policy:</b>\nApheleia uses Google Analytics to anonymously collect app usage data and report errors. None of you personal data is sent. This data is used to make Apheleia better.</string>
 
     <!-- Re:Initialization and periods helper-->
     <string name="check_periods_failed">Failed to update weeks/periods info. Error was reported</string>
@@ -64,7 +64,7 @@
     <string name="reinitialization_prompt">Apheleia has detected, that Eljur returned less weeks than it did last time.\n\nThat may have happened due to the start of a new school year.\n\nDo you want to perform a reinitialization, so that you can see the new school year?\n\nIf you believe that this is an error, you may ignore this</string>
     <string name="reinitialization_warning">If network to be disconnected or server error occurs during reinitialization, you will be logged off from the app and will have to log in again.</string>
     <string name="reinitialize_failed">During reinitialization, connection to Eljur was lost. Check your Internet connection or try again later.\n\nYou will have to log into Apheleia again. The app will now be closed</string>
-    <string name="check_periods_no_change">No new weeks/periods found</string>
+    <string name="check_periods_no_change">No changes in weeks/periods detected</string>
     <string name="check_periods_error">Unable to sync weeks/periods due to a network error</string>
     <string name="check_periods">Sync weeks/periods</string>
 
@@ -129,19 +129,16 @@
     <string name="finals">Finals</string>
     <string name="no_finals">No final marks found</string>
 
-    <!-- Tutorial -->
+    <!-- Tutorial and Preferences-->
     <string name="pref_show_tut">Show Tutorial</string>
     <string name="tut">Tutorial</string>
     <string name="tut_short">1. To switch week or period, click the calendar button in app bar\n\n2. Marks with comments are highlighted with a circle, click them to see the comment\n\n3. If the new week has started, but you don\'t see it in Apheleia, try using \"Sync weeks/periods\" option from \"three dots\" menu\n\n4. To switch folders in messages, click the button next to the \"three dots\" button in the app bar\n\n5. To switch current student, click the button next to the current student name in the navigation drawer\n\nYou can always open this from the settings</string>
-
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

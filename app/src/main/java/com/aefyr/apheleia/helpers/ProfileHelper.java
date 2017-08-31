@@ -104,12 +104,28 @@ public class ProfileHelper {
         preferences.edit().putInt("students_count", studentsCount).apply();
     }
 
+    private void setCity(String city){
+        preferences.edit().putString("city", city).apply();
+    }
+
+    private  void setRegion(String region){
+        preferences.edit().putString("region", region).apply();
+    }
+
+    private void setSign(String sign){
+        preferences.edit().putString("sign", sign).apply();
+    }
+
 
     public void savePersonaInfo(PersonaInfo personaInfo) {
         setGender(personaInfo.gender() == PersonaInfo.Gender.FEMALE ? "f" : "m");
         setEmail(personaInfo.email());
         setName(personaInfo.getCompositeName(true, false, true));
         setRole(personaInfo.role() == PersonaInfo.Role.PARENT ? Role.PARENT : Role.STUDENT);
+
+        setSign(personaInfo.sign());
+        setCity(personaInfo.city());
+        setRegion(personaInfo.region());
 
 
         HashSet<String> studentIds = new HashSet<>();

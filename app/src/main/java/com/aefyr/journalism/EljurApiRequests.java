@@ -103,6 +103,9 @@ class EljurApiRequests {
                 MajorObjectsHelper.setPersonaInfoId(personaInfo, response.get("name").getAsString());
                 MajorObjectsHelper.setPersonaInfoEmail(personaInfo, response.get("email").getAsString());
                 MajorObjectsHelper.setPersonaInfoName(personaInfo, response.get("firstname").getAsString(), response.get("middlename").getAsString(), response.get("lastname").getAsString());
+                MajorObjectsHelper.setPersonaInfoMessageSignature(personaInfo, response.get("messageSignature").getAsString());
+                MajorObjectsHelper.setPersonaInfoCity(personaInfo, response.get("city").getAsString());
+                MajorObjectsHelper.setPersonaInfoRegion(personaInfo, response.get("region").getAsString());
 
                 JsonObject students = response.getAsJsonObject("relations").getAsJsonObject("students");
 

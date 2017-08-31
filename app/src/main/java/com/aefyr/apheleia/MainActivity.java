@@ -34,7 +34,9 @@ import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.TheInitializer;
 import com.aefyr.apheleia.helpers.Tutorial;
+import com.aefyr.apheleia.utility.FirebaseConstants;
 import com.aefyr.apheleia.watcher.WatcherHelper;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
 
@@ -87,11 +89,13 @@ public class MainActivity extends AppCompatActivity
         if(getIntent().getStringExtra("requested_fragment")!=null){
             if(getIntent().getStringExtra("requested_fragment").equals("messages")){
                 currentFragment = new MessagesFragment();
+                currentApheleiaFragment = ApheleiaFragment.MESSAGES;
                 fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
                 navigationView.setCheckedItem(R.id.nav_messages);
             }
         }else {
             currentFragment = new DiaryFragment();
+            currentApheleiaFragment = ApheleiaFragment.DIARY;
             fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
             navigationView.setCheckedItem(R.id.nav_diary);
         }
@@ -391,6 +395,7 @@ public class MainActivity extends AppCompatActivity
                 new Destroyer(MainActivity.this).destroy(false, new Destroyer.OnDestructionListener() {
                     @Override
                     public void onDestroyed() {
+                        FirebaseAnalytics.getInstance(MainActivity.this).logEvent(FirebaseConstants.LOGOUT, null);
                         LoginActivity.startFromActivity(MainActivity.this, null);
                     }
                 });

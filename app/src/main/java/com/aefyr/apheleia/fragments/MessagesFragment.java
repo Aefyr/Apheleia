@@ -23,6 +23,7 @@ import com.aefyr.apheleia.MessageComposeActivity;
 import com.aefyr.apheleia.MessageViewActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MessagesAdapter;
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.Helper;
@@ -99,6 +100,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MESSAGES, FirebaseAnalytics.getInstance(getActivity()));
         loadMessages(currentFolder);
     }
 

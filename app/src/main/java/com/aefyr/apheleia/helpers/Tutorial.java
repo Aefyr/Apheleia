@@ -11,7 +11,7 @@ import com.aefyr.apheleia.R;
 
 public class Tutorial {
     public static void showTutorial(Context c){
-        AlertDialog tutorialDialog = new AlertDialog.Builder(c).setTitle(c.getString(R.string.tut)).setMessage(c.getString(R.string.tut_short)).setCancelable(false).setPositiveButton(c.getString(R.string.got_it), null).create();
+        AlertDialog tutorialDialog = new AlertDialog.Builder(c).setTitle(c.getString(R.string.tut)).setMessage(c.getString(R.string.tut_short)).setPositiveButton(c.getString(R.string.got_it), null).create();
         tutorialDialog.setCanceledOnTouchOutside(false);
         tutorialDialog.show();
     }

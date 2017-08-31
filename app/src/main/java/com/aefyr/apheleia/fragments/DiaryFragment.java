@@ -24,6 +24,7 @@ import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.DiaryRecyclerAdapter;
 import com.aefyr.apheleia.custom.PreloadLayoutManager;
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.DiaryHelper;
@@ -32,12 +33,14 @@ import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.SerializerHelperWithTimeAndStudentKeysBase;
 import com.aefyr.apheleia.helpers.TimeLord;
+import com.aefyr.apheleia.utility.FirebaseConstants;
 import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.minor.WeekDay;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -101,6 +104,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_DIARY, FirebaseAnalytics.getInstance(getActivity()));
         studentSwitched();
     }
 

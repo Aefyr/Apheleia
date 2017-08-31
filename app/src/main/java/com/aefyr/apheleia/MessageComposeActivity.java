@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import com.aefyr.apheleia.fragments.MCMessageFragment;
 import com.aefyr.apheleia.fragments.MCReceiversFragment;
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
@@ -114,6 +115,7 @@ public class MessageComposeActivity extends AppCompatActivity {
         messageSendRequest = EljurApiClient.getInstance(this).sendMessage(Helper.getInstance(this).getPersona(), messageFragment.getMessageSubject(), messageFragment.getMessageText(), receiversFragment.getReceiversIds(), new EljurApiClient.JournalismListener<SentMessageResponse>() {
             @Override
             public void onSuccess(SentMessageResponse result) {
+                AnalyticsHelper.sentMessage(FirebaseAnalytics.getInstance(MessageComposeActivity.this));
                 sendingDialog.dismiss();
                 Chief.makeAToast(MessageComposeActivity.this, getString(R.string.message_sent));
                 finish();

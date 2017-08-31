@@ -26,6 +26,8 @@ public class PersonaInfo {
     String id;
     String email;
     String messageSignature;
+    String city;
+    String region;
 
     ArrayList<Student> students;
 
@@ -65,6 +67,16 @@ public class PersonaInfo {
         return this;
     }
 
+    PersonaInfo setCity(String city){
+        this.city = city;
+        return this;
+    }
+
+    PersonaInfo setRegion(String region){
+        this.region = region;
+        return this;
+    }
+
     PersonaInfo addStudent(Student student) {
         students.add(student);
         return this;
@@ -97,8 +109,16 @@ public class PersonaInfo {
         return email;
     }
 
-    public String messageSignature() {
+    public String sign() {
         return messageSignature;
+    }
+
+    public String city(){
+        return city;
+    }
+
+    public String region(){
+        return  region;
     }
 
     public ArrayList<Student> getStudents() {

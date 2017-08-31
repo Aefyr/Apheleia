@@ -23,6 +23,7 @@ import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.ScheduleRecyclerAdapter;
 import com.aefyr.apheleia.custom.PreloadLayoutManager;
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.Helper;
@@ -109,6 +110,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_SCHEDULE, FirebaseAnalytics.getInstance(getActivity()));
         studentSwitched();
     }
 

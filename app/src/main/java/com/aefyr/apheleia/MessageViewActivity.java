@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.TimeLord;
@@ -86,6 +87,7 @@ public class MessageViewActivity extends AppCompatActivity {
     }
 
     private void setMessage(final MessageInfo message) {
+        AnalyticsHelper.viewedMessage(FirebaseAnalytics.getInstance(this));
         messageLayout.setVisibility(View.VISIBLE);
 
         subject.setText(message.getSubject());

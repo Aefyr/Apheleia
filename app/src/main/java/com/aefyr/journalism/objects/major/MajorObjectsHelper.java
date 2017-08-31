@@ -44,4 +44,12 @@ public class MajorObjectsHelper {
         return personaInfo.addStudent(student);
     }
 
+    public static PersonaInfo setPersonaInfoCity(PersonaInfo personaInfo, String city){
+        return personaInfo.setCity(city);
+    }
+
+    public static PersonaInfo setPersonaInfoRegion(PersonaInfo personaInfo, String region){
+        return personaInfo.setRegion(region);
+    }
+
 }
