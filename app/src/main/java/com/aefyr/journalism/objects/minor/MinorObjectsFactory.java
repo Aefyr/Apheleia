@@ -1,6 +1,6 @@
 package com.aefyr.journalism.objects.minor;
 
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.major.PersonaInfo;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class MinorObjectsFactory {
 
-    public static ActualPeriod createActualPeriod(String name, String fullName, String rawStart, String rawEnd) throws EljurApiException {
+    public static ActualPeriod createActualPeriod(String name, String fullName, String rawStart, String rawEnd) throws JournalismException {
         ActualPeriod period = new ActualPeriod();
 
         period.parseDate(rawEnd, rawStart);
@@ -37,7 +37,7 @@ public class MinorObjectsFactory {
         return attachment;
     }
 
-    public static GridMark createGridMark(String value, String rawDate) throws EljurApiException {
+    public static GridMark createGridMark(String value, String rawDate) throws JournalismException {
         GridMark mark = new GridMark();
 
         mark.value = value;
@@ -46,7 +46,7 @@ public class MinorObjectsFactory {
         return mark;
     }
 
-    public static GridMark createGridMarkWithComment(String value, String rawDate, String comment) throws EljurApiException {
+    public static GridMark createGridMarkWithComment(String value, String rawDate, String comment) throws JournalismException {
         GridMark mark = new GridMark();
 
         mark.value = value;
@@ -118,7 +118,7 @@ public class MinorObjectsFactory {
         return subjectInGrid;
     }
 
-    public static WeekDay createVacationWeekDay(String name, String rawDate) throws EljurApiException {
+    public static WeekDay createVacationWeekDay(String name, String rawDate) throws JournalismException {
         WeekDay weekDay = new WeekDay();
 
         weekDay.parseDate(rawDate);
@@ -128,7 +128,7 @@ public class MinorObjectsFactory {
         return weekDay;
     }
 
-    public static WeekDay createWeekDay(String name, String rawDate, ArrayList<Lesson> lessons) throws EljurApiException {
+    public static WeekDay createWeekDay(String name, String rawDate, ArrayList<Lesson> lessons) throws JournalismException {
         WeekDay weekDay = new WeekDay();
 
         weekDay.parseDate(rawDate);
@@ -138,7 +138,7 @@ public class MinorObjectsFactory {
         return weekDay;
     }
 
-    public static Week createWeek(String rawStart, String rawEnd, String name) throws EljurApiException {
+    public static Week createWeek(String rawStart, String rawEnd, String name) throws JournalismException {
         Week week = new Week();
 
         week.parseDate(rawEnd, rawStart);
@@ -146,7 +146,7 @@ public class MinorObjectsFactory {
         return week;
     }
 
-    public static ShortMessage createInboxShortMessage(String id, String subject, String previewText, String rawDate, MessagePerson sender, boolean unread, boolean hasFiles, boolean hasResources) throws EljurApiException {
+    public static ShortMessage createInboxShortMessage(String id, String subject, String previewText, String rawDate, MessagePerson sender, boolean unread, boolean hasFiles, boolean hasResources) throws JournalismException {
         ShortMessage message = new ShortMessage();
 
         message.parseDate(rawDate);
@@ -162,7 +162,7 @@ public class MinorObjectsFactory {
         return message;
     }
 
-    public static ShortMessage createSentShortMessage(String id, String subject, String previewText, String rawDate, ArrayList<MessagePerson> receivers, boolean unread, boolean hasFiles, boolean hasResources) throws EljurApiException {
+    public static ShortMessage createSentShortMessage(String id, String subject, String previewText, String rawDate, ArrayList<MessagePerson> receivers, boolean unread, boolean hasFiles, boolean hasResources) throws JournalismException {
         ShortMessage message = new ShortMessage();
 
         message.parseDate(rawDate);
@@ -189,7 +189,7 @@ public class MinorObjectsFactory {
         return sender;
     }
 
-    public static MessageInfo createMessageInfo(String id, String subject, String text, String rawDate, MessagesList.Folder folder, MessagePerson sender, ArrayList<MessagePerson> receivers) throws EljurApiException {
+    public static MessageInfo createMessageInfo(String id, String subject, String text, String rawDate, MessagesList.Folder folder, MessagePerson sender, ArrayList<MessagePerson> receivers) throws JournalismException {
         MessageInfo message = new MessageInfo();
 
         message.parseDate(rawDate);

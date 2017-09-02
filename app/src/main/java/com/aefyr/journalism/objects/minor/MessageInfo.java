@@ -1,7 +1,7 @@
 package com.aefyr.journalism.objects.minor;
 
 
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessagesList;
 
 import java.text.ParseException;
@@ -57,12 +57,12 @@ public class MessageInfo {
         this.attachments = attachments;
     }
 
-    void parseDate(String rawDate) throws EljurApiException {
+    void parseDate(String rawDate) throws JournalismException {
         SimpleDateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             date = messageDateFormat.parse(rawDate).getTime();
         } catch (ParseException e) {
-            throw new EljurApiException("Failed to parse ShortMessage date\n" + e.getMessage());
+            throw new JournalismException("Failed to parse ShortMessage date\n" + e.getMessage());
         }
     }
 }

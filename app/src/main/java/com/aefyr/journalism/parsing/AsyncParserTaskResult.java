@@ -1,18 +1,18 @@
 package com.aefyr.journalism.parsing;
 
+import com.aefyr.journalism.exceptions.JournalismException;
+
 /**
  * Created by Aefyr on 16.08.2017.
  */
 
 class AsyncParserTaskResult<T> {
-    String errorMessage;
-    String rawResponse;
+    JournalismException error;
     T journalismMajorObject;
     boolean failed;
 
-    AsyncParserTaskResult(String errorMessage, String rawResponse) {
-        this.errorMessage = errorMessage;
-        this.rawResponse = rawResponse;
+    AsyncParserTaskResult(JournalismException e) {
+        error = e;
         failed = true;
     }
 

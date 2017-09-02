@@ -18,11 +18,11 @@ import android.widget.ImageButton;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Destroyer;
 import com.aefyr.apheleia.helpers.Helper;
-import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.TheInitializer;
 import com.aefyr.apheleia.utility.FirebaseConstants;
 import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.Token;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
@@ -136,14 +136,10 @@ public class LoginActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void OnError(String m, String json, String failedWhat) {
+                            public void OnError(String m) {
                                 signIn.setEnabled(true);
                                 new Destroyer(LoginActivity.this).destroy(false, null);
-                                if (json != null) {
-                                    Chief.makeReportApiErrorDialog(LoginActivity.this, failedWhat, m, json, true);
-                                } else {
-                                    Chief.makeAnAlert(LoginActivity.this, m);
-                                }
+                                Chief.makeAnAlert(LoginActivity.this, m);
                             }
 
                         });
@@ -174,10 +170,11 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onApiError(String message, String json) {
+                    public void onApiError(JournalismException e) {
                         signIn.setEnabled(true);
                         progressDialog.hide();
-                        showAlert(getString(R.string.api_error), message);
+                        FirebaseCrash.report(e);
+                        Chief.makeApiErrorAlert(LoginActivity.this, false);
                     }
                 });
             }

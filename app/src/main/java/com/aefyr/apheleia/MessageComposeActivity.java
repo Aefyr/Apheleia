@@ -17,6 +17,7 @@ import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.SentMessageResponse;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -148,7 +149,7 @@ public class MessageComposeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onApiError(String message, String json) {
+            public void onApiError(JournalismException e) {
                 //Apparently, this never happens
             }
         });

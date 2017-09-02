@@ -369,11 +369,8 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void OnError(String m, String json, String failedWhat) {
-                if (json != null) {
-                    Chief.makeReportApiErrorDialog(MainActivity.this, failedWhat, m, json, true);
-                } else {
-                    AlertDialog d = new AlertDialog.Builder(MainActivity.this).setTitle(getString(R.string.network_error)).setMessage(getString(R.string.reinitialize_failed)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void OnError(String m) {
+                AlertDialog d = new AlertDialog.Builder(MainActivity.this).setTitle(getString(R.string.network_error)).setMessage(getString(R.string.reinitialize_failed)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             finish();
@@ -381,7 +378,6 @@ public class MainActivity extends AppCompatActivity
                     }).setCancelable(false).create();
                     d.setCanceledOnTouchOutside(false);
                     d.show();
-                }
             }
 
         });

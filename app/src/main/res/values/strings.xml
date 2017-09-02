@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Apheleia</string>
+    <string name="app_name">Apheleia</string>
 
 
     <!-- Commons -->
@@ -10,7 +10,6 @@
     <string name="got_it">Got it</string>
     <string name="network_error">Network Error</string>
     <string name="network_error_tip">Check your Internet connection or try again later</string>
-    <string name="api_error">Critical Error</string>
     <string name="pick_student">Choose Student</string>
     <string name="cancel">Cancel</string>
     <string name="offline_mode">No connection. Loaded saved copy</string>
@@ -30,13 +29,10 @@
     <string name="warning">Warning</string>
     <string name="enable">Enable</string>
     <string name="dont_enable">Don\'t enable</string>
+    <string name="error_wrong_rules">User profile can\'t be processed</string>
+    <string name="error">Error</string>
+    <string name="error_api">Unable to process data from Eljur</string>
 
-    <!-- Errors handling -->
-    <string name="api_error_report_prompt">Apheleia was unable to handle response from Eljur.\n\nDo you want to send that response which contains your %s to developer, so he can resolve this error?</string>
-    <string name="api_error_reported">Thanks for the report! I will try to resolve the error ASAP!</string>
-    <string name="api_error_prompt_declined">I won\'t be able to resolve this problem, until someone else reports the same problem then.\n\nAre you sure you don\'t want to report? This data will only be used to make Apheleia work for you</string>
-    <string name="report">Report</string>
-    <string name="dont_report">Don\'t report</string>
 
     <!-- Login Activity -->
     <string name="domain">School Domain</string>

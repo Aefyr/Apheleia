@@ -18,6 +18,7 @@ import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MessageReceiversAdapter;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessageReceiversInfo;
 import com.android.volley.toolbox.StringRequest;
 
@@ -114,7 +115,7 @@ public class MCReceiversFragment extends Fragment {
             }
 
             @Override
-            public void onApiError(String message, String json) {
+            public void onApiError(JournalismException e) {
                 //Well, apparently this will never be called, maybe I should make the parser in Utility throw EljurApiErrors
             }
         });

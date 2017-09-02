@@ -1,6 +1,6 @@
 package com.aefyr.journalism.objects.minor;
 
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -14,12 +14,12 @@ public class GridMark implements Serializable {
     long date;
 
 
-    void parseDate(String rawDate) throws EljurApiException {
+    void parseDate(String rawDate) throws JournalismException {
         SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             date = sdFormat.parse(rawDate).getTime();
         } catch (ParseException e) {
-            throw new EljurApiException("Failed to parse mark date\n" + e.getMessage());
+            throw new JournalismException("Failed to parse mark date\n" + e.getMessage());
         }
     }
 

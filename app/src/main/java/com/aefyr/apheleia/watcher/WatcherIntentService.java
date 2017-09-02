@@ -17,8 +17,10 @@ import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.ShortMessage;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 
@@ -61,8 +63,8 @@ public class WatcherIntentService extends IntentService {
             }
 
             @Override
-            public void onApiError(String message, String json) {
-                // who cares
+            public void onApiError(JournalismException e) {
+                FirebaseCrash.report(e);
             }
         });
     }

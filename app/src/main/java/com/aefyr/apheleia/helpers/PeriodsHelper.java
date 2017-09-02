@@ -6,9 +6,11 @@ import android.preference.PreferenceManager;
 
 import com.aefyr.apheleia.R;
 import com.aefyr.journalism.EljurApiClient;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.PeriodsInfo;
 import com.aefyr.journalism.objects.minor.ActualPeriod;
 import com.aefyr.journalism.objects.minor.Week;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -88,14 +90,14 @@ public class PeriodsHelper {
             }
 
             @Override
-            public void onApiError(String message, String json) {
+            public void onApiError(JournalismException e) {
                 Chief.makeAToast(c, c.getString(R.string.check_periods_failed));
-                //TODO Report error, I guess, w/o prompt, since periods are not some sensitive data
+                FirebaseCrash.report(e);
             }
         });
     }
 
-    public void savePeriods(Set<String> periods) {
+    private void savePeriods(Set<String> periods) {
         preferences.edit().putStringSet("periods_" + profileHelper.getCurrentStudentId(), periods).apply();
     }
 
@@ -119,15 +121,15 @@ public class PeriodsHelper {
         return preferences.getInt("periods_count_" + profileHelper.getCurrentStudentId(), 0);
     }
 
-    public void setPeriodsCount(int count) {
+    private void setPeriodsCount(int count) {
         preferences.edit().putInt("periods_count_" + profileHelper.getCurrentStudentId(), count).apply();
     }
 
-    public void setPeriodName(String period, String name) {
+    private void setPeriodName(String period, String name) {
         preferences.edit().putString("period_name_" + profileHelper.getCurrentStudentId() + "_" + period, name).apply();
     }
 
-    public void saveWeeks(Set<String> weeks) {
+    private void saveWeeks(Set<String> weeks) {
         preferences.edit().putStringSet("weeks_" + profileHelper.getCurrentStudentId(), weeks).apply();
     }
 
@@ -147,7 +149,7 @@ public class PeriodsHelper {
         return preferences.getInt("weeks_count_" + profileHelper.getCurrentStudentId(), 0);
     }
 
-    public void setWeeksCount(int count) {
+    private void setWeeksCount(int count) {
         preferences.edit().putInt("weeks_count_" + profileHelper.getCurrentStudentId(), count).apply();
     }
 

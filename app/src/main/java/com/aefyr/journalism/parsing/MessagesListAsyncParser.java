@@ -2,7 +2,7 @@ package com.aefyr.journalism.parsing;
 
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.Utility;
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MajorObjectsFactory;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.MessagePerson;
@@ -64,8 +64,8 @@ public class MessagesListAsyncParser {
                     JsonObject sender = message.getAsJsonObject("user_from");
                     try {
                         shortMessages.add(MinorObjectsFactory.createInboxShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(), MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
-                    } catch (EljurApiException e) {
-                        return new AsyncParserTaskResult<MessagesList>(e.getMessage(), rawResponse);
+                    } catch (JournalismException e) {
+                        return new AsyncParserTaskResult<MessagesList>(e);
                     }
                 } else {
                     //Eljur sure likes phantoms ^^
@@ -82,8 +82,8 @@ public class MessagesListAsyncParser {
                     }
                     try {
                         shortMessages.add(MinorObjectsFactory.createSentShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(), receivers, message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
-                    } catch (EljurApiException e) {
-                        return new AsyncParserTaskResult<MessagesList>(e.getMessage(), rawResponse);
+                    } catch (JournalismException e) {
+                        return new AsyncParserTaskResult<MessagesList>(e);
                     }
                 }
             }

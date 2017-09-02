@@ -2,7 +2,7 @@ package com.aefyr.journalism.parsing;
 
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.Utility;
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.Attachment;
 import com.aefyr.journalism.objects.minor.MessageInfo;
@@ -54,8 +54,8 @@ public class MessageInfoAsyncParser {
             MessageInfo messageInfo;
             try {
                 messageInfo = MinorObjectsFactory.createMessageInfo(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("text").getAsString(), message.get("date").getAsString(), folder, MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), receivers);
-            } catch (EljurApiException e) {
-                return new AsyncParserTaskResult<>(e.getMessage(), rawResponse);
+            } catch (JournalismException e) {
+                return new AsyncParserTaskResult<>(e);
             }
 
             if (message.get("files") != null) {

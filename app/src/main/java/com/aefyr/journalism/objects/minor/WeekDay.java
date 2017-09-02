@@ -1,6 +1,6 @@
 package com.aefyr.journalism.objects.minor;
 
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -15,13 +15,13 @@ public class WeekDay implements Serializable {
     ArrayList<Lesson> lessons;
     ArrayList<Lesson> overtimeLessons;
 
-    void parseDate(String rawDate) throws EljurApiException {
+    void parseDate(String rawDate) throws JournalismException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
         try {
             date = simpleDateFormat.parse(rawDate).getTime();
         } catch (ParseException e) {
-            throw new EljurApiException("Failed to parse day date\n" + e.getMessage());
+            throw new JournalismException("Failed to parse day date\n" + e.getMessage());
         }
     }
 

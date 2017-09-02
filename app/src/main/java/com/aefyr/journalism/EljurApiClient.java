@@ -3,6 +3,7 @@ package com.aefyr.journalism;
 
 import android.content.Context;
 
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.major.Finals;
 import com.aefyr.journalism.objects.major.MarksGrid;
@@ -31,7 +32,7 @@ public class EljurApiClient {
 
         void onNetworkError(boolean tokenIsWrong);
 
-        void onApiError(String message, String json);
+        void onApiError(JournalismException e);
     }
 
     public interface LoginRequestListener {
@@ -43,7 +44,7 @@ public class EljurApiClient {
 
         void onNetworkError();
 
-        void onApiError(String message, String json);
+        void onApiError(JournalismException e);
     }
 
     private static EljurApiClient instance;

@@ -1,6 +1,6 @@
 package com.aefyr.journalism.objects.minor;
 
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 
 import java.util.ArrayList;
 
@@ -26,7 +26,7 @@ public class MinorObjectsHelper {
         lesson.addHomework(homework);
     }
 
-    public static void addTimesToLesson(Lesson lesson, String rawStart, String rawEnd) throws EljurApiException {
+    public static void addTimesToLesson(Lesson lesson, String rawStart, String rawEnd) throws JournalismException {
         lesson.parseTimes(rawStart, rawEnd);
     }
 

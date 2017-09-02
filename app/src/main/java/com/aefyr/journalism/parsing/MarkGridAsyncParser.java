@@ -2,7 +2,7 @@ package com.aefyr.journalism.parsing;
 
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.Utility;
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MajorObjectsFactory;
 import com.aefyr.journalism.objects.major.MarksGrid;
 import com.aefyr.journalism.objects.minor.GridMark;
@@ -74,8 +74,8 @@ public class MarkGridAsyncParser {
                             } else {
                                 gridMark = MinorObjectsFactory.createGridMark(mark.get("value").getAsString(), mark.get("date").getAsString());
                             }
-                        } catch (EljurApiException e) {
-                            return new AsyncParserTaskResult<MarksGrid>(e.getMessage(), rawResponse);
+                        } catch (JournalismException e) {
+                            return new AsyncParserTaskResult<MarksGrid>(e);
                         }
 
                         marks.add(gridMark);

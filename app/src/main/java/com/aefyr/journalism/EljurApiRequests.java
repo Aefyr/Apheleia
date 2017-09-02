@@ -1,6 +1,6 @@
 package com.aefyr.journalism;
 
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.major.Finals;
 import com.aefyr.journalism.objects.major.MajorObjectsFactory;
@@ -55,8 +55,8 @@ class EljurApiRequests {
 
                 try {
                     listener.onSuccessfulLogin(Token.createToken(result.get("token").getAsString(), result.get("expires").getAsString()));
-                } catch (EljurApiException e) {
-                    listener.onApiError(e.getMessage(), result.toString());
+                } catch (JournalismException e) {
+                    listener.onApiError(e);
                 }
 
             }
@@ -95,7 +95,7 @@ class EljurApiRequests {
                 else if (roles.contains("student"))
                     MajorObjectsHelper.setPersonaInfoRole(personaInfo, PersonaInfo.Role.STUDENT);
                 else {
-                    listener.onApiError("Unsupported role", rawResponse);
+                    listener.onApiError(new JournalismException("unsupported role"));
                     return;
                 }
 
@@ -107,7 +107,13 @@ class EljurApiRequests {
                 MajorObjectsHelper.setPersonaInfoCity(personaInfo, response.get("city").getAsString());
                 MajorObjectsHelper.setPersonaInfoRegion(personaInfo, response.get("region").getAsString());
 
+                if(response.get("relations")==null||response.getAsJsonObject("relations").get("students")==null){
+                    listener.onApiError(new JournalismException("no relations"));
+                    return;
+                }
+
                 JsonObject students = response.getAsJsonObject("relations").getAsJsonObject("students");
+
 
                 for (Map.Entry<String, JsonElement> entry : students.entrySet()) {
                     JsonObject student = entry.getValue().getAsJsonObject();
@@ -149,8 +155,8 @@ class EljurApiRequests {
 
                         try {
                             actualPeriod = MinorObjectsFactory.createActualPeriod(period.get("name").getAsString(), period.get("fullname").getAsString(), period.get("start").getAsString(), period.get("end").getAsString());
-                        } catch (EljurApiException e) {
-                            listener.onApiError(e.getMessage(), rawResponse);
+                        } catch (JournalismException e) {
+                            listener.onApiError(e);
                             return;
                         }
 
@@ -160,8 +166,8 @@ class EljurApiRequests {
                             JsonObject week = weekEl.getAsJsonObject();
                             try {
                                 MinorObjectsHelper.addWeekToActualPeriod(actualPeriod, MinorObjectsFactory.createWeek(week.get("start").getAsString(), week.get("end").getAsString(), week.get("title").getAsString()));
-                            } catch (EljurApiException e) {
-                                listener.onApiError(e.getMessage(), rawResponse);
+                            } catch (JournalismException e) {
+                                listener.onApiError(e);
                                 return;
                             }
                         }
@@ -254,8 +260,8 @@ class EljurApiRequests {
                     if (weekDay.get("alert") != null && weekDay.get("alert").getAsString().equals("vacation")) {
                         try {
                             weekDays.add(MinorObjectsFactory.createVacationWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString()));
-                        } catch (EljurApiException e) {
-                            listener.onApiError(e.getMessage(), rawResponse);
+                        } catch (JournalismException e) {
+                            listener.onApiError(e);
                             return;
                         }
                         continue;
@@ -269,8 +275,8 @@ class EljurApiRequests {
                         if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
                             try {
                                 MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
-                            } catch (EljurApiException e) {
-                                listener.onApiError(e.getMessage(), rawResponse);
+                            } catch (JournalismException e) {
+                                listener.onApiError(e);
                                 return;
                             }
                         }
@@ -288,8 +294,8 @@ class EljurApiRequests {
                             if (otLessonObj.get("starttime") != null && otLessonObj.get("endtime") != null) {
                                 try {
                                     MinorObjectsHelper.addTimesToLesson(otLesson, otLessonObj.get("starttime").getAsString(), otLessonObj.get("endtime").getAsString());
-                                } catch (EljurApiException e) {
-                                    listener.onApiError(e.getMessage(), rawResponse);
+                                } catch (JournalismException e) {
+                                    listener.onApiError(e);
                                     return;
                                 }
                             }
@@ -301,8 +307,8 @@ class EljurApiRequests {
                     WeekDay day;
                     try {
                         day = MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons);
-                    } catch (EljurApiException e) {
-                        listener.onApiError(e.getMessage(), rawResponse);
+                    } catch (JournalismException e) {
+                        listener.onApiError(e);
                         return;
                     }
 

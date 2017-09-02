@@ -1,6 +1,6 @@
 package com.aefyr.journalism.objects.minor;
 
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -17,13 +17,13 @@ public class Lesson implements Serializable {
     Homework homework;
     ArrayList<Mark> marks;
 
-    void parseTimes(String rawStarts, String rawEnds) throws EljurApiException {
+    void parseTimes(String rawStarts, String rawEnds) throws JournalismException {
         SimpleDateFormat lessonTimesSDF = new SimpleDateFormat("HH:mm:ss");
         try {
             starts = lessonTimesSDF.parse(rawStarts).getTime();
             ends = lessonTimesSDF.parse(rawEnds).getTime();
         } catch (ParseException e) {
-            throw new EljurApiException("Unable to parse lesson times\n" + e.getMessage());
+            throw new JournalismException("Unable to parse lesson times\n" + e.getMessage());
         }
 
     }

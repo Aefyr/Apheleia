@@ -20,12 +20,14 @@ import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.TimeLord;
 import com.aefyr.journalism.EljurApiClient;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.Attachment;
 import com.aefyr.journalism.objects.minor.MessageInfo;
 import com.aefyr.journalism.objects.minor.MessagePerson;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 
 public class MessageViewActivity extends AppCompatActivity {
 
@@ -191,14 +193,10 @@ public class MessageViewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onApiError(String message, String json) {
+            public void onApiError(JournalismException e) {
                 loadingDialog.dismiss();
-                Chief.makeReportApiErrorDialog(MessageViewActivity.this, getString(R.string.message), message, json, false).setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        finish();
-                    }
-                });
+                FirebaseCrash.report(e);
+                Chief.makeApiErrorAlert(MessageViewActivity.this, true);
             }
         });
     }

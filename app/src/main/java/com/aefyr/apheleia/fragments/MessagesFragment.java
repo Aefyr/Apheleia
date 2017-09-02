@@ -32,10 +32,12 @@ import com.aefyr.apheleia.utility.FirebaseConstants;
 import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.ShortMessage;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.HashSet;
 
@@ -199,9 +201,10 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
 
             @Override
-            public void onApiError(String message, String json) {
+            public void onApiError(JournalismException e) {
+                FirebaseCrash.report(e);
+                Chief.makeApiErrorAlert(getActivity(), false);
                 refreshLayout.setRefreshing(false);
-                Chief.makeReportApiErrorDialog(getActivity(), getString(R.string.messages), message, json, false);
             }
         });
     }

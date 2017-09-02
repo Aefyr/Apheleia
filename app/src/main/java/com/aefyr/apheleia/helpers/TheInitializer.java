@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import com.aefyr.apheleia.R;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.major.Finals;
 import com.aefyr.journalism.objects.major.MarksGrid;
@@ -30,7 +31,7 @@ public class TheInitializer {
     public interface OnInitializationListener {
         void OnSuccess();
 
-        void OnError(String m, String json, String failedWhat);
+        void OnError(String message);
     }
 
     private OnInitializationListener listener;
@@ -101,7 +102,7 @@ public class TheInitializer {
                                     public void onSuccess(DiaryEntry entry) {
                                         profileHelper.setCurrentStudent(s.id());
                                         if (!DiaryHelper.getInstance(c).saveEntry(entry, periodsHelper.getCurrentWeek()))
-                                            fail("Критическая ошибка. Не удалось сериализовать дневник", null, null);
+                                            fail("Критическая ошибка. Не удалось сериализовать дневник");
 
 
                                         if (++i == actionsGoal) {
@@ -113,12 +114,12 @@ public class TheInitializer {
 
                                     @Override
                                     public void onNetworkError(boolean tokenIsWrong) {
-                                        fail(c.getString(R.string.network_error_tip), null, null);
+                                        fail(c.getString(R.string.network_error_tip));
                                     }
 
                                     @Override
-                                    public void onApiError(String message, String json) {
-                                        fail(message, json, c.getString(R.string.diary));
+                                    public void onApiError(JournalismException e) {
+                                        fail(null);
                                     }
                                 });
 
@@ -127,7 +128,7 @@ public class TheInitializer {
                                     public void onSuccess(MarksGrid grid) {
                                         profileHelper.setCurrentStudent(s.id());
                                         if (!MarksHelper.getInstance(c).saveGrid(grid, periodsHelper.getCurrentPeriod()))
-                                            fail("Критическая ошибка. Не удалось сериализовать оценки", null, null);
+                                            fail("Критическая ошибка. Не удалось сериализовать оценки");
 
                                         if (++i == actionsGoal) {
                                             done();
@@ -138,12 +139,12 @@ public class TheInitializer {
 
                                     @Override
                                     public void onNetworkError(boolean tokenIsWrong) {
-                                        fail(c.getString(R.string.network_error_tip), null, null);
+                                        fail(c.getString(R.string.network_error_tip));
                                     }
 
                                     @Override
-                                    public void onApiError(String message, String json) {
-                                        fail(message, json, c.getString(R.string.marks));
+                                    public void onApiError(JournalismException e) {
+                                        fail(null);
                                     }
                                 });
 
@@ -152,7 +153,7 @@ public class TheInitializer {
                                     public void onSuccess(Schedule schedule) {
                                         profileHelper.setCurrentStudent(s.id());
                                         if (!ScheduleHelper.getInstance(c).saveSchedule(schedule, periodsHelper.getCurrentScheduleWeek()))
-                                            fail("Критическая ошибка. Не удалось сериализовать расписание", null, null);
+                                            fail("Критическая ошибка. Не удалось сериализовать расписание");
 
                                         if (++i == actionsGoal) {
                                             done();
@@ -163,12 +164,12 @@ public class TheInitializer {
 
                                     @Override
                                     public void onNetworkError(boolean tokenIsWrong) {
-                                        fail(c.getString(R.string.network_error_tip), null, null);
+                                        fail(c.getString(R.string.network_error_tip));
                                     }
 
                                     @Override
-                                    public void onApiError(String message, String json) {
-                                        fail(message, json, c.getString(R.string.marks));
+                                    public void onApiError(JournalismException e) {
+                                        fail(null);
                                     }
                                 });
 
@@ -176,12 +177,12 @@ public class TheInitializer {
 
                             @Override
                             public void onNetworkError(boolean tokenIsWrong) {
-                                fail(c.getString(R.string.network_error_tip), null, null);
+                                fail(c.getString(R.string.network_error_tip));
                             }
 
                             @Override
-                            public void onApiError(String message, String json) {
-                                fail(message, json, c.getString(R.string.periods));
+                            public void onApiError(JournalismException e) {
+                                fail(null);
                             }
                         });
 
@@ -190,7 +191,7 @@ public class TheInitializer {
                             public void onSuccess(Finals finals) {
                                 profileHelper.setCurrentStudent(s.id());
                                 if (!FinalsHelper.getInstance(c).saveFinals(finals))
-                                    fail("Критическая ошибка. Не удалось сериализовать расписание", null, null);
+                                    fail("Критическая ошибка. Не удалось сериализовать расписание");
 
                                 if (++i == actionsGoal) {
                                     done();
@@ -201,12 +202,12 @@ public class TheInitializer {
 
                             @Override
                             public void onNetworkError(boolean tokenIsWrong) {
-                                fail(c.getString(R.string.network_error_tip), null, null);
+                                fail(c.getString(R.string.network_error_tip));
                             }
 
                             @Override
-                            public void onApiError(String message, String json) {
-                                fail(message, json, c.getString(R.string.finals));
+                            public void onApiError(JournalismException e) {
+                                fail(null);
                             }
                         });
 
@@ -227,7 +228,7 @@ public class TheInitializer {
 
                                         publishProgress(i);
                                     } else {
-                                        fail("Критическая ошибка. Не удалось сериализовать сообщения", null, null);
+                                        fail("Критическая ошибка. Не удалось сериализовать сообщения");
                                     }
                                 }
                             });
@@ -235,12 +236,12 @@ public class TheInitializer {
 
                         @Override
                         public void onNetworkError(boolean tokenIsWrong) {
-                            fail(c.getString(R.string.network_error_tip), null, null);
+                            fail(c.getString(R.string.network_error_tip));
                         }
 
                         @Override
-                        public void onApiError(String message, String json) {
-                            fail(message, json, c.getString(R.string.messages));
+                        public void onApiError(JournalismException e) {
+                            fail(null);
                         }
                     });
 
@@ -248,12 +249,18 @@ public class TheInitializer {
 
                 @Override
                 public void onNetworkError(boolean tokenIsWrong) {
-                    fail(c.getString(R.string.network_error_tip), null, null);
+                    fail(c.getString(R.string.network_error_tip));
                 }
 
                 @Override
-                public void onApiError(String message, String json) {
-                    fail(c.getString(R.string.unupported_role), null, null);
+                public void onApiError(JournalismException e) {
+                    switch (e.getMessage()){
+                        case "unsupported role":
+                            fail(c.getString(R.string.unupported_role));
+                            break;
+                        default:
+                            break;
+                    }
                 }
             });
 
@@ -283,7 +290,7 @@ public class TheInitializer {
     }
 
 
-    private void fail(String m, String json, String failedWhat) {
+    private void fail(String m) {
         if (finished)
             return;
         finished = true;
@@ -294,7 +301,7 @@ public class TheInitializer {
         }
 
         dialog.dismiss();
-        listener.OnError(m, json, failedWhat);
+        listener.OnError(m==null?c.getString(R.string.error_api):m);
     }
 
     private void done() {
@@ -333,4 +340,5 @@ public class TheInitializer {
     private void loadFinals(EljurPersona persona, String studentId, EljurApiClient.JournalismListener<Finals> listener) {
         requests.add(EljurApiClient.getInstance(c).getFinals(persona, studentId, listener));
     }
+
 }

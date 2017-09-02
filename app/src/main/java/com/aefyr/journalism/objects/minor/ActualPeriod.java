@@ -1,6 +1,6 @@
 package com.aefyr.journalism.objects.minor;
 
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,13 +18,13 @@ public class ActualPeriod {
         weeks = new ArrayList<Week>();
     }
 
-    void parseDate(String rawEnd, String rawStart) throws EljurApiException {
+    void parseDate(String rawEnd, String rawStart) throws JournalismException {
         SimpleDateFormat periodDateFormat = new SimpleDateFormat("yyyyMMdd");
         try {
             start = periodDateFormat.parse(rawStart).getTime();
             end = periodDateFormat.parse(rawEnd).getTime();
         } catch (ParseException e) {
-            throw new EljurApiException("Failed to parse period dates\n" + e.getMessage());
+            throw new JournalismException("Failed to parse period dates\n" + e.getMessage());
         }
     }
 

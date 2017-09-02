@@ -2,7 +2,7 @@ package com.aefyr.journalism.parsing;
 
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.Utility;
-import com.aefyr.journalism.exceptions.EljurApiException;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.major.MajorObjectsFactory;
 import com.aefyr.journalism.objects.minor.Attachment;
@@ -64,8 +64,8 @@ public class DiaryAsyncParser {
                 if (weekDay.get("alert") != null && weekDay.get("alert").getAsString().equals("vacation")) {
                     try {
                         weekDays.add(MinorObjectsFactory.createVacationWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString()));
-                    } catch (EljurApiException e) {
-                        return new AsyncParserTaskResult<DiaryEntry>(e.getMessage(), rawResponse);
+                    } catch (JournalismException e) {
+                        return new AsyncParserTaskResult<DiaryEntry>(e);
                     }
                     continue;
                 }
@@ -78,8 +78,8 @@ public class DiaryAsyncParser {
                     if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
                         try {
                             MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
-                        } catch (EljurApiException e) {
-                            return new AsyncParserTaskResult<DiaryEntry>(e.getMessage(), rawResponse);
+                        } catch (JournalismException e) {
+                            return new AsyncParserTaskResult<DiaryEntry>(e);
                         }
                     }
 
@@ -145,8 +145,8 @@ public class DiaryAsyncParser {
                         if (otLessonObj.get("starttime") != null && otLessonObj.get("endtime") != null) {
                             try {
                                 MinorObjectsHelper.addTimesToLesson(otLesson, otLessonObj.get("starttime").getAsString(), otLessonObj.get("endtime").getAsString());
-                            } catch (EljurApiException e) {
-                                return new AsyncParserTaskResult<DiaryEntry>(e.getMessage(), rawResponse);
+                            } catch (JournalismException e) {
+                                return new AsyncParserTaskResult<DiaryEntry>(e);
                             }
                         }
 
@@ -205,8 +205,8 @@ public class DiaryAsyncParser {
                 WeekDay day;
                 try {
                     day = MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons);
-                } catch (EljurApiException e) {
-                    return new AsyncParserTaskResult<DiaryEntry>(e.getMessage(), rawResponse);
+                } catch (JournalismException e) {
+                    return new AsyncParserTaskResult<DiaryEntry>(e);
                 }
 
                 if (overtimeLessons != null)

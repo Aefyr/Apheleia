@@ -1,5 +1,6 @@
 package com.aefyr.apheleia.helpers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.Snackbar;
@@ -39,42 +40,25 @@ public class Chief {
         return d;
     }
 
-    public static android.support.v7.app.AlertDialog makeReportApiErrorDialog(final Context c, final String containsWhat, final String message, final String json, boolean addAreYouSurePrompt) {
-        AnalyticsHelper.caughtParseError(c);
-        AlertDialog reportDialog = new AlertDialog.Builder(c).setTitle(c.getString(R.string.api_error)).setMessage(String.format(c.getString(R.string.api_error_report_prompt), containsWhat)).setPositiveButton(c.getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                makeAnAlert(c, c.getString(R.string.api_error_reported));
-                FirebaseCrash.log("ApiError: " + message + "\nRaw response: " + json);
-            }
-        }).setNegativeButton(c.getString(R.string.no), addAreYouSurePrompt ? new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                makeAreYouSurePrompt(c, message, json);
-            }
-        } : null).setCancelable(false).create();
-        reportDialog.setCanceledOnTouchOutside(false);
-        reportDialog.show();
-        return reportDialog;
-    }
-
-    private static void makeAreYouSurePrompt(final Context c, final String message, final String json) {
-        new AlertDialog.Builder(c).setTitle(c.getString(R.string.api_error)).setMessage(c.getString(R.string.api_error_prompt_declined)).setPositiveButton(c.getString(R.string.report), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                makeAnAlert(c, c.getString(R.string.api_error_reported));
-                FirebaseCrash.log("ApiError: " + message + "\nRaw response: " + json);
-            }
-        }).setNegativeButton(c.getString(R.string.dont_report), null).create().show();
-    }
-
-    public static void makeAFlyingToast(Context c, String message) {
-        Toast t = Toast.makeText(c, message, Toast.LENGTH_SHORT);
-        t.setGravity(Gravity.TOP, 0, (int) Utility.dpToPx(56, c.getResources()));
-        t.show();
-    }
-
     public static void makeAToast(Context c, String message) {
         Toast.makeText(c, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void makeApiErrorAlert(final Context c, boolean closeActivityOnDialogClosed){
+        AlertDialog.Builder b = new AlertDialog.Builder(c).setTitle(c.getString(R.string.error)).setMessage(c.getString(R.string.error_api)).setPositiveButton(c.getString(R.string.ok), null);
+        if(closeActivityOnDialogClosed){
+            b.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    ((Activity)c).finish();
+                }
+            }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    ((Activity)c).finish();
+                }
+            });
+        }
+        b.create().show();
     }
 }
