@@ -458,7 +458,7 @@ class EljurApiRequests {
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-                if (response.size() == 0 || response.get("students") == null) {
+                if (response.size() == 0 || response.get("students") == null || response.getAsJsonObject("students").getAsJsonObject(studentId).get("items") == null) {
                     listener.onSuccess(MajorObjectsFactory.createFinals(new ArrayList<FinalSubject>(0)));
                     return;
                 }
