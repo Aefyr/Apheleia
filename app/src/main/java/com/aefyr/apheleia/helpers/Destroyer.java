@@ -54,14 +54,14 @@ public class Destroyer {
 
             PreferenceManager.getDefaultSharedPreferences(c).edit().clear().commit();
 
-            if(keepCache)
+            if (keepCache)
                 return null;
 
-            Utility.deleteRecursive(new File(c.getFilesDir(),"diary"));
-            Utility.deleteRecursive(new File(c.getFilesDir(),"marks"));
-            Utility.deleteRecursive(new File(c.getFilesDir(),"messages"));
-            Utility.deleteRecursive(new File(c.getFilesDir(),"schedule"));
-            Utility.deleteRecursive(new File(c.getFilesDir(),"finals"));
+            Utility.deleteRecursive(new File(c.getFilesDir(), "diary"));
+            Utility.deleteRecursive(new File(c.getFilesDir(), "marks"));
+            Utility.deleteRecursive(new File(c.getFilesDir(), "messages"));
+            Utility.deleteRecursive(new File(c.getFilesDir(), "schedule"));
+            Utility.deleteRecursive(new File(c.getFilesDir(), "finals"));
             return null;
         }
 

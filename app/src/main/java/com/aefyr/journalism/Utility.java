@@ -9,7 +9,12 @@ public class Utility {
 
 
     public static JsonObject getJsonFromResponse(String rawResponse) {
-        return new JsonParser().parse(rawResponse).getAsJsonObject().getAsJsonObject("response").getAsJsonObject("result");
+        try {
+            return new JsonParser().parse(rawResponse).getAsJsonObject().getAsJsonObject("response").getAsJsonObject("result");
+        } catch (ClassCastException | NullPointerException e) {
+            return null;
+        }
+
     }
 
     public static JsonObject getRawJsonFromResponse(String rawResponse) {

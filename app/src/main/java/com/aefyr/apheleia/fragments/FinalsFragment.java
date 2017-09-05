@@ -59,10 +59,10 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_finals, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.finals));
+        updateActionBarTitle();
 
         finalsRecycler = (RecyclerView) view.findViewById(R.id.finalsRecycler);
-        finalsRecycler.setLayoutManager(new StaggeredGridLayoutManager((int) (Utility.displayWidthPx(getResources())/Utility.dpToPx(180, getResources())), StaggeredGridLayoutManager.VERTICAL));
+        finalsRecycler.setLayoutManager(new StaggeredGridLayoutManager((int) (Utility.displayWidthPx(getResources()) / Utility.dpToPx(180, getResources())), StaggeredGridLayoutManager.VERTICAL));
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);
         refreshLayout.setOnRefreshListener(this);
@@ -81,7 +81,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         AnalyticsHelper.viewSection(FirebaseConstants.SECTION_FINALS, FirebaseAnalytics.getInstance(getActivity()));
-        loadFinals();
+        studentSwitched();
     }
 
     private void setFinalsToAdapter(Finals finals) {
@@ -119,7 +119,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
         }
 
 
-        currentRequest = apiClient.getFinals(persona, profileHelper.getCurrentStudentId(), new EljurApiClient.JournalismListener<Finals>() {
+        currentRequest = apiClient.getFinals(persona, currentStudent, new EljurApiClient.JournalismListener<Finals>() {
             @Override
             public void onSuccess(Finals result) {
                 finalsHelper.saveFinalsAsync(result, null);
@@ -129,7 +129,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
             @Override
             public void onNetworkError(boolean tokenIsWrong) {
-                if(tokenIsWrong){
+                if (tokenIsWrong) {
                     LoginActivity.tokenExpired(getActivity());
                     return;
                 }
@@ -153,6 +153,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     public void studentSwitched() {
         firstLoad = true;
+        currentStudent = profileHelper.getCurrentStudentId();
         loadFinals();
     }
 
@@ -174,13 +175,32 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
         super.onDetach();
     }
 
+    private String currentStudent;
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            updateActionBarTitle();
+            if (!currentStudent.equals(profileHelper.getCurrentStudentId()))
+                studentSwitched();
+        } else
+            refreshLayout.setRefreshing(false);
+    }
+
     @Override
     public void onAction(Action action) {
         switch (action) {
             case STUDENT_SWITCHED:
+                studentSwitched();
+                break;
             case UPDATE_REQUESTED:
                 loadFinals();
                 break;
         }
+    }
+
+    private void updateActionBarTitle() {
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.finals));
     }
 }

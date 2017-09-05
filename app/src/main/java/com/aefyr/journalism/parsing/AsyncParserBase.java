@@ -3,7 +3,6 @@ package com.aefyr.journalism.parsing;
 import android.os.AsyncTask;
 
 import com.aefyr.journalism.EljurApiClient;
-import com.aefyr.journalism.exceptions.JournalismException;
 
 /**
  * Created by Aefyr on 16.08.2017.

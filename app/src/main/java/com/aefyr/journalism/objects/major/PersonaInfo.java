@@ -67,12 +67,12 @@ public class PersonaInfo {
         return this;
     }
 
-    PersonaInfo setCity(String city){
+    PersonaInfo setCity(String city) {
         this.city = city;
         return this;
     }
 
-    PersonaInfo setRegion(String region){
+    PersonaInfo setRegion(String region) {
         this.region = region;
         return this;
     }
@@ -113,12 +113,12 @@ public class PersonaInfo {
         return messageSignature;
     }
 
-    public String city(){
+    public String city() {
         return city;
     }
 
-    public String region(){
-        return  region;
+    public String region() {
+        return region;
     }
 
     public ArrayList<Student> getStudents() {

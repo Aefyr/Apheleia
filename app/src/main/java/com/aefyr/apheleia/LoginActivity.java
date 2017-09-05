@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         SharedPreferences l = getSharedPreferences("l", 0);
-        if(!l.getBoolean("start_warn_shown", false)) {
+        if (!l.getBoolean("start_warn_shown", false)) {
             Chief.makeWarning(this, getText(R.string.beta_warn)).setCancelable(false);
             l.edit().putBoolean("start_warn_shown", true).apply();
         }
@@ -199,10 +199,10 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void checkReason(Intent i){
+    private void checkReason(Intent i) {
         String reason = i.getStringExtra("reason");
-        if(reason!=null){
-            switch (reason){
+        if (reason != null) {
+            switch (reason) {
                 case Reason.TOKEN_EXPIRED:
                     Chief.makeWarning(this, getString(R.string.token_expired));
                     break;
@@ -210,19 +210,19 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public class Reason{
+    public class Reason {
         public static final String TOKEN_EXPIRED = "token_expired";
     }
 
     public static void startFromActivity(Activity activity, String reason) {
         Intent i = new Intent(activity, LoginActivity.class);
-        if(reason!=null)
+        if (reason != null)
             i.putExtra("reason", reason);
         activity.startActivity(i);
         activity.finish();
     }
 
-    public static void tokenExpired(final Activity a){
+    public static void tokenExpired(final Activity a) {
         Helper.getInstance(a).setLoggedIn(false);
         new Destroyer(a).destroy(true, new Destroyer.OnDestructionListener() {
             @Override

@@ -1,10 +1,6 @@
 package com.aefyr.apheleia;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -12,9 +8,9 @@ import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 
+import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Tutorial;
 import com.aefyr.apheleia.watcher.WatcherHelper;
-import com.aefyr.apheleia.watcher.WatcherIntentService;
 
 
 /**
@@ -44,9 +40,20 @@ public class PreferencesFragment extends PreferenceFragment {
 
         initializeWatcherPrefs();
         initializeTutorialPrefs();
+        initializeQuickPickerPrefs();
     }
 
-    private void initializeWatcherPrefs(){
+    private void initializeQuickPickerPrefs(){
+        findPreference("quick_day_picker_enabled").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Chief.makeAToast(getActivity(), getString(R.string.quick_picker_warn));
+                return false;
+            }
+        });
+    }
+
+    private void initializeWatcherPrefs() {
         watcherEnabled = findPreference("watcher_enabled");
         watcherViaCell = findPreference("allow_watcher_with_cell");
 
@@ -55,7 +62,7 @@ public class PreferencesFragment extends PreferenceFragment {
         watcherEnabled.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                boolean value = ((SwitchPreference)preference).isChecked();
+                boolean value = ((SwitchPreference) preference).isChecked();
                 WatcherHelper.setWatcherEnabled(getActivity(), value);
                 watcherViaCell.setEnabled(value);
 
@@ -66,7 +73,7 @@ public class PreferencesFragment extends PreferenceFragment {
         watcherViaCell.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if(((SwitchPreference)preference).isChecked())
+                if (((SwitchPreference) preference).isChecked())
                     WatcherHelper.showNetworkWarning(getActivity());
 
                 return false;
@@ -74,7 +81,7 @@ public class PreferencesFragment extends PreferenceFragment {
         });
     }
 
-    private void initializeTutorialPrefs(){
+    private void initializeTutorialPrefs() {
         showTutorial = findPreference("show_tut");
         showTutorial.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

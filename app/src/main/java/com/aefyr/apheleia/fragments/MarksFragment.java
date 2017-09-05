@@ -72,14 +72,14 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_marks, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
+        updateActionBarTitle();
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);
         refreshLayout.setOnRefreshListener(this);
         emptyMarks = view.findViewById(R.id.emptyMarks);
         marksRecycler = (RecyclerView) view.findViewById(R.id.marksRecycler);
-        marksRecycler.setLayoutManager(Utility.displayWidthDp(getResources())>=720?new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL):new LinearLayoutManager(getActivity()));
+        marksRecycler.setLayoutManager(Utility.displayWidthDp(getResources()) >= 720 ? new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL) : new LinearLayoutManager(getActivity()));
         marksRecycler.setItemViewCacheSize(24);
 
         apiClient = EljurApiClient.getInstance(getActivity());
@@ -138,7 +138,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             return;
         }
 
-        currentRequest = apiClient.getMarks(persona, profileHelper.getCurrentStudentId(), days, new EljurApiClient.JournalismListener<MarksGrid>() {
+        currentRequest = apiClient.getMarks(persona, currentStudent, days, new EljurApiClient.JournalismListener<MarksGrid>() {
             @Override
             public void onSuccess(MarksGrid result) {
                 setGridToAdapter(result);
@@ -159,7 +159,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
             @Override
             public void onNetworkError(boolean tokenIsWrong) {
-                if(tokenIsWrong){
+                if (tokenIsWrong) {
                     LoginActivity.tokenExpired(getActivity());
                     return;
                 }
@@ -223,6 +223,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }).create();
 
         requestedPeriod = selectedPeriod;
+        currentStudent = profileHelper.getCurrentStudentId();
         loadMarks(periods[selectedPeriod]);
     }
 
@@ -239,6 +240,21 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onDetach() {
         cancelRequest();
         super.onDetach();
+    }
+
+    private String currentStudent;
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            updateActionBarTitle();
+            if (!currentStudent.equals(profileHelper.getCurrentStudentId()))
+                studentSwitched();
+        } else {
+            cancelRequest();
+            refreshLayout.setRefreshing(false);
+        }
     }
 
     private void cancelRequest() {
@@ -263,5 +279,9 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 loadMarks(periods[selectedPeriod]);
                 break;
         }
+    }
+
+    private void updateActionBarTitle() {
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
     }
 }

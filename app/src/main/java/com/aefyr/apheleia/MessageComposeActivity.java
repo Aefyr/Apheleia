@@ -39,7 +39,7 @@ public class MessageComposeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_compose);
 
-        boolean replyIntent = getIntent().getStringExtra("receiver")!=null;
+        boolean replyIntent = getIntent().getStringExtra("receiver") != null;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.compose_message));
@@ -124,7 +124,7 @@ public class MessageComposeActivity extends AppCompatActivity {
 
             @Override
             public void onNetworkError(boolean tokenIsWrong) {
-                if(tokenIsWrong){
+                if (tokenIsWrong) {
                     LoginActivity.tokenExpired(MessageComposeActivity.this);
                     return;
                 }

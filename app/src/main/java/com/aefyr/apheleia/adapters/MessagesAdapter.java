@@ -125,7 +125,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 @Override
                 public void onClick(View view) {
                     int index = getAdapterPosition();
-                    if (index < messages.size()&&index>=0)
+                    if (index < messages.size() && index >= 0)
                         listener.onMessageClick(messages.get(index), messages.get(index).getId(), messages.get(index).getFolder() == MessagesList.Folder.INBOX);
                 }
             });

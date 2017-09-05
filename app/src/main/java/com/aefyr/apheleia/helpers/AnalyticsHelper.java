@@ -11,21 +11,21 @@ import com.google.firebase.analytics.FirebaseAnalytics;
  */
 
 public class AnalyticsHelper {
-    public static void viewSection(String section, FirebaseAnalytics analytics){
+    public static void viewSection(String section, FirebaseAnalytics analytics) {
         Bundle b = new Bundle();
         b.putString(FirebaseConstants.APP_SECTION, section);
         analytics.logEvent(FirebaseConstants.VIEW_SECTION, b);
     }
 
-    public static void viewedMessage(FirebaseAnalytics analytics){
+    public static void viewedMessage(FirebaseAnalytics analytics) {
         analytics.logEvent(FirebaseConstants.MESSAGE_VIEWED, null);
     }
 
-    public static void sentMessage(FirebaseAnalytics analytics){
+    public static void sentMessage(FirebaseAnalytics analytics) {
         analytics.logEvent(FirebaseConstants.MESSAGE_SENT, null);
     }
 
-    public static void caughtParseError(Context c){
+    public static void caughtParseError(Context c) {
         FirebaseAnalytics.getInstance(c).logEvent(FirebaseConstants.CAUGHT_API_EXCEPTION, null);
     }
 }

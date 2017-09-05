@@ -181,7 +181,7 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
                     } else {
                         people.setVisibility(View.GONE);
                     }
-                    ObjectAnimator arrowAnim = ObjectAnimator.ofFloat(arrow, View.SCALE_Y, innerRecyclerVisibilities[getAdapterPosition()] ?-1:1);
+                    ObjectAnimator arrowAnim = ObjectAnimator.ofFloat(arrow, View.SCALE_Y, innerRecyclerVisibilities[getAdapterPosition()] ? -1 : 1);
                     arrowAnim.setDuration(125);
                     arrowAnim.start();
                 }

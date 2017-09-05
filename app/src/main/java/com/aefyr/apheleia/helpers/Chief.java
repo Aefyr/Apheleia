@@ -5,13 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
 import com.aefyr.apheleia.R;
-import com.aefyr.apheleia.utility.Utility;
-import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * Created by Aefyr on 13.08.2017.
@@ -33,7 +30,7 @@ public class Chief {
         new AlertDialog.Builder(c).setMessage(message).setPositiveButton(c.getString(R.string.ok), null).create().show();
     }
 
-    public static AlertDialog makeWarning(Context c, CharSequence warningMessage){
+    public static AlertDialog makeWarning(Context c, CharSequence warningMessage) {
         AlertDialog d = new AlertDialog.Builder(c).setTitle(c.getString(R.string.warning)).setMessage(warningMessage).setPositiveButton(c.getString(R.string.got_it), null).create();
         d.setCanceledOnTouchOutside(false);
         d.show();
@@ -44,18 +41,18 @@ public class Chief {
         Toast.makeText(c, message, Toast.LENGTH_SHORT).show();
     }
 
-    public static void makeApiErrorAlert(final Context c, boolean closeActivityOnDialogClosed){
+    public static void makeApiErrorAlert(final Context c, boolean closeActivityOnDialogClosed) {
         AlertDialog.Builder b = new AlertDialog.Builder(c).setTitle(c.getString(R.string.error)).setMessage(c.getString(R.string.error_api)).setPositiveButton(c.getString(R.string.ok), null);
-        if(closeActivityOnDialogClosed){
+        if (closeActivityOnDialogClosed) {
             b.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    ((Activity)c).finish();
+                    ((Activity) c).finish();
                 }
             }).setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
-                    ((Activity)c).finish();
+                    ((Activity) c).finish();
                 }
             });
         }

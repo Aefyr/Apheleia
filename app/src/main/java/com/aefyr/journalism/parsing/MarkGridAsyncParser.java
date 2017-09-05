@@ -43,7 +43,7 @@ public class MarkGridAsyncParser {
 
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-            if (response.size() == 0 || response.get("students") == null) {
+            if (response == null || response.size() == 0 || response.get("students") == null) {
                 return new AsyncParserTaskResult<MarksGrid>(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
             }
 

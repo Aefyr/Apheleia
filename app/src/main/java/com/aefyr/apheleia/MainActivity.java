@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,6 +28,7 @@ import com.aefyr.apheleia.fragments.FinalsFragment;
 import com.aefyr.apheleia.fragments.MarksFragment;
 import com.aefyr.apheleia.fragments.MessagesFragment;
 import com.aefyr.apheleia.fragments.ScheduleFragment;
+import com.aefyr.apheleia.fragments.Tags;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Destroyer;
 import com.aefyr.apheleia.helpers.Helper;
@@ -39,6 +41,7 @@ import com.aefyr.apheleia.watcher.WatcherHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,11 +58,11 @@ public class MainActivity extends AppCompatActivity
 
         helper = Helper.getInstance(this);
         if (!helper.isLoggedIn() || helper.isTokenExpired()) {
-            LoginActivity.startFromActivity(this, helper.isTokenExpired()&&helper.isLoggedIn()? LoginActivity.Reason.TOKEN_EXPIRED:null);
+            LoginActivity.startFromActivity(this, helper.isTokenExpired() && helper.isLoggedIn() ? LoginActivity.Reason.TOKEN_EXPIRED : null);
             return;
         }
 
-        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("first_launch", true)){
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("first_launch", true)) {
             WatcherHelper.showPrompt(this);
             Tutorial.showTutorial(this);
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("first_launch", false).apply();
@@ -86,17 +89,17 @@ public class MainActivity extends AppCompatActivity
 
         fragmentManager = getSupportFragmentManager();
 
-        if(getIntent().getStringExtra("requested_fragment")!=null){
-            if(getIntent().getStringExtra("requested_fragment").equals("messages")){
+        if (getIntent().getStringExtra("requested_fragment") != null) {
+            if (getIntent().getStringExtra("requested_fragment").equals("messages")) {
                 currentFragment = new MessagesFragment();
                 currentApheleiaFragment = ApheleiaFragment.MESSAGES;
-                fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
+                fragmentManager.beginTransaction().add(R.id.fragmentContainer, currentFragment, Tags.MESSAGES).commit();
                 navigationView.setCheckedItem(R.id.nav_messages);
             }
-        }else {
+        } else {
             currentFragment = new DiaryFragment();
             currentApheleiaFragment = ApheleiaFragment.DIARY;
-            fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
+            fragmentManager.beginTransaction().add(R.id.fragmentContainer, currentFragment, Tags.DIARY).commit();
             navigationView.setCheckedItem(R.id.nav_diary);
         }
 
@@ -133,7 +136,7 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.action_refresh:
 
                 ((ActionListener) currentFragment).onAction(ActionListener.Action.UPDATE_REQUESTED);
@@ -198,7 +201,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             logout();
             doNotClose = true;
-        }else if(id == R.id.nav_settings){
+        } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, PreferencesActivity.class));
         }
 
@@ -220,37 +223,87 @@ public class MainActivity extends AppCompatActivity
             return;
 
         currentApheleiaFragment = fragment;
-        fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag("C")).commit();
+        hideFragments();
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction().setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit);
         switch (fragment) {
             case DIARY:
-                currentFragment = new DiaryFragment();
+                Fragment diary = fragmentManager.findFragmentByTag(Tags.DIARY);
+                if (diary == null) {
+                    diary = new DiaryFragment();
+                    transaction.add(R.id.fragmentContainer, diary, Tags.DIARY);
+                } else {
+                    transaction.show(diary);
+                }
+                currentFragment = diary;
                 timePeriodSwitchButton.setVisible(true);
                 mailFolderSwitchButton.setVisible(false);
                 break;
             case MARKS:
-                currentFragment = new MarksFragment();
+                Fragment marks = fragmentManager.findFragmentByTag(Tags.MARKS);
+                if (marks == null) {
+                    marks = new MarksFragment();
+                    transaction.add(R.id.fragmentContainer, marks, Tags.MARKS);
+                } else {
+                    transaction.show(marks);
+                }
+                currentFragment = marks;
                 timePeriodSwitchButton.setVisible(true);
                 mailFolderSwitchButton.setVisible(false);
                 break;
             case SCHEDULE:
-                currentFragment = new ScheduleFragment();
+                Fragment schedule = fragmentManager.findFragmentByTag(Tags.SCHEDULE);
+                if (schedule == null) {
+                    schedule = new ScheduleFragment();
+                    transaction.add(R.id.fragmentContainer, schedule, Tags.SCHEDULE);
+                } else {
+                    transaction.show(schedule);
+                }
+                currentFragment = schedule;
                 timePeriodSwitchButton.setVisible(true);
                 mailFolderSwitchButton.setVisible(false);
                 break;
             case MESSAGES:
-                currentFragment = new MessagesFragment();
+                Fragment messages = fragmentManager.findFragmentByTag(Tags.MESSAGES);
+                if (messages == null) {
+                    messages = new MessagesFragment();
+                    transaction.add(R.id.fragmentContainer, messages, Tags.MESSAGES);
+                } else {
+                    transaction.show(messages);
+                }
+                currentFragment = messages;
                 timePeriodSwitchButton.setVisible(false);
                 mailFolderSwitchButton.setVisible(true);
                 break;
             case FINALS:
-                currentFragment = new FinalsFragment();
+                Fragment finals = fragmentManager.findFragmentByTag(Tags.FINALS);
+                if (finals == null) {
+                    finals = new FinalsFragment();
+                    transaction.add(R.id.fragmentContainer, finals, Tags.FINALS);
+                } else {
+                    transaction.show(finals);
+                }
+                currentFragment = finals;
                 timePeriodSwitchButton.setVisible(false);
                 mailFolderSwitchButton.setVisible(false);
                 break;
         }
-        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, currentFragment, "C").commit();
+
+        transaction.commit();
 
 
+    }
+
+    List<Fragment> fragments;
+
+    private void hideFragments() {
+        if (fragments == null)
+            fragments = fragmentManager.getFragments();
+        for (Fragment f : fragments) {
+            if (f.isVisible()) {
+                fragmentManager.beginTransaction().hide(f).commit();
+            }
+        }
     }
 
     private TextView studentName;
@@ -262,7 +315,7 @@ public class MainActivity extends AppCompatActivity
         ((TextView) navHeader.findViewById(R.id.usernameText)).setText(profileHelper.getName());
         ((TextView) navHeader.findViewById(R.id.emailText)).setText(profileHelper.getEmail());
         System.out.println(profileHelper.getRole());
-        ((ImageView)navHeader.findViewById(R.id.roleIcon)).setImageResource(profileHelper.getRole().equals(ProfileHelper.Role.PARENT)?R.drawable.ic_business_center_white_24dp:R.drawable.ic_school_white_24dp);
+        ((ImageView) navHeader.findViewById(R.id.roleIcon)).setImageResource(profileHelper.getRole().equals(ProfileHelper.Role.PARENT) ? R.drawable.ic_business_center_white_24dp : R.drawable.ic_school_white_24dp);
         studentName = (TextView) navHeader.findViewById(R.id.studentNameText);
 
         if (profileHelper.getStudentsCount() == 1) {
@@ -283,7 +336,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     studentPickerDialog.dismiss();
-                    if(studentsIds[i].equals(profileHelper.getCurrentStudentId())){
+                    if (studentsIds[i].equals(profileHelper.getCurrentStudentId())) {
                         drawer.closeDrawer(GravityCompat.START);
                         return;
                     }
@@ -333,13 +386,13 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onNothingChanged() {
-                if(requestedByUser)
+                if (requestedByUser)
                     Chief.makeAToast(MainActivity.this, getString(R.string.check_periods_no_change));
             }
 
             @Override
             public void onNetworkError() {
-                if(requestedByUser)
+                if (requestedByUser)
                     Chief.makeAToast(MainActivity.this, getString(R.string.check_periods_error));
             }
         });
@@ -371,13 +424,13 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void OnError(String m) {
                 AlertDialog d = new AlertDialog.Builder(MainActivity.this).setTitle(getString(R.string.network_error)).setMessage(getString(R.string.reinitialize_failed)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            finish();
-                        }
-                    }).setCancelable(false).create();
-                    d.setCanceledOnTouchOutside(false);
-                    d.show();
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                }).setCancelable(false).create();
+                d.setCanceledOnTouchOutside(false);
+                d.show();
             }
 
         });

@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.helpers.TimeLord;
-import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.objects.minor.Lesson;
 import com.aefyr.journalism.objects.minor.WeekDay;
 

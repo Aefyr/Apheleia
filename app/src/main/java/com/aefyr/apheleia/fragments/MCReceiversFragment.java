@@ -91,7 +91,7 @@ public class MCReceiversFragment extends Fragment {
 
             @Override
             public void onNetworkError(boolean tokenIsWrong) {
-                if(tokenIsWrong){
+                if (tokenIsWrong) {
                     LoginActivity.tokenExpired(getActivity());
                     return;
                 }

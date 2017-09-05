@@ -1,6 +1,5 @@
 package com.aefyr.apheleia.helpers;
 
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -23,6 +22,8 @@ public class TimeLord {
 
     private SimpleDateFormat fullMessageSDF;
 
+    private SimpleDateFormat quickPickerSDF;
+
     private TimeLord() {
         instance = this;
 
@@ -37,6 +38,8 @@ public class TimeLord {
         messageSDF = new SimpleDateFormat("dd.MM.yy", Locale.getDefault());
 
         fullMessageSDF = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+
+        quickPickerSDF = new SimpleDateFormat("EE", Locale.getDefault());
     }
 
     public static TimeLord getInstance() {
@@ -66,5 +69,9 @@ public class TimeLord {
 
     public String getFullMessageDate(long date) {
         return fullMessageSDF.format(date);
+    }
+
+    public String getQuickPickerDate(long date) {
+        return quickPickerSDF.format(date);
     }
 }

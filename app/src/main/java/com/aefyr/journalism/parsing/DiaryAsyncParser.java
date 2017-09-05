@@ -51,7 +51,7 @@ public class DiaryAsyncParser {
 
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-            if (response.size() == 0 || response.get("students") == null) {
+            if (response == null || response.size() == 0 || response.get("students") == null) {
                 return new AsyncParserTaskResult<DiaryEntry>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
             }
 

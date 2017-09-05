@@ -3,6 +3,7 @@ package com.aefyr.apheleia.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -70,6 +71,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
     private SwipeRefreshLayout refreshLayout;
 
     private LinearLayout quickDayPickBar;
+    private boolean quickDayPickerEnabled;
 
 
     public ScheduleFragment() {
@@ -84,14 +86,14 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_diary, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.schedule));
+        updateActionBarTitle();
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);
         refreshLayout.setOnRefreshListener(this);
 
         scheduleRecycler = (RecyclerView) view.findViewById(R.id.diaryRecycler);
-        scheduleRecycler.setLayoutManager(Utility.displayWidthDp(getResources())>=720?new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL):new PreloadLayoutManager(getActivity(), 7));
+        scheduleRecycler.setLayoutManager(Utility.displayWidthDp(getResources()) >= 720 ? new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL) : new PreloadLayoutManager(getActivity(), 7));
         scheduleRecycler.setItemViewCacheSize(7);
 
         emptySchedule = view.findViewById(R.id.emptyDiary);
@@ -105,6 +107,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         connectionHelper = ConnectionHelper.getInstance(getActivity());
 
         quickDayPickBar = (LinearLayout) view.findViewById(R.id.quickDayPickBar);
+        quickDayPickerEnabled = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("quick_day_picker_enabled", true);
 
         return view;
     }
@@ -131,7 +134,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
 
         checkEmptiness(schedule);
-        initializeQuickScrolling(false, schedule);
+        initializeQuickScrolling(quickDayPickerEnabled, schedule);
     }
 
     private boolean loadedFromMemory = false;
@@ -173,7 +176,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
             return;
         }
 
-        currentRequest = apiClient.getSchedule(persona, profileHelper.getCurrentStudentId(), days, true, new EljurApiClient.JournalismListener<Schedule>() {
+        currentRequest = apiClient.getSchedule(persona, currentStudent, days, true, new EljurApiClient.JournalismListener<Schedule>() {
             @Override
             public void onSuccess(Schedule result) {
                 setScheduleToAdapter(result);
@@ -193,7 +196,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
             @Override
             public void onNetworkError(boolean tokenIsWrong) {
-                if(tokenIsWrong){
+                if (tokenIsWrong) {
                     LoginActivity.tokenExpired(getActivity());
                     return;
                 }
@@ -229,6 +232,10 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         weeks = periodsHelper.getWeeks().toArray(new String[]{});
         Arrays.sort(weeks);
         selectedWeek = Arrays.binarySearch(weeks, periodsHelper.getCurrentScheduleWeek());
+        //I dunno why, but on emulator sometimes it gets a random week from periodHelper, so just to be safe, I added this
+        if (!Utility.checkSelectedTime(selectedWeek, weeks))
+            selectedWeek = weeks.length - 1;
+
         weekNames = new String[weeks.length];
 
         SimpleDateFormat parser = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
@@ -256,6 +263,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         }).create();
 
         requestedWeek = selectedWeek;
+        currentStudent = profileHelper.getCurrentStudentId();
         loadSchedule(weeks[selectedWeek]);
     }
 
@@ -276,10 +284,12 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
             quickDayPickBar.removeAllViews();
 
+            TimeLord timeLord = TimeLord.getInstance();
+
             for (final WeekDay day : schedule.getDays()) {
                 View quickDayPickButton = LayoutInflater.from(quickDayPickBar.getContext()).inflate(R.layout.quick_day_pick_button, null);
                 Button button = (Button) quickDayPickButton.findViewById(R.id.quickDayPickButton);
-                button.setText(String.valueOf(TimeLord.getInstance().getDayTitle(day.getDate()).charAt(0)));
+                button.setText(String.valueOf(timeLord.getQuickPickerDate(day.getDate())));
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -299,6 +309,21 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onDetach() {
         cancelRequest();
         super.onDetach();
+    }
+
+    private String currentStudent;
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden)
+            updateActionBarTitle();
+        if (!currentStudent.equals(profileHelper.getCurrentStudentId()))
+            studentSwitched();
+        else {
+            cancelRequest();
+            refreshLayout.setRefreshing(false);
+        }
     }
 
     private void cancelRequest() {
@@ -323,5 +348,9 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
                 loadSchedule(weeks[selectedWeek]);
                 break;
         }
+    }
+
+    private void updateActionBarTitle() {
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.schedule));
     }
 }

@@ -104,15 +104,15 @@ public class ProfileHelper {
         preferences.edit().putInt("students_count", studentsCount).apply();
     }
 
-    private void setCity(String city){
+    private void setCity(String city) {
         preferences.edit().putString("city", city).apply();
     }
 
-    private  void setRegion(String region){
+    private void setRegion(String region) {
         preferences.edit().putString("region", region).apply();
     }
 
-    private void setSign(String sign){
+    private void setSign(String sign) {
         preferences.edit().putString("sign", sign).apply();
     }
 

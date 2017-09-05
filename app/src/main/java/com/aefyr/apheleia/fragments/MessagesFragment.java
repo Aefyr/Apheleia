@@ -73,7 +73,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_messages, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null || currentFolder == MessagesList.Folder.INBOX) ? R.string.inbox : R.string.sent));
+        updateActionBarTitle();
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);
@@ -192,7 +192,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
             @Override
             public void onNetworkError(boolean tokenIsWrong) {
-                if(tokenIsWrong){
+                if (tokenIsWrong) {
                     LoginActivity.tokenExpired(getActivity());
                     return;
                 }
@@ -247,6 +247,16 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         super.onDetach();
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            refreshLayout.setRefreshing(false);
+            cancelRequest();
+        } else
+            updateActionBarTitle();
+    }
+
     private void cancelRequest() {
         if (currentRequest != null && !currentRequest.hasHadResponseDelivered())
             currentRequest.cancel();
@@ -290,5 +300,9 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                 loadMessages(currentFolder);
                 break;
         }
+    }
+
+    private void updateActionBarTitle() {
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null || currentFolder == MessagesList.Folder.INBOX) ? R.string.inbox : R.string.sent));
     }
 }

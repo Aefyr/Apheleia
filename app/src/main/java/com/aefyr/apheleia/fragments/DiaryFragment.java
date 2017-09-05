@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -67,6 +68,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private ConnectionHelper connectionHelper;
 
     private LinearLayout quickDayPickBar;
+    private boolean quickDayPickerEnabled;
 
     public DiaryFragment() {
         // Required empty public constructor
@@ -80,7 +82,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_diary, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.diary));
+        updateActionBarTitle();
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         Utility.colorRefreshLayout(refreshLayout);
@@ -88,7 +90,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         emptyDiary = view.findViewById(R.id.emptyDiary);
 
         diaryRecycler = (RecyclerView) view.findViewById(R.id.diaryRecycler);
-        diaryRecycler.setLayoutManager(Utility.displayWidthDp(getResources())>=720?new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL):new PreloadLayoutManager(getActivity(), 7));
+        diaryRecycler.setLayoutManager(Utility.displayWidthDp(getResources()) >= 720 ? new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL) : new PreloadLayoutManager(getActivity(), 7));
         diaryRecycler.setItemViewCacheSize(7);
 
         apiClient = EljurApiClient.getInstance(getActivity());
@@ -99,6 +101,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         connectionHelper = ConnectionHelper.getInstance(getActivity());
 
         quickDayPickBar = (LinearLayout) view.findViewById(R.id.quickDayPickBar);
+        quickDayPickerEnabled = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("quick_day_picker_enabled", true);
 
         return view;
     }
@@ -156,7 +159,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             return;
         }
 
-        currentRequest = apiClient.getDiary(persona, profileHelper.getCurrentStudentId(), days, true, new EljurApiClient.JournalismListener<DiaryEntry>() {
+        currentRequest = apiClient.getDiary(persona, currentStudent, days, true, new EljurApiClient.JournalismListener<DiaryEntry>() {
             @Override
             public void onSuccess(DiaryEntry result) {
                 setDiaryEntryToAdapter(result);
@@ -176,7 +179,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
             @Override
             public void onNetworkError(boolean tokenIsWrong) {
-                if(tokenIsWrong){
+                if (tokenIsWrong) {
                     LoginActivity.tokenExpired(getActivity());
                     return;
                 }
@@ -211,7 +214,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             diaryRecyclerAdapter.setDiaryEntry(entry);
 
         checkEmptiness(entry);
-        initializeQuickScrolling(false, entry);
+        initializeQuickScrolling(quickDayPickerEnabled, entry);
     }
 
     private int requestedWeek;
@@ -254,6 +257,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }).create();
 
         requestedWeek = selectedWeek;
+        currentStudent = profileHelper.getCurrentStudentId();
         loadDiary(weeks[selectedWeek]);
     }
 
@@ -274,10 +278,12 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
             quickDayPickBar.removeAllViews();
 
+            TimeLord timeLord = TimeLord.getInstance();
+
             for (final WeekDay day : entry.getDays()) {
                 View quickDayPickButton = LayoutInflater.from(quickDayPickBar.getContext()).inflate(R.layout.quick_day_pick_button, null);
                 Button button = (Button) quickDayPickButton.findViewById(R.id.quickDayPickButton);
-                button.setText(String.valueOf(TimeLord.getInstance().getDayTitle(day.getDate()).charAt(0)));
+                button.setText(timeLord.getQuickPickerDate(day.getDate()));
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -305,6 +311,22 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         super.onDetach();
     }
 
+    private String currentStudent;
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            updateActionBarTitle();
+            if (!currentStudent.equals(profileHelper.getCurrentStudentId()))
+                studentSwitched();
+
+        } else {
+            cancelRequest();
+            refreshLayout.setRefreshing(false);
+        }
+    }
+
     private void cancelRequest() {
         if (currentRequest != null && !currentRequest.hasHadResponseDelivered())
             currentRequest.cancel();
@@ -327,5 +349,9 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 loadDiary(weeks[selectedWeek]);
                 break;
         }
+    }
+
+    private void updateActionBarTitle() {
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.diary));
     }
 }

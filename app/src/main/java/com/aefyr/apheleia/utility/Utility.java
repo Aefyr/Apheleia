@@ -4,7 +4,6 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.TypedValue;
 import android.widget.EditText;
@@ -28,7 +27,7 @@ public class Utility {
     }
 
     public static int displayWidthDp(Resources r) {
-        return (int) (displayWidthPx(r)/r.getDisplayMetrics().density);
+        return (int) (displayWidthPx(r) / r.getDisplayMetrics().density);
     }
 
     public static boolean checkSelectedTime(int i, String[] a) {

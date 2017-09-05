@@ -53,6 +53,11 @@ class EljurApiRequests {
             public void onResponse(String rawResponse) {
                 JsonObject result = Utility.getJsonFromResponse(rawResponse);
 
+                if (result == null) {
+                    listener.onApiError(new JournalismException("no token returned"));
+                    return;
+                }
+
                 try {
                     listener.onSuccessfulLogin(Token.createToken(result.get("token").getAsString(), result.get("expires").getAsString()));
                 } catch (JournalismException e) {
@@ -85,7 +90,11 @@ class EljurApiRequests {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
-                System.out.println(response);
+
+                if (response == null) {
+                    listener.onApiError(new JournalismException("no rules"));
+                    return;
+                }
 
                 PersonaInfo personaInfo = new PersonaInfo();
 
@@ -107,7 +116,7 @@ class EljurApiRequests {
                 MajorObjectsHelper.setPersonaInfoCity(personaInfo, response.get("city").getAsString());
                 MajorObjectsHelper.setPersonaInfoRegion(personaInfo, response.get("region").getAsString());
 
-                if(response.get("relations")==null||response.getAsJsonObject("relations").get("students")==null){
+                if (response.get("relations") == null || response.getAsJsonObject("relations").get("students") == null) {
                     listener.onApiError(new JournalismException("no relations"));
                     return;
                 }
@@ -126,7 +135,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 
@@ -142,6 +151,11 @@ class EljurApiRequests {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
+
+                if (response == null) {
+                    listener.onApiError(new JournalismException("no periods"));
+                    return;
+                }
 
                 JsonArray periods = response.getAsJsonArray("students").get(0).getAsJsonObject().getAsJsonArray("periods");
                 PeriodsInfo periodsInfo = MajorObjectsFactory.createPeriodsInfo();
@@ -181,7 +195,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 
@@ -205,7 +219,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 
@@ -225,7 +239,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 
@@ -246,7 +260,7 @@ class EljurApiRequests {
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-                if (response.size() == 0 || response.get("students") == null) {
+                if (response == null || response.size() == 0 || response.get("students") == null) {
                     listener.onSuccess(MajorObjectsFactory.createSchedule(new ArrayList<WeekDay>(0)));
                     return;
                 }
@@ -322,7 +336,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 
@@ -343,7 +357,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 
@@ -363,7 +377,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 
@@ -378,6 +392,11 @@ class EljurApiRequests {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
+
+                if (response == null) {
+                    listener.onApiError(new JournalismException("no receivers"));
+                    return;
+                }
 
                 ArrayList<MessageReceiversGroup> groups = new ArrayList<MessageReceiversGroup>();
 
@@ -415,7 +434,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 
@@ -442,7 +461,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 
@@ -458,7 +477,7 @@ class EljurApiRequests {
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-                if (response.size() == 0 || response.get("students") == null || response.getAsJsonObject("students").getAsJsonObject(studentId).get("items") == null) {
+                if (response == null || response.size() == 0 || response.get("students") == null || response.getAsJsonObject("students").getAsJsonObject(studentId).get("items") == null) {
                     listener.onSuccess(MajorObjectsFactory.createFinals(new ArrayList<FinalSubject>(0)));
                     return;
                 }
@@ -488,7 +507,7 @@ class EljurApiRequests {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onNetworkError(error.networkResponse!=null && error.networkResponse.statusCode==403);
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
             }
         });
 

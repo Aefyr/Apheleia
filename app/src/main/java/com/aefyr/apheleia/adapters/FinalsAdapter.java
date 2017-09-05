@@ -1,7 +1,6 @@
 package com.aefyr.apheleia.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
@@ -57,11 +56,11 @@ public class FinalsAdapter extends RecyclerView.Adapter<FinalsAdapter.FinalsSubj
             SpannableStringBuilder builder = new SpannableStringBuilder();
             int l = 0;
             for (FinalPeriod period : subject.getPeriods()) {
-                if(!colorMap.containsKey(period.getName())){
-                    colorMap.put(period.getName(), colors[lastColor++%colors.length]);
+                if (!colorMap.containsKey(period.getName())) {
+                    colorMap.put(period.getName(), colors[lastColor++ % colors.length]);
                 }
-                if(Build.VERSION.SDK_INT>=21)
-                    builder.append((period.getName()+": "+period.getMark()+"\n"), new ForegroundColorSpan(colorMap.get(period.getName())), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (Build.VERSION.SDK_INT >= 21)
+                    builder.append((period.getName() + ": " + period.getMark() + "\n"), new ForegroundColorSpan(colorMap.get(period.getName())), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 else {
                     builder.append(period.getName()).append(": ").append(period.getMark()).append("\n");
                     builder.setSpan(new ForegroundColorSpan(colorMap.get(period.getName())), l, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -69,7 +68,7 @@ public class FinalsAdapter extends RecyclerView.Adapter<FinalsAdapter.FinalsSubj
                 }
 
             }
-            builder.delete(builder.length()-1, builder.length());
+            builder.delete(builder.length() - 1, builder.length());
             marks[i++] = builder;
         }
     }

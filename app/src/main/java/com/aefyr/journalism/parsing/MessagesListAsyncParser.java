@@ -52,7 +52,7 @@ public class MessagesListAsyncParser {
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
             MessagesList.Folder folder = messagesParseTaskParams.folder;
 
-            if (response.size() == 0 || response.get("messages") == null) {
+            if (response == null || response.size() == 0 || response.get("messages") == null) {
                 return new AsyncParserTaskResult<MessagesList>(MajorObjectsFactory.createMessagesList(response.get("total").getAsInt(), response.get("count").getAsInt(), new ArrayList<ShortMessage>(0), folder));
             }
 

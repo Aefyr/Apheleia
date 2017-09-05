@@ -128,7 +128,10 @@
     <!-- Tutorial and Preferences-->
     <string name="pref_show_tut">Show Tutorial</string>
     <string name="tut">Tutorial</string>
-    <string name="tut_short">1. To switch week or period, click the calendar button in app bar\n\n2. Marks with comments are highlighted with a circle, click them to see the comment\n\n3. If the new week has started, but you don\'t see it in Apheleia, try using \"Sync weeks/periods\" option from \"three dots\" menu\n\n4. To switch folders in messages, click the button next to the \"three dots\" button in the app bar\n\n5. To switch current student, click the button next to the current student name in the navigation drawer\n\nYou can always open this from the settings</string>
+    <string name="tut_short">1. To switch week or period, click the calendar button in app bar\n\n2. Marks with comments are highlighted with a circle, click them to see the comment\n\n3. If the new week has started, but you don\'t see it in Apheleia, try using \"Sync weeks/periods\" option from \"three dots\" menu\n\n4. To switch folders in messages, click the button next to the \"three dots\" button in the app bar\n\n5. You can scroll to a particular weekday in schedule and diary by tapping it\'s name at the bottom bar\n\n6. To switch current student, click the button next to the current student name in the navigation drawer\n\nYou can always open this from the settings</string>
+    <string name="pref_group_ui">UI</string>
+    <string name="pref_quick_picker">Quick weekday picker</string>
+    <string name="quick_picker_warn">Changes will be applied after app restart</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -254,7 +254,7 @@ public class TheInitializer {
 
                 @Override
                 public void onApiError(JournalismException e) {
-                    switch (e.getMessage()){
+                    switch (e.getMessage()) {
                         case "unsupported role":
                             fail(c.getString(R.string.unupported_role));
                             break;
@@ -301,7 +301,7 @@ public class TheInitializer {
         }
 
         dialog.dismiss();
-        listener.OnError(m==null?c.getString(R.string.error_api):m);
+        listener.OnError(m == null ? c.getString(R.string.error_api) : m);
     }
 
     private void done() {
