@@ -110,10 +110,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
         }
 
         if (!connectionHelper.hasNetworkConnection() && loadedFromMemory) {
-            View v = getView();
-            if (v == null)
-                v = getActivity().getWindow().getDecorView();
-            Chief.makeASnack(v, getString(R.string.offline_mode));
+            Chief.makeASnack(getView(), getString(R.string.offline_mode));
             refreshLayout.setRefreshing(false);
             return;
         }
@@ -134,7 +131,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
                     return;
                 }
                 refreshLayout.setRefreshing(false);
-                Chief.makeASnack(getActivity().getCurrentFocus(), String.format(getString(R.string.fetch_network_error), getString(R.string.finals)));
+                Chief.makeASnack(getView(), String.format(getString(R.string.fetch_network_error), getString(R.string.finals)));
             }
 
             @Override

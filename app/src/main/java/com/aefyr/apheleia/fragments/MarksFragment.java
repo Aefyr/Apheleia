@@ -125,11 +125,8 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         if (!connectionHelper.hasNetworkConnection()) {
             if (loadedFromMemory) {
-                View v = getView();
-                if (v == null)
-                    v = getActivity().getWindow().getDecorView();
 
-                Chief.makeASnack(v, getString(R.string.offline_mode));
+                Chief.makeASnack(getView(), getString(R.string.offline_mode));
             } else {
                 antiScroll();
                 Chief.makeAnAlert(getActivity(), getString(R.string.error_grid_not_saved));
@@ -165,7 +162,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 }
                 if (!loadedFromMemory)
                     antiScroll();
-                Chief.makeASnack(getActivity().getCurrentFocus(), String.format(getString(R.string.fetch_network_error), getString(R.string.marks)));
+                Chief.makeASnack(getView(), String.format(getString(R.string.fetch_network_error), getString(R.string.marks)));
                 refreshLayout.setRefreshing(false);
             }
 

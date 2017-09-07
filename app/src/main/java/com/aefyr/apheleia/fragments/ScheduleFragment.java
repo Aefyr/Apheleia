@@ -163,11 +163,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         if (!connectionHelper.hasNetworkConnection()) {
             if (loadedFromMemory) {
 
-                View v = getView();
-                if (v == null)
-                    v = getActivity().getWindow().getDecorView();
-
-                Chief.makeASnack(v, getString(R.string.offline_mode));
+                Chief.makeASnack(getView(), getString(R.string.offline_mode));
             } else {
                 antiScroll();
                 Chief.makeAnAlert(getActivity(), getString(R.string.error_week_not_saved));
@@ -202,7 +198,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
                 }
                 if (!loadedFromMemory)
                     antiScroll();
-                Chief.makeASnack(getActivity().getCurrentFocus(), String.format(getString(R.string.fetch_network_error), getString(R.string.schedule)));
+                Chief.makeASnack(getView(), String.format(getString(R.string.fetch_network_error), getString(R.string.schedule)));
                 refreshLayout.setRefreshing(false);
             }
 

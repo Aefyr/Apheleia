@@ -146,11 +146,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         if (!connectionHelper.hasNetworkConnection()) {
             if (loadedFromMemory) {
 
-                View v = getView();
-                if (v == null)
-                    v = getActivity().getWindow().getDecorView();
-
-                Chief.makeASnack(v, getString(R.string.offline_mode));
+                Chief.makeASnack(getView(), getString(R.string.offline_mode));
             } else {
                 antiScroll();
                 Chief.makeAnAlert(getActivity(), getString(R.string.error_week_not_saved));
@@ -185,7 +181,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 }
                 if (!loadedFromMemory)
                     antiScroll();
-                Chief.makeASnack(getActivity().getCurrentFocus(), String.format(getString(R.string.fetch_network_error), getString(R.string.diary)));
+                Chief.makeASnack(getView(), String.format(getString(R.string.fetch_network_error), getString(R.string.diary)));
                 refreshLayout.setRefreshing(false);
             }
 
