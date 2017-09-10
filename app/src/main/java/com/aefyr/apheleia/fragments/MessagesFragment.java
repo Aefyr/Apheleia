@@ -102,7 +102,6 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MESSAGES, FirebaseAnalytics.getInstance(getActivity()));
         loadMessages(currentFolder);
     }
 
@@ -253,8 +252,9 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         if (hidden) {
             refreshLayout.setRefreshing(false);
             cancelRequest();
-        } else
+        } else {
             updateActionBarTitle();
+        }
     }
 
     private void cancelRequest() {
@@ -303,6 +303,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void updateActionBarTitle() {
+        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MESSAGES, FirebaseAnalytics.getInstance(getActivity()));
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null || currentFolder == MessagesList.Folder.INBOX) ? R.string.inbox : R.string.sent));
     }
 }

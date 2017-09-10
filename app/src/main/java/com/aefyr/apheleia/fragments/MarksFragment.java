@@ -95,7 +95,6 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MARKS, FirebaseAnalytics.getInstance(getActivity()));
         studentSwitched();
     }
 
@@ -279,6 +278,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private void updateActionBarTitle() {
+        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MARKS, FirebaseAnalytics.getInstance(getActivity()));
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
     }
 }

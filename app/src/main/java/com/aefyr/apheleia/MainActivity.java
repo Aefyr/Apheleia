@@ -223,9 +223,8 @@ public class MainActivity extends AppCompatActivity
             return;
 
         currentApheleiaFragment = fragment;
-        hideFragments();
 
-        FragmentTransaction transaction = fragmentManager.beginTransaction().setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit);
+        FragmentTransaction transaction = fragmentManager.beginTransaction().hide(currentFragment).setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit);
         switch (fragment) {
             case DIARY:
                 Fragment diary = fragmentManager.findFragmentByTag(Tags.DIARY);
@@ -292,18 +291,6 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
 
 
-    }
-
-    List<Fragment> fragments;
-
-    private void hideFragments() {
-        if (fragments == null)
-            fragments = fragmentManager.getFragments();
-        for (Fragment f : fragments) {
-            if (f.isVisible()) {
-                fragmentManager.beginTransaction().hide(f).commit();
-            }
-        }
     }
 
     private TextView studentName;

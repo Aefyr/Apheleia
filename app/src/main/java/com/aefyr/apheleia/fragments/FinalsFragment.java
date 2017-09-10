@@ -80,7 +80,6 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_FINALS, FirebaseAnalytics.getInstance(getActivity()));
         studentSwitched();
     }
 
@@ -198,6 +197,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     private void updateActionBarTitle() {
+        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_FINALS, FirebaseAnalytics.getInstance(getActivity()));
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.finals));
     }
 }
