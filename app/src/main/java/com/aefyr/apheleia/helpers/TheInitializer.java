@@ -88,7 +88,7 @@ public class TheInitializer {
                             @Override
                             public void onSuccess(PeriodsInfo periods) {
                                 if(periods == null) {
-                                    actionsGoal -= 3;
+                                    i+=3;
                                     publishProgress(++i);
                                     return;
                                 }

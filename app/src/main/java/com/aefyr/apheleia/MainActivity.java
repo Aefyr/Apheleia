@@ -431,10 +431,12 @@ public class MainActivity extends AppCompatActivity
         new AlertDialog.Builder(this).setMessage(getString(R.string.logout_prompt)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                final Bundle domain = new Bundle();
+                domain.putString(FirebaseConstants.SCHOOL_DOMAIN, helper.getDomain());
                 new Destroyer(MainActivity.this).destroy(false, new Destroyer.OnDestructionListener() {
                     @Override
                     public void onDestroyed() {
-                        FirebaseAnalytics.getInstance(MainActivity.this).logEvent(FirebaseConstants.LOGOUT, null);
+                        FirebaseAnalytics.getInstance(MainActivity.this).logEvent(FirebaseConstants.LOGOUT, domain);
                         LoginActivity.startFromActivity(MainActivity.this, null);
                     }
                 });

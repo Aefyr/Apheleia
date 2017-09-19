@@ -131,7 +131,6 @@ public class LoginActivity extends AppCompatActivity {
                         TheInitializer t = new TheInitializer(LoginActivity.this, new TheInitializer.OnInitializationListener() {
                             @Override
                             public void OnSuccess() {
-                                signIn.setEnabled(true);
                                 loggedIn();
                             }
 
