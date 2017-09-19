@@ -116,12 +116,13 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Override
     public void onRefresh() {
-        loadDiary(weeks[selectedWeek]);
+        refreshDiary();
     }
 
     private boolean loadedFromMemory = false;
 
     private void loadDiary(final String days) {
+
         loadedFromMemory = false;
         refreshLayout.setRefreshing(true);
 
@@ -213,15 +214,27 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private int requestedWeek;
+    private boolean brokenStudent;
 
     private void studentSwitched() {
         cancelRequest();
         firstLoad = true;
+        brokenStudent = false;
+        setEmptinessTextShown(false);
+
+        currentStudent = profileHelper.getCurrentStudentId();
+
+        if(periodsHelper.getCurrentWeek() == null){
+            brokenStudent = true;
+            setDiaryEntryToAdapter(null);
+            weeksPickerDialog = Utility.createBrokenStudentDialog(getActivity());
+            return;
+        }
 
         weeks = periodsHelper.getWeeks().toArray(new String[]{});
         Arrays.sort(weeks);
         selectedWeek = Arrays.binarySearch(weeks, periodsHelper.getCurrentWeek());
-        //I dunno why, but on emulator sometimes it gets a random week from periodHelper, so just to be safe, I added this
+
         if (!Utility.checkSelectedTime(selectedWeek, weeks))
             selectedWeek = weeks.length - 1;
 
@@ -237,6 +250,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 weekNames[i++] = target.format(parser.parse(dates[0])) + " - " + target.format(parser.parse(dates[1]));
             } catch (ParseException e) {
                 e.printStackTrace();
+                FirebaseCrash.report(e);
                 weekNames[i++] = "????? - ?????";
             }
         }
@@ -252,7 +266,14 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }).create();
 
         requestedWeek = selectedWeek;
-        currentStudent = profileHelper.getCurrentStudentId();
+        refreshDiary();
+    }
+
+    private void refreshDiary(){
+        if(brokenStudent) {
+            refreshLayout.setRefreshing(false);
+            return;
+        }
         loadDiary(weeks[selectedWeek]);
     }
 
@@ -262,7 +283,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
 
     private void initializeQuickScrolling(boolean enabled, final DiaryEntry entry) {
-        if (enabled) {
+        if (enabled && entry!=null) {
 
             if (firstLoad) {
                 quickDayPickBar.setVisibility(View.VISIBLE);
@@ -328,10 +349,11 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private void checkEmptiness(DiaryEntry entry) {
-        if (entry.getDays().size() == 0)
-            emptyDiary.setVisibility(View.VISIBLE);
-        else
-            emptyDiary.setVisibility(View.GONE);
+        setEmptinessTextShown(entry == null || entry.getDays().size() == 0);
+    }
+
+    private void setEmptinessTextShown(boolean shown){
+        emptyDiary.setVisibility(shown?View.VISIBLE:View.GONE);
     }
 
     @Override
@@ -341,7 +363,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 studentSwitched();
                 break;
             case UPDATE_REQUESTED:
-                loadDiary(weeks[selectedWeek]);
+                refreshDiary();
                 break;
         }
     }

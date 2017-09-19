@@ -152,13 +152,16 @@ class EljurApiRequests {
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-                if (response == null) {
-                    listener.onApiError(new JournalismException("no periods"));
+                if (response == null || response.size() == 0 || response.get("students") == null || response.getAsJsonArray("students").get(0).getAsJsonObject().get("periods") == null) {
+                    listener.onSuccess(null);
                     return;
                 }
 
                 JsonArray periods = response.getAsJsonArray("students").get(0).getAsJsonObject().getAsJsonArray("periods");
                 PeriodsInfo periodsInfo = MajorObjectsFactory.createPeriodsInfo();
+
+                //I'm not sure you can even get periods with no weeks inside, so this might be redundant (And I think it is), but this is Eljur we're talking about after all.
+                int weeksCount = 0;
 
                 for (JsonElement periodEl : periods) {
                     JsonObject period = periodEl.getAsJsonObject();
@@ -184,13 +187,15 @@ class EljurApiRequests {
                                 listener.onApiError(e);
                                 return;
                             }
+                            weeksCount++;
                         }
 
                         MajorObjectsHelper.addActualPeriodToPeriodsInfo(periodsInfo, actualPeriod);
                     }
                 }
 
-                listener.onSuccess(periodsInfo);
+                //So we'll return null, if we have no weeks, since Apheleia can't work just with periods.
+                listener.onSuccess(weeksCount==0?null:periodsInfo);
             }
         }, new Response.ErrorListener() {
             @Override

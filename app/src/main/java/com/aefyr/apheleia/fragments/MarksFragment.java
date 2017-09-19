@@ -101,6 +101,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private boolean loadedFromMemory = false;
 
     private void loadMarks(final String days) {
+
         loadedFromMemory = false;
         refreshLayout.setRefreshing(true);
 
@@ -176,6 +177,14 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         });
     }
 
+    private void refreshMarks(){
+        if(brokenStudent) {
+            refreshLayout.setRefreshing(false);
+            return;
+        }
+        loadMarks(periods[selectedPeriod]);
+    }
+
     private void antiScroll() {
         periodsPickerDialog.getListView().setItemChecked(selectedPeriod, true);
         periodsPickerDialog.getListView().setSelection(requestedPeriod);
@@ -194,10 +203,23 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private String[] periods;
     private String[] periodsNames;
+    private boolean brokenStudent = false;
 
     private void studentSwitched() {
         cancelRequest();
         firstLoad = true;
+        brokenStudent = false;
+        setEmptinessTextShown(false);
+
+        currentStudent = profileHelper.getCurrentStudentId();
+
+        if(periodsHelper.getCurrentPeriod() == null){
+            brokenStudent = true;
+            setGridToAdapter(null);
+            periodsPickerDialog = Utility.createBrokenStudentDialog(getActivity());
+            return;
+        }
+
         periods = periodsHelper.getPeriods().toArray(new String[]{});
         Arrays.sort(periods);
         selectedPeriod = Arrays.binarySearch(periods, periodsHelper.getCurrentPeriod());
@@ -219,8 +241,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }).create();
 
         requestedPeriod = selectedPeriod;
-        currentStudent = profileHelper.getCurrentStudentId();
-        loadMarks(periods[selectedPeriod]);
+        refreshMarks();
     }
 
     public void showTimePeriodSwitcherDialog() {
@@ -229,7 +250,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Override
     public void onRefresh() {
-        loadMarks(periods[selectedPeriod]);
+        refreshMarks();
     }
 
     @Override
@@ -259,10 +280,11 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private void checkEmptiness(MarksGrid grid) {
-        if (grid.getLessons().size() == 0)
-            emptyMarks.setVisibility(View.VISIBLE);
-        else
-            emptyMarks.setVisibility(View.GONE);
+        setEmptinessTextShown(grid == null || grid.getLessons().size() == 0);
+    }
+
+    private void setEmptinessTextShown(boolean shown){
+        emptyMarks.setVisibility(shown?View.VISIBLE:View.GONE);
     }
 
     @Override
@@ -272,7 +294,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 studentSwitched();
                 break;
             case UPDATE_REQUESTED:
-                loadMarks(periods[selectedPeriod]);
+                refreshMarks();
                 break;
         }
     }

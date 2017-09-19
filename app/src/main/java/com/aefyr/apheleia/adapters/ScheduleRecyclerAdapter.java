@@ -66,7 +66,7 @@ public class ScheduleRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public int getItemCount() {
-        return schedule.getDays().size();
+        return schedule==null?0:schedule.getDays().size();
     }
 
     @Override

@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aefyr.apheleia.fragments.DiaryFragment;
@@ -298,11 +299,13 @@ public class MainActivity extends AppCompatActivity
 
     private void initializeNavHeader(View navHeader) {
         final ProfileHelper profileHelper = ProfileHelper.getInstance(this);
+        boolean parent = profileHelper.getRole().equals(ProfileHelper.Role.PARENT);
 
         ((TextView) navHeader.findViewById(R.id.usernameText)).setText(profileHelper.getName());
         ((TextView) navHeader.findViewById(R.id.emailText)).setText(profileHelper.getEmail());
-        System.out.println(profileHelper.getRole());
-        ((ImageView) navHeader.findViewById(R.id.roleIcon)).setImageResource(profileHelper.getRole().equals(ProfileHelper.Role.PARENT) ? R.drawable.ic_business_center_white_24dp : R.drawable.ic_school_white_24dp);
+        ((ImageView) navHeader.findViewById(R.id.roleIcon)).setImageResource(parent ? R.drawable.ic_business_center_white_24dp : R.drawable.ic_school_white_24dp);
+        ((TextView) navHeader.findViewById(R.id.domainText)).setText(helper.getDomain());
+
         studentName = (TextView) navHeader.findViewById(R.id.studentNameText);
 
         if (profileHelper.getStudentsCount() == 1) {

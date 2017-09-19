@@ -13,9 +13,9 @@ public class Token {
     public static Token createToken(String token, String rawExpiration) throws JournalismException {
         Token t = new Token();
         t.token = token;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz", Locale.ENGLISH);
         try {
-            t.expirationTime = format.parse(rawExpiration + " +3000").getTime();
+            t.expirationTime = format.parse(rawExpiration + " GMT+03:00").getTime();
         } catch (ParseException e) {
             throw new JournalismException("Couldn't parse token expiration date\n" + e.getMessage());
         }

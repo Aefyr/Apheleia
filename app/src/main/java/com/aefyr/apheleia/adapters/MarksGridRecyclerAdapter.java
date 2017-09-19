@@ -60,7 +60,7 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
 
     @Override
     public int getItemCount() {
-        return grid.getLessons().size();
+        return grid==null?0:grid.getLessons().size();
     }
 
     @Override

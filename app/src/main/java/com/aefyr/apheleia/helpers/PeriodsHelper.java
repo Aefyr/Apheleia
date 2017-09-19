@@ -54,6 +54,10 @@ public class PeriodsHelper {
         EljurApiClient.getInstance(c).getPeriods(Helper.getInstance(c).getPersona(), profileHelper.getCurrentStudentId(), new EljurApiClient.JournalismListener<PeriodsInfo>() {
             @Override
             public void onSuccess(PeriodsInfo result) {
+                if(result == null){
+                    listener.onNothingChanged();
+                    return;
+                }
                 int prevPeriodsCount = getPeriodsCount();
                 int prevWeeksCount = getWeeksCount();
 
@@ -106,7 +110,7 @@ public class PeriodsHelper {
     }
 
     public String getCurrentPeriod() {
-        return preferences.getString("current_period_" + profileHelper.getCurrentStudentId(), "0");
+        return preferences.getString("current_period_" + profileHelper.getCurrentStudentId(), null);
     }
 
     public void setCurrentPeriod(String period) {
@@ -138,7 +142,7 @@ public class PeriodsHelper {
     }
 
     public String getCurrentWeek() {
-        return preferences.getString("current_week_" + profileHelper.getCurrentStudentId(), "0");
+        return preferences.getString("current_week_" + profileHelper.getCurrentStudentId(), null);
     }
 
     public void setCurrentWeek(String weeks) {
@@ -158,7 +162,7 @@ public class PeriodsHelper {
     }
 
     public String getCurrentScheduleWeek() {
-        return preferences.getString("current_schedule_week_" + profileHelper.getCurrentStudentId(), "0");
+        return preferences.getString("current_schedule_week_" + profileHelper.getCurrentStudentId(), null);
     }
 
     public void savePeriodsInfo(PeriodsInfo periodsInfo) {

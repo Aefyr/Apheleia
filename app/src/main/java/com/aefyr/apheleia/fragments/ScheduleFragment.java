@@ -120,7 +120,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        loadSchedule(weeks[selectedWeek]);
+        refreshSchedule();
     }
 
     private void setScheduleToAdapter(Schedule schedule) {
@@ -139,6 +139,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
     private boolean loadedFromMemory = false;
 
     private void loadSchedule(final String days) {
+
         loadedFromMemory = false;
         refreshLayout.setRefreshing(true);
 
@@ -212,6 +213,14 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         });
     }
 
+    private void refreshSchedule(){
+        if(brokenStudent) {
+            refreshLayout.setRefreshing(false);
+            return;
+        }
+        loadSchedule(weeks[selectedWeek]);
+    }
+
     private void antiScroll() {
         weeksPickerDialog.getListView().setItemChecked(selectedWeek, true);
         weeksPickerDialog.getListView().setSelection(selectedWeek);
@@ -219,15 +228,26 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
     private int requestedWeek;
-
+    private boolean brokenStudent = false;
     private void studentSwitched() {
         cancelRequest();
         firstLoad = true;
+        brokenStudent = false;
+        setEmptinessTextShown(false);
+
+        currentStudent = profileHelper.getCurrentStudentId();
+
+        if(periodsHelper.getCurrentScheduleWeek() == null){
+            brokenStudent = true;
+            setScheduleToAdapter(null);
+            weeksPickerDialog = Utility.createBrokenStudentDialog(getActivity());
+            return;
+        }
 
         weeks = periodsHelper.getWeeks().toArray(new String[]{});
         Arrays.sort(weeks);
         selectedWeek = Arrays.binarySearch(weeks, periodsHelper.getCurrentScheduleWeek());
-        //I dunno why, but on emulator sometimes it gets a random week from periodHelper, so just to be safe, I added this
+
         if (!Utility.checkSelectedTime(selectedWeek, weeks))
             selectedWeek = weeks.length - 1;
 
@@ -243,6 +263,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
                 weekNames[i++] = target.format(parser.parse(dates[0])) + " - " + target.format(parser.parse(dates[1]));
             } catch (ParseException e) {
                 e.printStackTrace();
+                FirebaseCrash.report(e);
                 weekNames[i++] = "????? - ?????";
             }
         }
@@ -258,8 +279,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         }).create();
 
         requestedWeek = selectedWeek;
-        currentStudent = profileHelper.getCurrentStudentId();
-        loadSchedule(weeks[selectedWeek]);
+        refreshSchedule();
     }
 
     public void showTimePeriodSwitcherDialog() {
@@ -268,7 +288,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
     private void initializeQuickScrolling(boolean enabled, final Schedule schedule) {
-        if (enabled) {
+        if (enabled && schedule!=null) {
 
             if (firstLoad) {
                 quickDayPickBar.setVisibility(View.VISIBLE);
@@ -327,10 +347,11 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void checkEmptiness(Schedule schedule) {
-        if (schedule.getDays().size() == 0)
-            emptySchedule.setVisibility(View.VISIBLE);
-        else
-            emptySchedule.setVisibility(View.GONE);
+        setEmptinessTextShown(schedule == null || schedule.getDays().size() == 0);
+    }
+
+    private void setEmptinessTextShown(boolean shown){
+        emptySchedule.setVisibility(shown?View.VISIBLE:View.GONE);
     }
 
     @Override
@@ -340,7 +361,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
                 studentSwitched();
                 break;
             case UPDATE_REQUESTED:
-                loadSchedule(weeks[selectedWeek]);
+                refreshSchedule();
                 break;
         }
     }

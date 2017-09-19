@@ -32,6 +32,7 @@
     <string name="error_wrong_rules">User profile can\'t be processed</string>
     <string name="error">Error</string>
     <string name="error_api">Unable to process data from Eljur</string>
+    <string name="no_periods">This student doesn\'t have any weeks or periods.\n\nTry syncing them from the overflow menu</string>
 
 
     <!-- Login Activity -->

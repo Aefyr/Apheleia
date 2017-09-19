@@ -76,7 +76,8 @@ public class DiaryRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return entry.getDays().size();
+
+        return entry==null?0:entry.getDays().size();
     }
 
     @Override

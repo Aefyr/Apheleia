@@ -87,16 +87,18 @@ public class TheInitializer {
                         loadPeriods(helper.getPersona(), s.id(), new EljurApiClient.JournalismListener<PeriodsInfo>() {
                             @Override
                             public void onSuccess(PeriodsInfo periods) {
+                                if(periods == null) {
+                                    actionsGoal -= 3;
+                                    publishProgress(++i);
+                                    return;
+                                }
+
                                 profileHelper.setCurrentStudent(s.id());
-                                System.out.println("Set student " + s.id());
                                 final PeriodsHelper periodsHelper = PeriodsHelper.getInstance(c);
                                 periodsHelper.savePeriodsInfo(periods);
-                                System.out.println("Saved periods for " + s.id());
-                                System.out.println("period " + s.id() + " " + periodsHelper.getCurrentWeek());
 
                                 publishProgress(++i);
 
-                                profileHelper.setCurrentStudent(s.id());
                                 loadDiary(helper.getPersona(), s.id(), periodsHelper.getCurrentWeek(), new EljurApiClient.JournalismListener<DiaryEntry>() {
                                     @Override
                                     public void onSuccess(DiaryEntry entry) {
