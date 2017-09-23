@@ -47,7 +47,6 @@
     <string name="invalid_credentials_desc">Invalid username or password</string>
     <string name="invalid_domain">Invalid school domain</string>
     <string name="invalid_domain_desc">Entered school domain doesn\'t exist or is temporary unavailable. Please check if you\'ve entered it right</string>
-    <string name="title_activity_container" translatable="false">Apheleia</string>
     <string name="loading_profile">Fetching profile…</string>
     <string name="loading_data">Fetching initial data…</string>
     <string name="logging_out">Signing out…</string>

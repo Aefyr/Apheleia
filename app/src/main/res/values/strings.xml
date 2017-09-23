@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="title_activity_container" translatable="false">Apheleia</string>
     <string name="ok">OK</string>
     <string name="action_settings">Настройки</string>
     <string name="authorization">Аутентификация…</string>
