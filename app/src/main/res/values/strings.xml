@@ -1,145 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Apheleia</string>
-
-
-    <!-- Commons -->
     <string name="ok">OK</string>
-    <string name="yes">Yes</string>
-    <string name="no">Nope</string>
-    <string name="help">Help</string>
-    <string name="got_it">Got it</string>
-    <string name="network_error">Network Error</string>
-    <string name="network_error_tip">Check your Internet connection or try again later</string>
-    <string name="pick_student">Choose Student</string>
-    <string name="cancel">Cancel</string>
-    <string name="offline_mode">No connection. Loaded saved copy</string>
-    <string name="switch_time_period">Switch time period</string>
-    <string name="diary">Diary</string>
-    <string name="marks">Marks</string>
-    <string name="schedule">Schedule</string>
-    <string name="messages">Messages</string>
-    <string name="periods">Periods info</string>
-    <string name="profile">Profile info</string>
-    <string name="fetch_network_error" formatted="false">Failed to fetch %s due to a network error, please try again later</string>
-    <string name="logout">Sign out</string>
-    <string name="logout_prompt">Sign out?</string>
-    <string name="misc">Other</string>
-    <string name="refresh">Refresh</string>
-    <string name="current_student">Current Student:</string>
-    <string name="warning">Warning</string>
-    <string name="enable">Enable</string>
-    <string name="dont_enable">Don\'t enable</string>
-    <string name="error_wrong_rules">User profile can\'t be processed</string>
-    <string name="error">Error</string>
-    <string name="error_api">Unable to process data from Eljur</string>
-    <string name="no_periods">This student doesn\'t have any weeks or periods.\n\nTry syncing them from the overflow menu</string>
-    <string name="error_api_access_forbidden">Authorization request was rejected by server\n\n(This doesn\'t mean your login/password are invalid)</string>
-
-
-    <!-- Login Activity -->
-    <string name="domain">School Domain</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="sing_in">Sign In</string>
-    <string name="what_is_school_domain">School domain is the part before \".eljur.ru\" in your school\'s eljur address.\n\nExample: For eljur with address \"<b>example1</b>.eljur.ru\" the school domain would be \"<b>example1</b>\"</string>
-    <string name="authorization">Singing in…</string>
-    <string name="invalid_credentials">Invalid Credentials</string>
-    <string name="invalid_credentials_desc">Invalid username or password</string>
-    <string name="invalid_domain">Invalid school domain</string>
-    <string name="invalid_domain_desc">Entered school domain doesn\'t exist or is temporary unavailable. Please check if you\'ve entered it right</string>
-    <string name="title_activity_container" translatable="false">Apheleia</string>
-    <string name="loading_profile">Fetching profile…</string>
-    <string name="loading_data">Fetching initial data…</string>
-    <string name="logging_out">Signing out…</string>
-    <string name="unupported_role">Apheleia only supports students and parents accounts</string>
-    <string name="token_expired">Your access token is no longer valid, you need to sign in again</string>
-    <string name="beta_warn"><b>Beta:</b>\nThis is a beta release of Apheleia, and it hasn\'t been tested on real users. So if you notice any problems, report them on the Google Play Apheleia page\n\n<b>Analytics and Privacy Policy:</b>\nApheleia uses Google Analytics to anonymously collect app usage data and report errors. None of you personal data is sent. This data is used to make Apheleia better.</string>
-
-    <!-- Re:Initialization and periods helper-->
-    <string name="check_periods_failed">Failed to update weeks/periods info. Error was reported</string>
-    <string name="check_periods_updated">Found new week/period, updating data</string>
-    <string name="reinitialization_title">Possible school year change</string>
-    <string name="reinitialization_prompt">Apheleia has detected, that Eljur returned less weeks than it did last time.\n\nThat may have happened due to the start of a new school year.\n\nDo you want to perform a reinitialization, so that you can see the new school year?\n\nIf you believe that this is an error, you may ignore this</string>
-    <string name="reinitialization_warning">If network to be disconnected or server error occurs during reinitialization, you will be logged off from the app and will have to log in again.</string>
-    <string name="reinitialize_failed">During reinitialization, connection to Eljur was lost. Check your Internet connection or try again later.\n\nYou will have to log into Apheleia again. The app will now be closed</string>
-    <string name="check_periods_no_change">No changes in weeks/periods detected</string>
-    <string name="check_periods_error">Unable to sync weeks/periods due to a network error</string>
-    <string name="check_periods">Sync weeks/periods</string>
-
-
-    <!-- Diary -->
-    <string name="vacation">Vacation</string>
-    <string name="time_unknown">Time unknown</string>
-    <string name="no_homework">● No homework</string>
-    <string name="overtime">OT</string>
-    <string name="personal">(Individual)</string>
-    <string name="error_week_not_saved">No internet connection and selected week is not saved!</string>
-    <string name="no_diary">No diary found for selected week</string>
-
-    <!-- Marks Grid -->
-    <string name="average">Average</string>
-    <string name="error_grid_not_saved">No internet connection and selected period is not saved!</string>
-    <string name="no_marks">No marks found for selected period</string>
-
-    <!-- Schedule -->
-    <string name="teacher">Teacher</string>
-    <string name="room">Room</string>
-    <string name="no_schedule">Schedule is not set for selected week</string>
-
-    <!-- Messages -->
-    <string name="inbox">Inbox</string>
-    <string name="sent">Sent</string>
-    <string name="no_messages">No messages in this folder</string>
-    <string name="multiple_receivers">%d receivers</string>
-    <string name="toggle_folder">Toggle folder</string>
-    <string name="cant_get_message">Unable to fetch message</string>
-    <string name="retry">Retry</string>
-    <string name="message">Message</string>
-    <string name="viewing_message">View Message</string>
-    <string name="fetching_message">Fetching message…</string>
-    <string name="from" formatted="false">From: %s</string>
-    <string name="to" formatted="false">To: %s</string>
-    <string name="to_many" formatted="false">To: %s and %d others</string>
-    <string name="you">You</string>
-    <string name="receivers">Receivers</string>
-    <string name="compose_message">Compose</string>
-    <string name="send">Send</string>
-    <string name="select_all">Select All</string>
-    <string name="deselect_all">Deselect All</string>
-    <string name="fetching_receivers">Fetching receivers…</string>
-    <string name="subject">Subject</string>
-    <string name="text">Message</string>
-    <string name="error_no_receivers">You have to select at least one receiver</string>
-    <string name="sending_message">Sending message…</string>
-    <string name="message_sent">Message was sent</string>
-    <string name="cant_get_receivers">Unable to fetch receivers</string>
-    <string name="cant_send_message">Unable to send message</string>
-    <string name="reply_subject_prefix" formatted="false">Re: %s</string>
-    <string name="multiple_new_messages" formatted="false">%d new messages</string>
-    <string name="pref_enable_watcher">New messages monitoring service</string>
-    <string name="pref_watcher_allow_cell">Messages monitoring via mobile network</string>
-    <string name="watcher_desc">Apheleia can\'t use instant new messages notifications like the official Eljur app\n\nNonetheless, Apheleia can once in a while check your inbox for new messages and notify you if there are any. Though it will increase battery usage insignificantly and traffic usage proportionally to the total count of unread messages you have, hence this will work only with WIFI connection by, until you allow to use cell network in settings.\n\nIf you have many unread messages, and want to use this option, I highly recommend you use \"Read All\" option on the Eljur website.\n\nDo you want to enable this option? You can always turn it on/off in settings</string>
-    <string name="watcher_first_check_warning">First new messages check will count all you unread messages as new</string>
-    <string name="watcher_traffic_warning">Allowing messages check via cell network will increase your mobile traffic usage significantly.\n\nEach unread message in your inbox will cost you approximately 1.5 megabytes of traffic per month, this includes all of the unread messages you have, not only new ones.</string>
-
-
-    <!-- Finals -->
-    <string name="finals">Finals</string>
-    <string name="no_finals">No final marks found</string>
-
-    <!-- Tutorial and Preferences-->
-    <string name="pref_show_tut">Show Tutorial</string>
-    <string name="tut">Tutorial</string>
-    <string name="tut_short">1. To switch week or period, click the calendar button in app bar\n\n2. Marks with comments are highlighted with a circle, click them to see the comment\n\n3. If the new week has started, but you don\'t see it in Apheleia, try using \"Sync weeks/periods\" option from \"three dots\" menu\n\n4. To switch folders in messages, click the button next to the \"three dots\" button in the app bar\n\n5. You can scroll to a particular weekday in schedule and diary by tapping it\'s name at the bottom bar\n\n6. To switch current student, click the button next to the current student name in the navigation drawer\n\nYou can always open this from the settings</string>
-    <string name="pref_group_ui">UI</string>
-    <string name="pref_quick_picker">Quick weekday picker</string>
-    <string name="quick_picker_warn">Changes will be applied after app restart</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_settings">Settings</string>
-
+    <string name="action_settings">Настройки</string>
+    <string name="authorization">Аутентификация…</string>
+    <string name="average">Средняя</string>
+    <string name="cancel">Отмена</string>
+    <string name="cant_get_message">Не удалось получить сообщение</string>
+    <string name="cant_get_receivers">Не удалось получить список получателей</string>
+    <string name="cant_send_message">Не удалось отправить сообщение</string>
+    <string name="check_periods_failed">Не удалось получить информацию о неделях/периодах. Сообщение об ошибке отправлено</string>
+    <string name="check_periods_updated">Найден новый период/неделя, обновление данных</string>
+    <string name="compose_message">Написать</string>
+    <string name="current_student">Текущий ученик:</string>
+    <string name="deselect_all">Снять выбор со всех</string>
+    <string name="diary">Дневник</string>
+    <string name="domain">Адрес школы на Eljur.ru</string>
+    <string name="error_grid_not_saved">Нет подключения к сети и выбранный период не сохранён!</string>
+    <string name="error_no_receivers">Необходимо выбрать хотя бы одного получателя</string>
+    <string name="error_week_not_saved">Нет подключения к сети и выбранная неделя не сохранена!</string>
+    <string name="fetch_network_error">Не удалось получить %s из-за ошибки сети, пожалуйста попробуйте позже</string>
+    <string name="fetching_message">Получение сообщения…</string>
+    <string name="fetching_receivers">Получение списка получателей…</string>
+    <string name="finals">Итоговые оценки</string>
+    <string name="from" formatted="false">От кого: %s</string>
+    <string name="help">Помощь</string>
+    <string name="inbox">Входящие</string>
+    <string name="invalid_credentials">Неверные данные</string>
+    <string name="invalid_credentials_desc">Неверные имя пользователя или пароль</string>
+    <string name="invalid_domain">Неверный адрес школы</string>
+    <string name="invalid_domain_desc">Введённый адрес школы не существует или временно недоступен. Пожалуйста, проверьте его корректность</string>
+    <string name="loading_data">Получение первоначальных данных…</string>
+    <string name="loading_profile">Получение профиля…</string>
+    <string name="logging_out">Выход…</string>
+    <string name="logout">Выход из аккаунта</string>
+    <string name="logout_prompt">Выйти из аккаунта?</string>
+    <string name="marks">Текущие оценки</string>
+    <string name="message">Сообщение</string>
+    <string name="message_sent">Сообщение отправлено</string>
+    <string name="messages">Сообщения</string>
+    <string name="misc">Другое</string>
+    <string name="multiple_receivers">Получателей: %d</string>
+    <string name="navigation_drawer_close">Закрыть боковую панель</string>
+    <string name="navigation_drawer_open">Открыть боковую панель</string>
+    <string name="network_error">Ошибка сети</string>
+    <string name="network_error_tip">Проверьте соединение с интернетом или попробуйте позже</string>
+    <string name="no">Нет</string>
+    <string name="no_diary">Дневник для выбранной недели не найден</string>
+    <string name="no_finals">Итоговых оценок не найдено</string>
+    <string name="no_homework">● Нет задания</string>
+    <string name="no_marks">Оценок для выбранного периода не найдено</string>
+    <string name="no_messages">В этой папке нет сообщений</string>
+    <string name="no_schedule">Расписание на выбранную неделю не задано</string>
+    <string name="offline_mode">Нет подключения. Загружена сохраненная копия</string>
+    <string name="overtime">ВП</string>
+    <string name="password">Пароль</string>
+    <string name="periods">Инфомация о периодах</string>
+    <string name="personal">(Индивидуальное)</string>
+    <string name="pick_student">Выбор ученика</string>
+    <string name="profile">Информация профиля</string>
+    <string name="receivers">Получатели</string>
+    <string name="refresh">Обновить</string>
+    <string name="reinitialization_prompt">"Приложение обнаружило, что Eljur вернул меньше недель в расписании, чем в прошлый раз.\n\nЭто могло быть вызвано началом нового учебного года.\n\nВы хотите провести повторную инициализацию, чтобы начать работу с новым годом?\n\nЕсли вы считаете, что это ошибка, можете проигнорировать это сообщение"</string>
+    <string name="reinitialization_title">Возможна смена учебного года</string>
+    <string name="reinitialization_warning">Если во время повторной инициализации потеряется соединение с сетью, вы будете деавторизованы, и вам придется войти в аккаунт снова.</string>
+    <string name="reinitialize_failed">Во время повторной инициализации, соединение с Eljur было потеряно. Проверьте соединение с интернетом или попробуйте позже.\n\nВам придется войти в приложение заново. Приложение будет закрыто</string>
+    <string name="reply_subject_prefix">Re: %s</string>
+    <string name="retry">Попробовать снова</string>
+    <string name="room">Кабинет</string>
+    <string name="schedule">Расписание</string>
+    <string name="select_all">Выбрать всех</string>
+    <string name="send">Отправить</string>
+    <string name="sending_message">Отправка сообщения…</string>
+    <string name="sent">Отправленные</string>
+    <string name="sing_in">Войти</string>
+    <string name="subject">Тема</string>
+    <string name="switch_time_period">Смена временного периода</string>
+    <string name="teacher">Учитель</string>
+    <string name="text">Сообщение</string>
+    <string name="time_unknown">Время неизвестно</string>
+    <string name="to" formatted="false">Кому: %s</string>
+    <string name="to_many" formatted="false">Кому: %s и другие (%d)</string>
+    <string name="toggle_folder">Сменить папку</string>
+    <string name="unupported_role">Приложение поддерживает только аккаунты учеников и родителей</string>
+    <string name="username">Имя пользователя</string>
+    <string name="vacation">Выходной</string>
+    <string name="viewing_message">Просмотр сообщения</string>
+    <string name="what_is_school_domain">Адрес школы - это часть адреса сайта журнала вашей школы перед \".eljur.ru\".\n\nНапример: Для журнала с адресом \"<b>example1</b>.eljur.ru\", адрес будет \"<b>example1</b>\"</string>
+    <string name="yes">Да</string>
+    <string name="you">Вы</string>
+    <string name="multiple_new_messages">Новых сообщений: %d</string>
+    <string name="pref_enable_watcher">Следить за новыми сообщениями</string>
+    <string name="check_periods">Синхронизировать недели/периоды</string>
+    <string name="check_periods_error">Не удалось синхронизировать недели/периоды из-за ошибки сети</string>
+    <string name="check_periods_no_change">Изменений в неделях/периодах не обнаружено</string>
+    <string name="dont_enable">Не включать</string>
+    <string name="enable">Включить</string>
+    <string name="got_it">Понятно</string>
+    <string name="warning">Предупреждение</string>
+    <string name="pref_watcher_allow_cell">Моб. сеть для проверки сообщений</string>
+    <string name="watcher_first_check_warning">Первая проверка на наличие новых сообщений примет все ваши непрочитанные сообщения за новые</string>
+    <string name="watcher_traffic_warning">Проверка сообщений через мобильную сеть сильно увеличит расход вашего мобильного интернет-трафика.\n\nЗА КАЖДОЕ имеющееся у вас непрочитанное сообщение, будет расходоваться до 1.5 мегабайт трафика в месяц (1.5 выйдет, если вы постоянно используете только моб. сеть). \"Каждое\" подразумевает ВООБЩЕ ВСЕ непрочитанные сообщения, даже старые.</string>
+    <string name="watcher_desc">Это приложение не может получать мгновенные уведомления о сообщениях как официальное приложение.\n\nТем не менее, это приложение может переодически проверять наличие новых сообщений, однако это немного увеличит расход батареи, а также увеличит расход интернет-трафика пропорционально общему количеству ваших непрочитанных сообщений, поэтому по умолчанию будет использоваться только WIFI-подключение, но вы можете разрешить моб. сеть в настройках.\n\nЕсли у вас много непрочитанных сообщений и вы хотите использовать эту функцию, я крайне рекомендую использовать опцию \"Отметить все как прочитанные\" на сайте Eljur.\n\nВы хотите использовать данную функцию? Вы всегда можете изменить выбор в настройках.</string>
+    <string name="pref_show_tut">Показать обучение</string>
+    <string name="tut">Обучение</string>
+    <string name="tut_short">1. Оценки с комментарием обведены в круг, нажмите на них, чтобы увидеть комментарий\n\n2. Если началась новая неделя, но её не видно в приложении, попробуйте выбрать \"Синхронизировать недели/периоды\" в меню (которое открывается нажатием на три точки сверху справа)\n\n3. Чтобы переключать папки сообщений (входящие/исходящие), нажмите на кнопку сверху справа возле \"троеточия\"\n\n4. В дневнике и расписании, вы можете быстро пролистать список до определенного дня недели, нажав на название нужного дня в нижней панели\n\n5. Если вы родитель, то чтобы сменить текущего ученика, нажмите на кнопку возле имени текущего ученика в боковой панели\n\nВы всегда можете открыть это обучение из настроек</string>
+    <string name="token_expired">Ключ доступа истёк, требуется повторная авторизация</string>
+    <string name="beta_warn"><b>Бета:</b>\nЭто бета-версия приложения, она может содержать ошибки. Если вы их заметите, пожалуйста сообщите о них на странице приложения в Google Play в комментариях\n\n<b>Аналитика и конфиденциальность:</b>\nЭто приложение использует Google Analytics, чтобы собирать анонимные данные об использовании программы и сообщать разработчику об ошибках. Никаких личных данных не передаётся. Собранные данные используются для улучшения приложения.</string>
+    <string name="app_name">Электронный Журнал</string>
+    <string name="error_wrong_rules">Не удается обработать ваш профиль</string>
+    <string name="error">Ошибка</string>
+    <string name="error_api">Не удалось обработать данные, полученные от Eljur</string>
+    <string name="pref_group_ui">Интерфейс</string>
+    <string name="pref_quick_picker">Быстрый выбор дня недели</string>
+    <string name="quick_picker_warn">Изменения вступят в силу после перезапуска приложения</string>
+    <string name="no_periods">У этого учащегося отсутствуют недели/периоды.\n\nПопробуйте синхронизировать их из выпадающего меню справа сверху</string>
+    <string name="error_api_access_forbidden">Сервер школы отклонил запрос на авторизацию\n\n(Это не значит, что логин/пароль не верны)</string>
 
 
 </resources>

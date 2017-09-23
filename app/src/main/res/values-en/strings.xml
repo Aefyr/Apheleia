@@ -1,0 +1,145 @@
+<resources>
+    <string name="app_name">Apheleia</string>
+
+
+    <!-- Commons -->
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">Nope</string>
+    <string name="help">Help</string>
+    <string name="got_it">Got it</string>
+    <string name="network_error">Network Error</string>
+    <string name="network_error_tip">Check your Internet connection or try again later</string>
+    <string name="pick_student">Choose Student</string>
+    <string name="cancel">Cancel</string>
+    <string name="offline_mode">No connection. Loaded saved copy</string>
+    <string name="switch_time_period">Switch time period</string>
+    <string name="diary">Diary</string>
+    <string name="marks">Marks</string>
+    <string name="schedule">Schedule</string>
+    <string name="messages">Messages</string>
+    <string name="periods">Periods info</string>
+    <string name="profile">Profile info</string>
+    <string name="fetch_network_error" formatted="false">Failed to fetch %s due to a network error, please try again later</string>
+    <string name="logout">Sign out</string>
+    <string name="logout_prompt">Sign out?</string>
+    <string name="misc">Other</string>
+    <string name="refresh">Refresh</string>
+    <string name="current_student">Current Student:</string>
+    <string name="warning">Warning</string>
+    <string name="enable">Enable</string>
+    <string name="dont_enable">Don\'t enable</string>
+    <string name="error_wrong_rules">User profile can\'t be processed</string>
+    <string name="error">Error</string>
+    <string name="error_api">Unable to process data from Eljur</string>
+    <string name="no_periods">This student doesn\'t have any weeks or periods.\n\nTry syncing them from the overflow menu</string>
+    <string name="error_api_access_forbidden">Authorization request was rejected by server\n\n(This doesn\'t mean your login/password are invalid)</string>
+
+
+    <!-- Login Activity -->
+    <string name="domain">School Domain</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="sing_in">Sign In</string>
+    <string name="what_is_school_domain">School domain is the part before \".eljur.ru\" in your school\'s eljur address.\n\nExample: For eljur with address \"<b>example1</b>.eljur.ru\" the school domain would be \"<b>example1</b>\"</string>
+    <string name="authorization">Singing in…</string>
+    <string name="invalid_credentials">Invalid Credentials</string>
+    <string name="invalid_credentials_desc">Invalid username or password</string>
+    <string name="invalid_domain">Invalid school domain</string>
+    <string name="invalid_domain_desc">Entered school domain doesn\'t exist or is temporary unavailable. Please check if you\'ve entered it right</string>
+    <string name="title_activity_container" translatable="false">Apheleia</string>
+    <string name="loading_profile">Fetching profile…</string>
+    <string name="loading_data">Fetching initial data…</string>
+    <string name="logging_out">Signing out…</string>
+    <string name="unupported_role">Apheleia only supports students and parents accounts</string>
+    <string name="token_expired">Your access token is no longer valid, you need to sign in again</string>
+    <string name="beta_warn"><b>Beta:</b>\nThis is a beta release of Apheleia, and it hasn\'t been tested on real users. So if you notice any problems, report them on the Google Play Apheleia page\n\n<b>Analytics and Privacy Policy:</b>\nApheleia uses Google Analytics to anonymously collect app usage data and report errors. None of you personal data is sent. This data is used to make Apheleia better.</string>
+
+    <!-- Re:Initialization and periods helper-->
+    <string name="check_periods_failed">Failed to update weeks/periods info. Error was reported</string>
+    <string name="check_periods_updated">Found new week/period, updating data</string>
+    <string name="reinitialization_title">Possible school year change</string>
+    <string name="reinitialization_prompt">Apheleia has detected, that Eljur returned less weeks than it did last time.\n\nThat may have happened due to the start of a new school year.\n\nDo you want to perform a reinitialization, so that you can see the new school year?\n\nIf you believe that this is an error, you may ignore this</string>
+    <string name="reinitialization_warning">If network to be disconnected or server error occurs during reinitialization, you will be logged off from the app and will have to log in again.</string>
+    <string name="reinitialize_failed">During reinitialization, connection to Eljur was lost. Check your Internet connection or try again later.\n\nYou will have to log into Apheleia again. The app will now be closed</string>
+    <string name="check_periods_no_change">No changes in weeks/periods detected</string>
+    <string name="check_periods_error">Unable to sync weeks/periods due to a network error</string>
+    <string name="check_periods">Sync weeks/periods</string>
+
+
+    <!-- Diary -->
+    <string name="vacation">Vacation</string>
+    <string name="time_unknown">Time unknown</string>
+    <string name="no_homework">● No homework</string>
+    <string name="overtime">OT</string>
+    <string name="personal">(Individual)</string>
+    <string name="error_week_not_saved">No internet connection and selected week is not saved!</string>
+    <string name="no_diary">No diary found for selected week</string>
+
+    <!-- Marks Grid -->
+    <string name="average">Average</string>
+    <string name="error_grid_not_saved">No internet connection and selected period is not saved!</string>
+    <string name="no_marks">No marks found for selected period</string>
+
+    <!-- Schedule -->
+    <string name="teacher">Teacher</string>
+    <string name="room">Room</string>
+    <string name="no_schedule">Schedule is not set for selected week</string>
+
+    <!-- Messages -->
+    <string name="inbox">Inbox</string>
+    <string name="sent">Sent</string>
+    <string name="no_messages">No messages in this folder</string>
+    <string name="multiple_receivers">%d receivers</string>
+    <string name="toggle_folder">Toggle folder</string>
+    <string name="cant_get_message">Unable to fetch message</string>
+    <string name="retry">Retry</string>
+    <string name="message">Message</string>
+    <string name="viewing_message">View Message</string>
+    <string name="fetching_message">Fetching message…</string>
+    <string name="from" formatted="false">From: %s</string>
+    <string name="to" formatted="false">To: %s</string>
+    <string name="to_many" formatted="false">To: %s and %d others</string>
+    <string name="you">You</string>
+    <string name="receivers">Receivers</string>
+    <string name="compose_message">Compose</string>
+    <string name="send">Send</string>
+    <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
+    <string name="fetching_receivers">Fetching receivers…</string>
+    <string name="subject">Subject</string>
+    <string name="text">Message</string>
+    <string name="error_no_receivers">You have to select at least one receiver</string>
+    <string name="sending_message">Sending message…</string>
+    <string name="message_sent">Message was sent</string>
+    <string name="cant_get_receivers">Unable to fetch receivers</string>
+    <string name="cant_send_message">Unable to send message</string>
+    <string name="reply_subject_prefix" formatted="false">Re: %s</string>
+    <string name="multiple_new_messages" formatted="false">%d new messages</string>
+    <string name="pref_enable_watcher">New messages monitoring service</string>
+    <string name="pref_watcher_allow_cell">Messages monitoring via mobile network</string>
+    <string name="watcher_desc">Apheleia can\'t use instant new messages notifications like the official Eljur app\n\nNonetheless, Apheleia can once in a while check your inbox for new messages and notify you if there are any. Though it will increase battery usage insignificantly and traffic usage proportionally to the total count of unread messages you have, hence this will work only with WIFI connection by, until you allow to use cell network in settings.\n\nIf you have many unread messages, and want to use this option, I highly recommend you use \"Read All\" option on the Eljur website.\n\nDo you want to enable this option? You can always turn it on/off in settings</string>
+    <string name="watcher_first_check_warning">First new messages check will count all you unread messages as new</string>
+    <string name="watcher_traffic_warning">Allowing messages check via cell network will increase your mobile traffic usage significantly.\n\nEach unread message in your inbox will cost you approximately 1.5 megabytes of traffic per month, this includes all of the unread messages you have, not only new ones.</string>
+
+
+    <!-- Finals -->
+    <string name="finals">Finals</string>
+    <string name="no_finals">No final marks found</string>
+
+    <!-- Tutorial and Preferences-->
+    <string name="pref_show_tut">Show Tutorial</string>
+    <string name="tut">Tutorial</string>
+    <string name="tut_short">1. To switch week or period, click the calendar button in app bar\n\n2. Marks with comments are highlighted with a circle, click them to see the comment\n\n3. If the new week has started, but you don\'t see it in Apheleia, try using \"Sync weeks/periods\" option from \"three dots\" menu\n\n4. To switch folders in messages, click the button next to the \"three dots\" button in the app bar\n\n5. You can scroll to a particular weekday in schedule and diary by tapping it\'s name at the bottom bar\n\n6. To switch current student, click the button next to the current student name in the navigation drawer\n\nYou can always open this from the settings</string>
+    <string name="pref_group_ui">UI</string>
+    <string name="pref_quick_picker">Quick weekday picker</string>
+    <string name="quick_picker_warn">Changes will be applied after app restart</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+
+
+</resources>
