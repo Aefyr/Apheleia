@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.schoolDomainHelp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAlert(getString(R.string.help), getString(R.string.what_is_school_domain));
+                showAlert(getString(R.string.help), getText(R.string.what_is_school_domain));
             }
         });
     }
@@ -175,6 +175,13 @@ public class LoginActivity extends AppCompatActivity {
                         FirebaseCrash.report(e);
                         Chief.makeApiErrorAlert(LoginActivity.this, false);
                     }
+
+                    @Override
+                    public void onApiAccessForbidden() {
+                        signIn.setEnabled(true);
+                        progressDialog.hide();
+                        showAlert(getString(R.string.error), getString(R.string.error_api_access_forbidden));
+                    }
                 });
             }
         });
@@ -183,7 +190,7 @@ public class LoginActivity extends AppCompatActivity {
 
     ProgressDialog progressDialog;
 
-    private void showAlert(String title, String message) {
+    private void showAlert(String title, CharSequence message) {
         new AlertDialog.Builder(this).setTitle(title).setMessage(message).setPositiveButton(getString(R.string.ok), null).create().show();
     }
 

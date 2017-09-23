@@ -45,6 +45,8 @@ public class EljurApiClient {
         void onNetworkError();
 
         void onApiError(JournalismException e);
+
+        void onApiAccessForbidden();
     }
 
     private static EljurApiClient instance;

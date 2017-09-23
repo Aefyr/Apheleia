@@ -17,6 +17,7 @@ import com.aefyr.journalism.objects.major.PersonaInfo;
 import com.aefyr.journalism.objects.major.Schedule;
 import com.aefyr.journalism.objects.minor.Student;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.HashSet;
 
@@ -65,6 +66,8 @@ public class TheInitializer {
             dialog = new ProgressDialog(c, ProgressDialog.STYLE_SPINNER);
             dialog.setMessage(c.getString(R.string.loading_profile));
             dialog.setMax(0);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
             dialog.show();
 
         }
@@ -121,6 +124,7 @@ public class TheInitializer {
 
                                     @Override
                                     public void onApiError(JournalismException e) {
+                                        FirebaseCrash.report(e);
                                         fail(null);
                                     }
                                 });
@@ -146,6 +150,7 @@ public class TheInitializer {
 
                                     @Override
                                     public void onApiError(JournalismException e) {
+                                        FirebaseCrash.report(e);
                                         fail(null);
                                     }
                                 });
@@ -171,6 +176,7 @@ public class TheInitializer {
 
                                     @Override
                                     public void onApiError(JournalismException e) {
+                                        FirebaseCrash.report(e);
                                         fail(null);
                                     }
                                 });
@@ -184,6 +190,7 @@ public class TheInitializer {
 
                             @Override
                             public void onApiError(JournalismException e) {
+                                FirebaseCrash.report(e);
                                 fail(null);
                             }
                         });
@@ -209,6 +216,7 @@ public class TheInitializer {
 
                             @Override
                             public void onApiError(JournalismException e) {
+                                FirebaseCrash.report(e);
                                 fail(null);
                             }
                         });
@@ -243,6 +251,7 @@ public class TheInitializer {
 
                         @Override
                         public void onApiError(JournalismException e) {
+                            FirebaseCrash.report(e);
                             fail(null);
                         }
                     });
@@ -256,6 +265,7 @@ public class TheInitializer {
 
                 @Override
                 public void onApiError(JournalismException e) {
+                    FirebaseCrash.report(e);
                     switch (e.getMessage()) {
                         case "unsupported role":
                             fail(c.getString(R.string.unupported_role));
@@ -283,6 +293,8 @@ public class TheInitializer {
                 dialog.setTitle(c.getString(R.string.loading_data));
                 dialog.setMax(actionsGoal);
                 dialog.setProgress(0);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setCancelable(false);
                 dialog.show();
                 styleUpdated = true;
             } else

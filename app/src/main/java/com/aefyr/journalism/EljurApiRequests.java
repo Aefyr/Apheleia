@@ -74,6 +74,10 @@ class EljurApiRequests {
                     listener.onInvalidCredentialsError();
                 else if (error.networkResponse.statusCode == 500)
                     listener.onInvalidDomainError();
+                else if(error.networkResponse.statusCode == 403)
+                    listener.onApiAccessForbidden();
+                else
+                    listener.onNetworkError();
             }
         });
 

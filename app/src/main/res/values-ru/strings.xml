@@ -85,7 +85,7 @@
     <string name="username">Имя пользователя</string>
     <string name="vacation">Выходной</string>
     <string name="viewing_message">Просмотр сообщения</string>
-    <string name="what_is_school_domain">Адрес школы - это часть адреса сайта журнала вашей школы перед \".eljur.ru\".\n\nНапример: Для журнала с адресом \"example1.eljur.ru\", адрес будет \"example1\"</string>
+    <string name="what_is_school_domain">Адрес школы - это часть адреса сайта журнала вашей школы перед \".eljur.ru\".\n\nНапример: Для журнала с адресом \"<b>example1</b>.eljur.ru\", адрес будет \"<b>example1</b>\"</string>
     <string name="yes">Да</string>
     <string name="you">Вы</string>
     <string name="multiple_new_messages">Новых сообщений: %d</string>
@@ -114,6 +114,7 @@
     <string name="pref_quick_picker">Быстрый выбор дня недели</string>
     <string name="quick_picker_warn">Изменения вступят в силу после перезапуска приложения</string>
     <string name="no_periods">У этого учащегося отсутствуют недели/периоды.\n\nПопробуйте синхронизировать их из выпадающего меню справа сверху</string>
+    <string name="error_api_access_forbidden">Сервер школы отклонил запрос на авторизацию\n\n(Это не значит, что логин/пароль не верны)</string>
 
 
 </resources>

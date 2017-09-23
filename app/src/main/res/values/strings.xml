@@ -33,6 +33,7 @@
     <string name="error">Error</string>
     <string name="error_api">Unable to process data from Eljur</string>
     <string name="no_periods">This student doesn\'t have any weeks or periods.\n\nTry syncing them from the overflow menu</string>
+    <string name="error_api_access_forbidden">Authorization request was rejected by server\n\n(This doesn\'t mean your login/password are invalid)</string>
 
 
     <!-- Login Activity -->
@@ -40,7 +41,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="sing_in">Sign In</string>
-    <string name="what_is_school_domain">School domain is the part before \".eljur.ru\" in your school\'s eljur address.\n\nExample: For eljur with address \"1399.eljur.ru\" the school domain would be \"1399\"</string>
+    <string name="what_is_school_domain">School domain is the part before \".eljur.ru\" in your school\'s eljur address.\n\nExample: For eljur with address \"<b>example1</b>.eljur.ru\" the school domain would be \"<b>example1</b>\"</string>
     <string name="authorization">Singing in…</string>
     <string name="invalid_credentials">Invalid Credentials</string>
     <string name="invalid_credentials_desc">Invalid username or password</string>
