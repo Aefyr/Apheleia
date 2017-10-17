@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:paddingTop="8dp"
-                android:text="@string/no_diary"
+                android:text="@string/no_finals"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@color/colorOvertimeLesson"
                 android:visibility="gone" />

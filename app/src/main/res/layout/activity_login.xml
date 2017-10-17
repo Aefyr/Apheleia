@@ -79,4 +79,13 @@
         android:tint="@color/colorAccent"
         app:srcCompat="@drawable/ic_visibility_black_24dp" />
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/domain"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        app:srcCompat="@mipmap/icon" />
+
 </RelativeLayout>

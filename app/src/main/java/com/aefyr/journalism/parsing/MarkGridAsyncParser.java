@@ -44,20 +44,28 @@ public class MarkGridAsyncParser {
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
             if (response == null || response.size() == 0 || response.get("students") == null) {
-                return new AsyncParserTaskResult<MarksGrid>(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
+                return new AsyncParserTaskResult<>(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
             }
 
             JsonArray lessons = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonArray("lessons");
 
-            ArrayList<SubjectInGrid> subjects = new ArrayList<>();
+            ArrayList<SubjectInGrid> subjects = new ArrayList<>(lessons.size());
 
             for (JsonElement lessonEl : lessons) {
                 JsonObject lesson = lessonEl.getAsJsonObject();
 
-                ArrayList<GridMark> marks = new ArrayList<>();
+                ArrayList<GridMark> marks;
 
-                if (lesson.get("marks") != null && lesson.getAsJsonArray("marks").size() > 0) {
-                    for (JsonElement markEl : lesson.getAsJsonArray("marks")) {
+                if (lesson.get("marks") != null) {
+
+                    JsonArray jMarks = lesson.getAsJsonArray("marks");
+
+                    if(jMarks.size()==0)
+                        continue;
+
+                    marks = new ArrayList<>(jMarks.size());
+
+                    for (JsonElement markEl : jMarks) {
                         JsonObject mark = markEl.getAsJsonObject();
 
                         //Phantom marks filter, why do they even appear tho?
@@ -75,7 +83,7 @@ public class MarkGridAsyncParser {
                                 gridMark = MinorObjectsFactory.createGridMark(mark.get("value").getAsString(), mark.get("date").getAsString());
                             }
                         } catch (JournalismException e) {
-                            return new AsyncParserTaskResult<MarksGrid>(e);
+                            return new AsyncParserTaskResult<>(e);
                         }
 
                         marks.add(gridMark);
@@ -86,7 +94,7 @@ public class MarkGridAsyncParser {
                 }
 
             }
-            return new AsyncParserTaskResult<MarksGrid>(MajorObjectsFactory.createMarksGrid(subjects));
+            return new AsyncParserTaskResult<>(MajorObjectsFactory.createMarksGrid(subjects));
         }
     }
 }

@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
         SharedPreferences l = getSharedPreferences("l", 0);
         if (!l.getBoolean("start_warn_shown", false)) {
-            Chief.makeWarning(this, getText(R.string.beta_warn)).setCancelable(false);
+            Chief.makeWarning(this, getText(R.string.first_launch_warn)).setCancelable(false);
             l.edit().putBoolean("start_warn_shown", true).apply();
         }
 

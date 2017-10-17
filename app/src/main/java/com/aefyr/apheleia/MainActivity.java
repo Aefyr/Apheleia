@@ -39,6 +39,8 @@ import com.aefyr.apheleia.helpers.TheInitializer;
 import com.aefyr.apheleia.helpers.Tutorial;
 import com.aefyr.apheleia.utility.FirebaseConstants;
 import com.aefyr.apheleia.watcher.WatcherHelper;
+import com.aefyr.journalism.exceptions.JournalismException;
+import com.aefyr.journalism.objects.major.Token;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
@@ -436,6 +438,7 @@ public class MainActivity extends AppCompatActivity
                 new Destroyer(MainActivity.this).destroy(false, new Destroyer.OnDestructionListener() {
                     @Override
                     public void onDestroyed() {
+                        WatcherHelper.setWatcherEnabled(MainActivity.this, false);
                         FirebaseAnalytics.getInstance(MainActivity.this).logEvent(FirebaseConstants.LOGOUT, domain);
                         LoginActivity.startFromActivity(MainActivity.this, null);
                     }
