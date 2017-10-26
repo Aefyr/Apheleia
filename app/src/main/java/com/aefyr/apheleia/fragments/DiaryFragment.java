@@ -297,7 +297,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             TimeLord timeLord = TimeLord.getInstance();
 
             for (final WeekDay day : entry.getDays()) {
-                View quickDayPickButton = LayoutInflater.from(quickDayPickBar.getContext()).inflate(R.layout.quick_day_pick_button, null);
+                View quickDayPickButton = LayoutInflater.from(quickDayPickBar.getContext()).inflate(R.layout.quick_day_pick_button, quickDayPickBar, false);
                 Button button = (Button) quickDayPickButton.findViewById(R.id.quickDayPickButton);
                 button.setText(timeLord.getQuickPickerDate(day.getDate()));
                 button.setOnClickListener(new View.OnClickListener() {

@@ -44,11 +44,11 @@ public class PreferencesFragment extends PreferenceFragment {
     }
 
     private void initializeQuickPickerPrefs(){
-        findPreference("quick_day_picker_enabled").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference("quick_day_picker_enabled").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            public boolean onPreferenceChange(Preference preference, Object o) {
                 Chief.makeAToast(getActivity(), getString(R.string.quick_picker_warn));
-                return false;
+                return true;
             }
         });
     }
@@ -59,24 +59,26 @@ public class PreferencesFragment extends PreferenceFragment {
 
         watcherViaCell.setEnabled(prefs.getBoolean("watcher_enabled", false));
 
-        watcherEnabled.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        watcherEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                boolean value = ((SwitchPreference) preference).isChecked();
-                WatcherHelper.setWatcherEnabled(getActivity(), value);
-                watcherViaCell.setEnabled(value);
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                boolean checked = (boolean)newValue;
 
-                return false;
+                WatcherHelper.setWatcherEnabled(getActivity(), checked);
+                watcherViaCell.setEnabled(checked);
+
+                return true;
             }
         });
 
-        watcherViaCell.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        watcherViaCell.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (((SwitchPreference) preference).isChecked())
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                boolean checked = (boolean) newValue;
+                if(checked)
                     WatcherHelper.showNetworkWarning(getActivity());
 
-                return false;
+                return true;
             }
         });
     }

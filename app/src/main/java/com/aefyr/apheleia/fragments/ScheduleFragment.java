@@ -302,7 +302,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
             TimeLord timeLord = TimeLord.getInstance();
 
             for (final WeekDay day : schedule.getDays()) {
-                View quickDayPickButton = LayoutInflater.from(quickDayPickBar.getContext()).inflate(R.layout.quick_day_pick_button, null);
+                View quickDayPickButton = LayoutInflater.from(quickDayPickBar.getContext()).inflate(R.layout.quick_day_pick_button, quickDayPickBar, false);
                 Button button = (Button) quickDayPickButton.findViewById(R.id.quickDayPickButton);
                 button.setText(String.valueOf(timeLord.getQuickPickerDate(day.getDate())));
                 button.setOnClickListener(new View.OnClickListener() {

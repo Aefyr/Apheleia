@@ -42,7 +42,7 @@
         android:layout_height="64dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:background="?attr/selectableItemBackground"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:padding="8dp"
         android:tint="@color/colorAccent"
         app:srcCompat="@drawable/ic_more_vert_black_48dp" />
