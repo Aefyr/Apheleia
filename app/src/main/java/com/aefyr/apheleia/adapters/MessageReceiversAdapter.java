@@ -132,7 +132,7 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
         private MessageReceiversGroupAdapter adapter;
         private ImageView arrow;
 
-        public MessageReceiversGroupViewHolder(final View itemView) {
+        MessageReceiversGroupViewHolder(final View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.receiversGroupName);
             arrow = (ImageView) itemView.findViewById(R.id.receiversGroupArrow);
@@ -172,7 +172,7 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
                 }
             });
 
-            View.OnClickListener visibilitySwitch = new View.OnClickListener() {
+            itemView.findViewById(R.id.layout).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     innerRecyclerVisibilities[getAdapterPosition()] = !innerRecyclerVisibilities[getAdapterPosition()];
@@ -185,10 +185,7 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
                     arrowAnim.setDuration(125);
                     arrowAnim.start();
                 }
-            };
-
-            name.setOnClickListener(visibilitySwitch);
-            arrow.setOnClickListener(visibilitySwitch);
+            });
         }
     }
 }
