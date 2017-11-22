@@ -54,7 +54,7 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
             holder.mark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Chief.makeAnAlert(inflater.getContext(), mark.getComment());
+                    Chief.makeAnAlert(view.getContext(), mark.getComment());
                 }
             });
             holder.mark.setBackgroundResource(R.drawable.mark_circle);

@@ -155,7 +155,7 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
                     markButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Chief.makeAnAlert(inflater.getContext(), mark.getComment());
+                            Chief.makeAnAlert(view.getContext(), mark.getComment());
                         }
                     });
                 } else {
