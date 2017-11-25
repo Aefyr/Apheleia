@@ -463,6 +463,10 @@ class EljurApiRequests {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getRawJsonFromResponse(rawResponse).getAsJsonObject("response");
+                if(response == null){
+                    MajorObjectsFactory.createSentMessageResponse(false);
+                    return;
+                }
 
                 if (response.get("state").getAsInt() == 200 && response.get("error").isJsonNull())
                     listener.onSuccess(MajorObjectsFactory.createSentMessageResponse(true));

@@ -118,7 +118,7 @@ public class MessageComposeActivity extends AppCompatActivity {
             public void onSuccess(SentMessageResponse result) {
                 AnalyticsHelper.sentMessage(FirebaseAnalytics.getInstance(MessageComposeActivity.this));
                 sendingDialog.dismiss();
-                Chief.makeAToast(MessageComposeActivity.this, getString(R.string.message_sent));
+                Chief.makeAToast(MessageComposeActivity.this, result.wasSent()?getString(R.string.message_sent):getString(R.string.sending_error));
                 finish();
             }
 

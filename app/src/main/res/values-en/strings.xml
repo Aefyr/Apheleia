@@ -120,7 +120,7 @@
     <string name="watcher_desc">Apheleia can\'t use instant new messages notifications like the official Eljur app\n\nNonetheless, Apheleia can once in a while check your inbox for new messages and notify you if there are any. Though it will increase battery usage insignificantly and traffic usage proportionally to the total count of unread messages you have, hence this will work only with WIFI connection by, until you allow to use cell network in settings.\n\nIf you have many unread messages, and want to use this option, I highly recommend you use \"Read All\" option on the Eljur website.\n\nDo you want to enable this option? You can always turn it on/off in settings</string>
     <string name="watcher_first_check_warning">First new messages check will count all you unread messages as new</string>
     <string name="watcher_traffic_warning">Allowing messages check via cell network will increase your mobile traffic usage significantly.\n\nEach unread message in your inbox will cost you approximately 1.5 megabytes of traffic per month, this includes all of the unread messages you have, not only new ones.</string>
-
+    <string name="sending_error">Error occurred while sending message</string>
 
     <!-- Finals -->
     <string name="finals">Finals</string>

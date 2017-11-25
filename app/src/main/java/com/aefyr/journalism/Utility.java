@@ -1,6 +1,7 @@
 package com.aefyr.journalism;
 
 import com.aefyr.journalism.objects.major.PersonaInfo;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -11,14 +12,20 @@ public class Utility {
     public static JsonObject getJsonFromResponse(String rawResponse) {
         try {
             return new JsonParser().parse(rawResponse).getAsJsonObject().getAsJsonObject("response").getAsJsonObject("result");
-        } catch (ClassCastException | NullPointerException e) {
+        } catch (Exception e) {
+            FirebaseCrash.report(e);
             return null;
         }
 
     }
 
     public static JsonObject getRawJsonFromResponse(String rawResponse) {
-        return new JsonParser().parse(rawResponse).getAsJsonObject();
+        try {
+            return new JsonParser().parse(rawResponse).getAsJsonObject();
+        } catch (Exception e){
+            FirebaseCrash.report(e);
+            return null;
+        }
     }
 
     public static PersonaInfo.Gender parseGender(String genderString) {
