@@ -293,7 +293,7 @@ class EljurApiRequests {
                     for (Map.Entry<String, JsonElement> entry2 : weekDay.getAsJsonObject("items").entrySet()) {
                         JsonObject lessonObj = entry2.getValue().getAsJsonObject();
 
-                        Lesson lesson = MinorObjectsFactory.createLesson(lessonObj.get("num").getAsString(), lessonObj.get("name").getAsString(), lessonObj.get("room").getAsString(), lessonObj.get("teacher").getAsString());
+                        Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num"), Utility.getStringFromJsonSafe(lessonObj, "name"), Utility.getStringFromJsonSafe(lessonObj, "room"), Utility.getStringFromJsonSafe(lessonObj, "teacher"));
 
                         if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
                             try {
@@ -312,7 +312,7 @@ class EljurApiRequests {
                         overtimeLessons = new ArrayList<>();
                         for (JsonElement otLessonEl : weekDay.getAsJsonArray("items_extday")) {
                             JsonObject otLessonObj = otLessonEl.getAsJsonObject();
-                            Lesson otLesson = MinorObjectsFactory.createLesson("OT", otLessonObj.get("name").getAsString(), "OT", otLessonObj.get("teacher").getAsString());
+                            Lesson otLesson = MinorObjectsFactory.createLesson("OT", Utility.getStringFromJsonSafe(otLessonObj, "name"), "OT", Utility.getStringFromJsonSafe(otLessonObj, "teacher"));
 
                             if (otLessonObj.get("starttime") != null && otLessonObj.get("endtime") != null) {
                                 try {

@@ -7,16 +7,16 @@ import java.util.HashMap;
 class EljurApiRequest {
 
     //Methods
-    public final static String GET_RULES = "getrules";
-    public final static String GET_PERIODS = "getperiods";
-    public final static String GET_DIARY = "getdiary";
-    public final static String GET_MARKS = "getmarks";
-    public final static String GET_SCHEDULE = "getschedule";
-    public final static String GET_MESSAGES = "getmessages";
-    public final static String GET_MESSAGE_INFO = "getmessageinfo";
-    public final static String GET_MESSAGE_RECEIVERS = "getmessagereceivers";
-    public final static String SEND_MESSAGE = "sendmessage";
-    public final static String GET_FINALS = "getfinalassessments";
+    final static String GET_RULES = "getrules";
+    final static String GET_PERIODS = "getperiods";
+    final static String GET_DIARY = "getdiary";
+    final static String GET_MARKS = "getmarks";
+    final static String GET_SCHEDULE = "getschedule";
+    final static String GET_MESSAGES = "getmessages";
+    final static String GET_MESSAGE_INFO = "getmessageinfo";
+    final static String GET_MESSAGE_RECEIVERS = "getmessagereceivers";
+    final static String SEND_MESSAGE = "sendmessage";
+    final static String GET_FINALS = "getfinalassessments";
     public final static String GET_FEED = "getupdates";
 
     static final String HTTPS = "https://";
@@ -39,15 +39,16 @@ class EljurApiRequest {
     }
 
     String getRequestURL() {
-        String httpRequest = HTTPS + persona.schoolDomain + ELJUR + method + "?" + BOUND + "&vendor=" + persona.schoolDomain + "&auth_token=" + persona.token;
+        StringBuilder httpRequest = new StringBuilder(HTTPS + persona.schoolDomain + ELJUR + method + "?" + BOUND + "&vendor=" + persona.schoolDomain + "&auth_token=" + persona.token);
+
         for (String k : parameters.keySet())
             try {
-                httpRequest += "&" + k + "=" + URLEncoder.encode(parameters.get(k), "UTF-8");
+                httpRequest.append("&").append(k).append("=").append(URLEncoder.encode(parameters.get(k), "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 //Well, it shouldn't happen I guess...
                 //TODO Gotta ad Firebase report here
             }
-        return httpRequest;
+        return httpRequest.toString();
     }
 }

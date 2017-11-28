@@ -298,6 +298,7 @@ public class MainActivity extends AppCompatActivity
 
     private TextView studentName;
     private AlertDialog studentPickerDialog;
+    private int debugModeCounter = 0;
 
     private void initializeNavHeader(View navHeader) {
         final ProfileHelper profileHelper = ProfileHelper.getInstance(this);
@@ -305,7 +306,8 @@ public class MainActivity extends AppCompatActivity
 
         ((TextView) navHeader.findViewById(R.id.usernameText)).setText(profileHelper.getName());
         ((TextView) navHeader.findViewById(R.id.emailText)).setText(profileHelper.getEmail());
-        ((ImageView) navHeader.findViewById(R.id.roleIcon)).setImageResource(parent ? R.drawable.ic_business_center_white_24dp : R.drawable.ic_school_white_24dp);
+        ImageView roleIcon = (ImageView) navHeader.findViewById(R.id.roleIcon);
+        roleIcon.setImageResource(parent ? R.drawable.ic_business_center_white_24dp : R.drawable.ic_school_white_24dp);
         ((TextView) navHeader.findViewById(R.id.domainText)).setText(helper.getDomain());
 
         studentName = (TextView) navHeader.findViewById(R.id.studentNameText);
@@ -346,6 +348,35 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+
+        //Debug mode switching
+        roleIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                debugModeCounter++;
+            }
+        });
+        roleIcon.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(debugModeCounter<7)
+                    return true;
+
+                new AlertDialog.Builder(MainActivity.this).setMessage("Выберите состояние дебаг-режима\n\nНе рекомендуется трогать это меню, если вы не разработчик данной программы, так как это нарушит нормальную работу приложения :/").setNegativeButton("Выключен", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putBoolean("debug_mode", false).apply();
+                        Chief.makeAToast(MainActivity.this,  getString(R.string.quick_picker_warn));
+                    }
+                }).setPositiveButton("Включен", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putBoolean("debug_mode", true).apply();
+                    }
+                }).create().show();
+                return true;
+            }
+        });
     }
 
     private void studentSwitched() {
@@ -358,12 +389,14 @@ public class MainActivity extends AppCompatActivity
             public void OnFoundMoreWeeks() {
                 Chief.makeAToast(MainActivity.this, getString(R.string.check_periods_updated));
                 studentSwitched();
+                destroyAllFragmentsExceptCurrent();
             }
 
             @Override
             public void OnFoundMorePeriods() {
                 Chief.makeAToast(MainActivity.this, getString(R.string.check_periods_updated));
                 studentSwitched();
+                destroyAllFragmentsExceptCurrent();
             }
 
             @Override
@@ -390,6 +423,16 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    private void destroyAllFragmentsExceptCurrent(){
+        List<Fragment> fragments = fragmentManager.getFragments();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        for(Fragment fragment: fragments){
+            if(fragment!=currentFragment)
+                transaction.remove(fragment);
+        }
+        transaction.commit();
+    }
+
     private void showReinitializePrompt() {
         new AlertDialog.Builder(this).setTitle(getString(R.string.reinitialization_title)).setMessage(getString(R.string.reinitialization_prompt)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
@@ -411,6 +454,7 @@ public class MainActivity extends AppCompatActivity
             public void OnSuccess() {
                 studentSwitched();
                 helper.setLoggedIn(true);
+                destroyAllFragmentsExceptCurrent();
             }
 
             @Override

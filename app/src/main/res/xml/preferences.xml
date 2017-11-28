@@ -22,4 +22,8 @@
     <PreferenceCategory android:title="@string/misc">
         <Preference android:title="@string/pref_show_tut" android:key="show_tut"/>
     </PreferenceCategory>
+    <PreferenceCategory android:title="Debug" android:key="debug">
+        <Preference android:title="Override current week" android:key="debug_override_week"/>
+        <Preference android:title="Override current period" android:key="debug_override_period" />
+    </PreferenceCategory>
 </PreferenceScreen>

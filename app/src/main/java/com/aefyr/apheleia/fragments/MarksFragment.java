@@ -223,6 +223,10 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         periods = periodsHelper.getPeriods().toArray(new String[]{});
         Arrays.sort(periods);
         selectedPeriod = Arrays.binarySearch(periods, periodsHelper.getCurrentPeriod());
+
+        if (!Utility.checkSelectedTime(selectedPeriod, periods))
+            selectedPeriod = periods.length - 1;
+
         periodsNames = new String[periods.length];
 
         int i = 0;

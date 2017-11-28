@@ -25,6 +25,8 @@ public class PeriodsHelper {
     private SharedPreferences preferences;
     private Context c;
 
+    private boolean debugMode;
+
     public interface OnPeriodsChangeDetectedListener {
         void OnFoundMoreWeeks();
 
@@ -44,6 +46,8 @@ public class PeriodsHelper {
         this.c = c;
         preferences = PreferenceManager.getDefaultSharedPreferences(c);
         profileHelper = ProfileHelper.getInstance(c);
+
+        debugMode = preferences.getBoolean("debug_mode", false);
     }
 
     public static PeriodsHelper getInstance(Context c) {
@@ -54,6 +58,12 @@ public class PeriodsHelper {
         EljurApiClient.getInstance(c).getPeriods(Helper.getInstance(c).getPersona(), profileHelper.getCurrentStudentId(), new EljurApiClient.JournalismListener<PeriodsInfo>() {
             @Override
             public void onSuccess(PeriodsInfo result) {
+                //Forcing to reload week and periods in debug mode
+                if(debugMode) {
+                    listener.OnFoundLessPeriods();
+                    return;
+                }
+
                 if(result == null){
                     listener.onNothingChanged();
                     return;
@@ -106,6 +116,11 @@ public class PeriodsHelper {
     }
 
     public Set<String> getPeriods() {
+        if(debugMode){
+            HashSet<String> dPeriod = new HashSet<>(1);
+            dPeriod.add(getCurrentPeriod());
+            return dPeriod;
+        }
         return preferences.getStringSet("periods_" + profileHelper.getCurrentStudentId(), null);
     }
 
@@ -118,7 +133,7 @@ public class PeriodsHelper {
     }
 
     public String getPeriodName(String period) {
-        return preferences.getString("period_name_" + profileHelper.getCurrentStudentId() + "_" + period, "nani");
+        return preferences.getString("period_name_" + profileHelper.getCurrentStudentId() + "_" + period, "nani?");
     }
 
     public int getPeriodsCount() {
@@ -138,6 +153,11 @@ public class PeriodsHelper {
     }
 
     public Set<String> getWeeks() {
+        if(debugMode){
+            HashSet<String> dWeek = new HashSet<>(1);
+            dWeek.add(getCurrentWeek());
+            return dWeek;
+        }
         return preferences.getStringSet("weeks_" + profileHelper.getCurrentStudentId(), null);
     }
 

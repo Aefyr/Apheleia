@@ -36,4 +36,14 @@ public class Utility {
         return PersonaInfo.Gender.UNKNOWN;
     }
 
+    public static String getStringFromJsonSafe(JsonObject jsonObject, String key){
+        try {
+            return jsonObject.get(key).getAsString();
+        }catch (Exception e){
+            FirebaseCrash.log("Unable to retrieve key \""+key+"\" from JsonObject: "+jsonObject.toString());
+            FirebaseCrash.report(e);
+            return "Неизвестно";
+        }
+    }
+
 }
