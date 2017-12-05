@@ -117,4 +117,9 @@ public class EljurApiClient {
     public StringRequest getFinals(EljurPersona persona, String studentId, JournalismListener<Finals> listener) {
         return EljurApiRequests.getFinals(queue, persona, studentId, listener);
     }
+
+    //Not that easy, apparently...
+    public StringRequest hijackFCM(EljurPersona persona, String fcmToken, JournalismListener<Boolean> listener){
+        return EljurApiRequests.hijackFCM(queue, persona, fcmToken,listener);
+    }
 }

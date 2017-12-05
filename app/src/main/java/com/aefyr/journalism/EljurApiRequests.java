@@ -48,7 +48,7 @@ class EljurApiRequests {
     //Get token to save it for further use
     static StringRequest loginRequest(RequestQueue queue, String schoolDomain, String username, String password, final EljurApiClient.LoginRequestListener listener) {
 
-        StringRequest loginRequest = new StringRequest(Request.Method.GET, EljurApiRequest.HTTPS + schoolDomain + EljurApiRequest.ELJUR + "auth?" + "vendor=" + schoolDomain + "&login=" + username + "&password=" + password + EljurApiRequest.BOUND, new Response.Listener<String>() {
+        StringRequest loginRequest = new StringRequest(Request.Method.GET, EljurApiRequest.HTTPS + schoolDomain + EljurApiRequest.ELJUR + "auth?" + "vendor=" + schoolDomain + "&login=" + username + "&password=" + password + EljurApiRequest.BOUND + "&_="+System.currentTimeMillis()/1000, new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject result = Utility.getJsonFromResponse(rawResponse);
@@ -526,6 +526,31 @@ class EljurApiRequests {
 
         queue.add(finalsRequest);
         return finalsRequest;
+    }
+
+    static StringRequest hijackFCM(RequestQueue queue, EljurPersona persona, String fcmToken, final EljurApiClient.JournalismListener<Boolean> listener) {
+        EljurApiRequest apiRequest = new EljurApiRequest(persona, "setpushtoken").addParameter("token", fcmToken).addParameter("type", "google").addParameter("activate", "1");
+
+        StringRequest tokenRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String rawResponse) {
+                JsonObject response = Utility.getJsonFromResponse(rawResponse);
+                if(response == null){
+                    listener.onSuccess(false);
+                    return;
+                }
+
+                listener.onSuccess(response.get("result").getAsBoolean());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
+            }
+        });
+
+        queue.add(tokenRequest);
+        return tokenRequest;
     }
 
     //Not enough data about returned json structure to parse it

@@ -39,7 +39,7 @@ class EljurApiRequest {
     }
 
     String getRequestURL() {
-        StringBuilder httpRequest = new StringBuilder(HTTPS + persona.schoolDomain + ELJUR + method + "?" + "vendor=" + persona.schoolDomain + BOUND + "&auth_token=" + persona.token);
+        StringBuilder httpRequest = new StringBuilder(HTTPS + persona.schoolDomain + ELJUR + method + "?" + "vendor=" + persona.schoolDomain + BOUND + "&auth_token=" + persona.token + "&_="+System.currentTimeMillis()/1000);
 
         for (String k : parameters.keySet())
             try {

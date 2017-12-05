@@ -15,10 +15,14 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.aefyr.apheleia.helpers.Chief;
+import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.PeriodsHelper;
 import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.Tutorial;
 import com.aefyr.apheleia.watcher.WatcherHelper;
+import com.aefyr.journalism.EljurApiClient;
+import com.aefyr.journalism.EljurPersona;
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 
@@ -144,11 +148,32 @@ public class PreferencesFragment extends PreferenceFragment {
                         return false;
                     case "debug_fcm_token":
                         final String fcmTokenV = FirebaseInstanceId.getInstance().getToken();
-                        new AlertDialog.Builder(getActivity()).setTitle("FCM Token").setMessage(fcmTokenV).setPositiveButton("Copy", new DialogInterface.OnClickListener() {
+                        int mc = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("mdb", 0);
+                        new AlertDialog.Builder(getActivity()).setTitle("FCM Token").setMessage("MC: "+mc+"\n"+fcmTokenV).setPositiveButton("Copy", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 ((ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("", fcmTokenV));
                                 Chief.makeAToast(getActivity(), "Copied FCM token to clipboard");
+                            }
+                        }).setNeutralButton("Hijack FCM", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EljurApiClient.getInstance(getActivity()).hijackFCM(Helper.getInstance(getActivity()).getPersona(), fcmTokenV, new EljurApiClient.JournalismListener<Boolean>() {
+                                    @Override
+                                    public void onSuccess(Boolean result) {
+                                        Chief.makeAToast(getActivity(), "Hijacked FCM: "+result);
+                                    }
+
+                                    @Override
+                                    public void onNetworkError(boolean tokenIsWrong) {
+                                        Chief.makeAToast(getActivity(), "Net error while hijacking FCM");
+                                    }
+
+                                    @Override
+                                    public void onApiError(JournalismException e) {
+
+                                    }
+                                });
                             }
                         }).create().show();
                         return false;
