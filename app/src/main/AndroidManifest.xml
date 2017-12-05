@@ -43,6 +43,21 @@
             </intent-filter>
         </receiver>
         <activity android:name=".PreferencesActivity" android:screenOrientation="portrait"/>
+
+        <!-- FCM -->
+        <service
+            android:name=".fcm.ApheleiaInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/icon" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary" />
+        <!-- /FCM -->
     </application>
 
 </manifest>

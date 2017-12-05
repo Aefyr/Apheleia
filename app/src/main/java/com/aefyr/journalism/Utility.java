@@ -1,5 +1,6 @@
 package com.aefyr.journalism;
 
+import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.PersonaInfo;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonObject;
@@ -13,7 +14,9 @@ public class Utility {
         try {
             return new JsonParser().parse(rawResponse).getAsJsonObject().getAsJsonObject("response").getAsJsonObject("result");
         } catch (Exception e) {
-            FirebaseCrash.report(e);
+            e.printStackTrace();
+            FirebaseCrash.log(e.getMessage());
+            FirebaseCrash.report(new JournalismException("Unable to get response Json object"));
             return null;
         }
 
@@ -40,8 +43,9 @@ public class Utility {
         try {
             return jsonObject.get(key).getAsString();
         }catch (Exception e){
-            FirebaseCrash.log("Unable to retrieve key \""+key+"\" from JsonObject: "+jsonObject.toString());
-            FirebaseCrash.report(e);
+            e.printStackTrace();
+            FirebaseCrash.log(e.getMessage());
+            FirebaseCrash.report(new JournalismException("Unable to retrieve key \""+key+"\" from JsonObject: "+jsonObject.toString()));
             return "Неизвестно";
         }
     }

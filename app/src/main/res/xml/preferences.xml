@@ -25,5 +25,6 @@
     <PreferenceCategory android:title="Debug" android:key="debug">
         <Preference android:title="Override current week" android:key="debug_override_week"/>
         <Preference android:title="Override current period" android:key="debug_override_period" />
+        <Preference android:title="FCM Token" android:key="debug_fcm_token"/>
     </PreferenceCategory>
 </PreferenceScreen>

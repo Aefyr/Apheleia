@@ -21,7 +21,7 @@ class EljurApiRequest {
 
     static final String HTTPS = "https://";
     static final String ELJUR = ".eljur.ru/apiv3/";
-    static final String BOUND = "devkey=6ec0e964a29c22fe5542f748b5143c4e&out_format=json";
+    static final String BOUND = "&devkey=6ec0e964a29c22fe5542f748b5143c4e&out_format=json";
 
     private EljurPersona persona;
     private String method;
@@ -39,7 +39,7 @@ class EljurApiRequest {
     }
 
     String getRequestURL() {
-        StringBuilder httpRequest = new StringBuilder(HTTPS + persona.schoolDomain + ELJUR + method + "?" + BOUND + "&vendor=" + persona.schoolDomain + "&auth_token=" + persona.token);
+        StringBuilder httpRequest = new StringBuilder(HTTPS + persona.schoolDomain + ELJUR + method + "?" + "vendor=" + persona.schoolDomain + BOUND + "&auth_token=" + persona.token);
 
         for (String k : parameters.keySet())
             try {

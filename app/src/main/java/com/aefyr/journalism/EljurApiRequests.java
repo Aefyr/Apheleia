@@ -48,7 +48,7 @@ class EljurApiRequests {
     //Get token to save it for further use
     static StringRequest loginRequest(RequestQueue queue, String schoolDomain, String username, String password, final EljurApiClient.LoginRequestListener listener) {
 
-        StringRequest loginRequest = new StringRequest(Request.Method.GET, EljurApiRequest.HTTPS + schoolDomain + EljurApiRequest.ELJUR + "auth?" + EljurApiRequest.BOUND + "&vendor=" + schoolDomain + "&login=" + username + "&password=" + password, new Response.Listener<String>() {
+        StringRequest loginRequest = new StringRequest(Request.Method.GET, EljurApiRequest.HTTPS + schoolDomain + EljurApiRequest.ELJUR + "auth?" + "vendor=" + schoolDomain + "&login=" + username + "&password=" + password + EljurApiRequest.BOUND, new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject result = Utility.getJsonFromResponse(rawResponse);

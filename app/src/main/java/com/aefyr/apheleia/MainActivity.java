@@ -21,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aefyr.apheleia.fragments.DiaryFragment;
@@ -39,8 +38,6 @@ import com.aefyr.apheleia.helpers.TheInitializer;
 import com.aefyr.apheleia.helpers.Tutorial;
 import com.aefyr.apheleia.utility.FirebaseConstants;
 import com.aefyr.apheleia.watcher.WatcherHelper;
-import com.aefyr.journalism.exceptions.JournalismException;
-import com.aefyr.journalism.objects.major.Token;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Arrays;
