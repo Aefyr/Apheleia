@@ -19,14 +19,14 @@ import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.SentMessageResponse;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 
 public class MessageComposeActivity extends AppCompatActivity {
 
-    private StringRequest messageSendRequest;
+    private Request messageSendRequest;
 
     private ProgressDialog sendingDialog;
 

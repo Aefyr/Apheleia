@@ -25,13 +25,13 @@ import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.Attachment;
 import com.aefyr.journalism.objects.minor.MessageInfo;
 import com.aefyr.journalism.objects.minor.MessagePerson;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
 public class MessageViewActivity extends AppCompatActivity {
 
-    private StringRequest messageGetRequest;
+    private Request messageGetRequest;
     private boolean inbox;
     private String messageId;
 

@@ -33,7 +33,7 @@ import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MarksGrid;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -45,7 +45,7 @@ import java.util.Arrays;
 public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActionListener {
 
     private boolean firstLoad = true;
-    private StringRequest currentRequest;
+    private Request currentRequest;
 
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView marksRecycler;

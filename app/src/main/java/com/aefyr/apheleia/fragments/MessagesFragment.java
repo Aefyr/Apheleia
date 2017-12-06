@@ -35,7 +35,7 @@ import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.ShortMessage;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -47,7 +47,7 @@ import java.util.HashSet;
 public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, MessagesAdapter.OnMessageClickListener, ActionListener {
 
     private boolean firstLoad = true;
-    private StringRequest currentRequest;
+    private Request currentRequest;
     private View emptyMessages;
 
     private SwipeRefreshLayout refreshLayout;

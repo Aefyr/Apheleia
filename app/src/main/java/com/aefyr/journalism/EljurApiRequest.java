@@ -3,6 +3,7 @@ package com.aefyr.journalism;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Random;
 
 class EljurApiRequest {
 
@@ -39,7 +40,7 @@ class EljurApiRequest {
     }
 
     String getRequestURL() {
-        StringBuilder httpRequest = new StringBuilder(HTTPS + persona.schoolDomain + ELJUR + method + "?" + "vendor=" + persona.schoolDomain + BOUND + "&auth_token=" + persona.token + "&_="+System.currentTimeMillis()/1000);
+        StringBuilder httpRequest = new StringBuilder(HTTPS + persona.schoolDomain + ELJUR + method + "?" + "vendor=" + persona.schoolDomain + BOUND + "&auth_token=" + persona.token + "&_="+System.currentTimeMillis());
 
         for (String k : parameters.keySet())
             try {

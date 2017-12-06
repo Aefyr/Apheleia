@@ -28,7 +28,7 @@ import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.Finals;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -37,7 +37,7 @@ import com.google.firebase.crash.FirebaseCrash;
  */
 public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActionListener {
 
-    private StringRequest currentRequest;
+    private Request currentRequest;
     private boolean firstLoad = true;
 
     private SwipeRefreshLayout refreshLayout;

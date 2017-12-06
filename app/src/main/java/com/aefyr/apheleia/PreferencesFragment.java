@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -21,9 +22,10 @@ import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.Tutorial;
 import com.aefyr.apheleia.watcher.WatcherHelper;
 import com.aefyr.journalism.EljurApiClient;
-import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.io.IOException;
 
 
 /**
@@ -158,22 +160,32 @@ public class PreferencesFragment extends PreferenceFragment {
                         }).setNeutralButton("Hijack FCM", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                EljurApiClient.getInstance(getActivity()).hijackFCM(Helper.getInstance(getActivity()).getPersona(), fcmTokenV, new EljurApiClient.JournalismListener<Boolean>() {
+                                new FCMF(new L() {
                                     @Override
-                                    public void onSuccess(Boolean result) {
-                                        Chief.makeAToast(getActivity(), "Hijacked FCM: "+result);
-                                    }
+                                    public void onA(String t) {
+                                        if(t!=null){
+                                            Chief.makeAToast(getActivity(), "Got token for eljur: "+t);
+                                            EljurApiClient.getInstance(getActivity()).hijackFCM(Helper.getInstance(getActivity()).getPersona(), t, new EljurApiClient.JournalismListener<Boolean>() {
+                                                @Override
+                                                public void onSuccess(Boolean result) {
+                                                    Chief.makeAToast(getActivity(), "Hijacked FCM: "+result);
+                                                }
 
-                                    @Override
-                                    public void onNetworkError(boolean tokenIsWrong) {
-                                        Chief.makeAToast(getActivity(), "Net error while hijacking FCM");
-                                    }
+                                                @Override
+                                                public void onNetworkError(boolean tokenIsWrong) {
+                                                    Chief.makeAToast(getActivity(), "Net error while hijacking FCM");
+                                                }
 
-                                    @Override
-                                    public void onApiError(JournalismException e) {
+                                                @Override
+                                                public void onApiError(JournalismException e) {
 
+                                                }
+                                            });
+                                        }else
+                                            Chief.makeAToast(getActivity(), "Couldn't get token for eljur");
                                     }
-                                });
+                                }).execute();
+
                             }
                         }).create().show();
                         return false;
@@ -186,5 +198,35 @@ public class PreferencesFragment extends PreferenceFragment {
         week.setOnPreferenceClickListener(debugListener);
         period.setOnPreferenceClickListener(debugListener);
         fcmToken.setOnPreferenceClickListener(debugListener);
+    }
+
+    private interface L{
+        void onA(String t);
+    }
+    private class  FCMF extends AsyncTask<Void, Void, String>{
+        private L l;
+        FCMF(L l){
+            super();
+            this.l = l;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            String eToken;
+            try {
+                eToken = FirebaseInstanceId.getInstance().getToken("581165343215", "FCM");
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                return null;
+            }
+            return eToken;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            l.onA(s);
+        }
     }
 }

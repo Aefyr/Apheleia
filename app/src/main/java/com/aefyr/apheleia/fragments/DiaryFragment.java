@@ -41,7 +41,7 @@ import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.minor.WeekDay;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -53,7 +53,7 @@ import java.util.Locale;
 public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, DiaryRecyclerAdapter.OnLinkOpenRequestListener, ActionListener {
 
     private boolean firstLoad = true;
-    private StringRequest currentRequest;
+    private Request currentRequest;
     private View emptyDiary;
 
     private SwipeRefreshLayout refreshLayout;

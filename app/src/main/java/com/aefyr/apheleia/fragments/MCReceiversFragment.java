@@ -20,7 +20,7 @@ import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessageReceiversInfo;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
 
 import java.util.HashSet;
 
@@ -28,7 +28,7 @@ import java.util.HashSet;
  * A simple {@link Fragment} subclass.
  */
 public class MCReceiversFragment extends Fragment {
-    private StringRequest receiversGetRequest;
+    private Request receiversGetRequest;
 
     private RecyclerView receiversRecycler;
     private MessageReceiversAdapter receiversAdapter;

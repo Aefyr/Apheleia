@@ -16,7 +16,7 @@ import com.aefyr.journalism.objects.major.PeriodsInfo;
 import com.aefyr.journalism.objects.major.PersonaInfo;
 import com.aefyr.journalism.objects.major.Schedule;
 import com.aefyr.journalism.objects.minor.Student;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.Request;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.HashSet;
@@ -27,7 +27,7 @@ import java.util.HashSet;
 
 public class TheInitializer {
     Context c;
-    private HashSet<StringRequest> requests;
+    private HashSet<Request> requests;
 
     public interface OnInitializationListener {
         void OnSuccess();
@@ -309,7 +309,7 @@ public class TheInitializer {
             return;
         finished = true;
 
-        for (StringRequest request : requests) {
+        for (Request request : requests) {
             if (!request.hasHadResponseDelivered())
                 request.cancel();
         }

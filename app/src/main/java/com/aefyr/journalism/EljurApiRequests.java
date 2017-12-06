@@ -1,5 +1,6 @@
 package com.aefyr.journalism;
 
+import com.aefyr.apheleia.custom.ApheleiaRequest;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.major.Finals;
@@ -46,9 +47,9 @@ class EljurApiRequests {
 
 
     //Get token to save it for further use
-    static StringRequest loginRequest(RequestQueue queue, String schoolDomain, String username, String password, final EljurApiClient.LoginRequestListener listener) {
+    static Request loginRequest(RequestQueue queue, String schoolDomain, String username, String password, final EljurApiClient.LoginRequestListener listener) {
 
-        StringRequest loginRequest = new StringRequest(Request.Method.GET, EljurApiRequest.HTTPS + schoolDomain + EljurApiRequest.ELJUR + "auth?" + "vendor=" + schoolDomain + "&login=" + username + "&password=" + password + EljurApiRequest.BOUND + "&_="+System.currentTimeMillis()/1000, new Response.Listener<String>() {
+        Request loginRequest = new ApheleiaRequest(Request.Method.GET, EljurApiRequest.HTTPS + schoolDomain + EljurApiRequest.ELJUR + "auth?" + "vendor=" + schoolDomain + "&login=" + username + "&password=" + password + EljurApiRequest.BOUND + "&_="+System.currentTimeMillis(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject result = Utility.getJsonFromResponse(rawResponse);
@@ -86,11 +87,11 @@ class EljurApiRequests {
     }
 
     //Get rules!
-    static StringRequest getRules(RequestQueue queue, EljurPersona persona, final EljurApiClient.JournalismListener<PersonaInfo> listener) {
+    static Request getRules(RequestQueue queue, EljurPersona persona, final EljurApiClient.JournalismListener<PersonaInfo> listener) {
 
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_RULES).addParameter("vendor", persona.schoolDomain);
 
-        StringRequest rulesRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request rulesRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
@@ -148,10 +149,10 @@ class EljurApiRequests {
     }
 
     //Get periods!
-    static StringRequest getPeriods(RequestQueue queue, EljurPersona persona, String studentId, final EljurApiClient.JournalismListener<PeriodsInfo> listener) {
+    static Request getPeriods(RequestQueue queue, EljurPersona persona, String studentId, final EljurApiClient.JournalismListener<PeriodsInfo> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_PERIODS).addParameter("weeks", "__yes").addParameter("student", studentId);
 
-        StringRequest periodsRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request periodsRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
@@ -214,12 +215,12 @@ class EljurApiRequests {
     }
 
     //Get diary!
-    static StringRequest getDiary(RequestQueue queue, EljurPersona persona, final String studentId, String days, final boolean getTimes, final EljurApiClient.JournalismListener<DiaryEntry> listener) {
+    static Request getDiary(RequestQueue queue, EljurPersona persona, final String studentId, String days, final boolean getTimes, final EljurApiClient.JournalismListener<DiaryEntry> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_DIARY).addParameter("student", studentId).addParameter("days", days);
         if (getTimes)
             apiRequest.addParameter("rings", "__yes");
 
-        StringRequest diaryRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request diaryRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 DiaryAsyncParser.getInstance().parseDiary(rawResponse, studentId, listener);
@@ -237,10 +238,10 @@ class EljurApiRequests {
     }
 
     //Get marks!
-    static StringRequest getMarks(RequestQueue queue, EljurPersona persona, final String studentId, String days, final EljurApiClient.JournalismListener<MarksGrid> listener) {
+    static Request getMarks(RequestQueue queue, EljurPersona persona, final String studentId, String days, final EljurApiClient.JournalismListener<MarksGrid> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_MARKS).addParameter("student", studentId).addParameter("days", days);
 
-        StringRequest marksRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request marksRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 MarkGridAsyncParser.getInstance().parseGrid(rawResponse, studentId, listener);
@@ -259,12 +260,12 @@ class EljurApiRequests {
     }
 
     //Get schedule!
-    static StringRequest getSchedule(RequestQueue queue, EljurPersona persona, final String studentId, String days, boolean getTimes, final EljurApiClient.JournalismListener<Schedule> listener) {
+    static Request getSchedule(RequestQueue queue, EljurPersona persona, final String studentId, String days, boolean getTimes, final EljurApiClient.JournalismListener<Schedule> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_SCHEDULE).addParameter("studentId", studentId).addParameter("days", days);
         if (getTimes)
             apiRequest.addParameter("rings", "__yes");
 
-        StringRequest scheduleRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request scheduleRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
@@ -354,10 +355,10 @@ class EljurApiRequests {
     }
 
     //Get messages list!
-    static StringRequest getMessages(RequestQueue queue, EljurPersona persona, final MessagesList.Folder folder, boolean unreadOnly, final EljurApiClient.JournalismListener<MessagesList> listener) {
+    static Request getMessages(RequestQueue queue, EljurPersona persona, final MessagesList.Folder folder, boolean unreadOnly, final EljurApiClient.JournalismListener<MessagesList> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_MESSAGES).addParameter("folder", folder == MessagesList.Folder.INBOX ? "inbox" : "sent").addParameter("unreadonly", String.valueOf(unreadOnly));
 
-        StringRequest messagesListRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request messagesListRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 MessagesListAsyncParser.getInstance().parseMessages(rawResponse, folder, listener);
@@ -375,10 +376,10 @@ class EljurApiRequests {
     }
 
     //Get message info!
-    static StringRequest getMessageInfo(RequestQueue queue, EljurPersona persona, final MessagesList.Folder folder, String messageId, final EljurApiClient.JournalismListener<MessageInfo> listener) {
+    static Request getMessageInfo(RequestQueue queue, EljurPersona persona, final MessagesList.Folder folder, String messageId, final EljurApiClient.JournalismListener<MessageInfo> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_MESSAGE_INFO).addParameter("id", messageId);
 
-        StringRequest messageInfoRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request messageInfoRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 MessageInfoAsyncParser.getInstance().parseMessage(rawResponse, folder, listener);
@@ -394,10 +395,10 @@ class EljurApiRequests {
         return messageInfoRequest;
     }
 
-    static StringRequest getMessageReceivers(RequestQueue queue, EljurPersona persona, final EljurApiClient.JournalismListener<MessageReceiversInfo> listener) {
+    static Request getMessageReceivers(RequestQueue queue, EljurPersona persona, final EljurApiClient.JournalismListener<MessageReceiversInfo> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_MESSAGE_RECEIVERS);
 
-        StringRequest messageReceiversInfoRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request messageReceiversInfoRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
@@ -451,7 +452,7 @@ class EljurApiRequests {
         return messageReceiversInfoRequest;
     }
 
-    static StringRequest sendMessage(RequestQueue queue, EljurPersona persona, String subject, String text, HashSet<String> receiversIds, final EljurApiClient.JournalismListener<SentMessageResponse> listener) {
+    static Request sendMessage(RequestQueue queue, EljurPersona persona, String subject, String text, HashSet<String> receiversIds, final EljurApiClient.JournalismListener<SentMessageResponse> listener) {
         final StringBuilder r = new StringBuilder();
         for (String receiverId : receiversIds) {
             r.append(receiverId).append(",");
@@ -459,7 +460,7 @@ class EljurApiRequests {
 
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.SEND_MESSAGE).addParameter("users_to", r.substring(0, r.length() - 1)).addParameter("subject", subject).addParameter("text", text);
 
-        StringRequest sendMessageRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request sendMessageRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getRawJsonFromResponse(rawResponse).getAsJsonObject("response");
@@ -482,10 +483,10 @@ class EljurApiRequests {
         return sendMessageRequest;
     }
 
-    static StringRequest getFinals(RequestQueue queue, EljurPersona persona, final String studentId, final EljurApiClient.JournalismListener<Finals> listener) {
+    static Request getFinals(RequestQueue queue, EljurPersona persona, final String studentId, final EljurApiClient.JournalismListener<Finals> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_FINALS).addParameter("student", studentId);
 
-        StringRequest finalsRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request finalsRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
@@ -528,10 +529,10 @@ class EljurApiRequests {
         return finalsRequest;
     }
 
-    static StringRequest hijackFCM(RequestQueue queue, EljurPersona persona, String fcmToken, final EljurApiClient.JournalismListener<Boolean> listener) {
+    static Request hijackFCM(RequestQueue queue, EljurPersona persona, String fcmToken, final EljurApiClient.JournalismListener<Boolean> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, "setpushtoken").addParameter("token", fcmToken).addParameter("type", "google").addParameter("activate", "1");
 
-        StringRequest tokenRequest = new StringRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+        Request tokenRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
