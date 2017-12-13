@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.1'
     defaultConfig {
         applicationId "com.aefyr.apheleia"
         minSdkVersion 19
-        targetSdkVersion 26
-        versionCode 19
-        versionName "1.1.6.6"
+        targetSdkVersion 27
+        versionCode 21
+        versionName "1.1.6.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -29,12 +29,12 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.android.support:design:26.1.0'
-    compile 'com.android.support:support-v4:26.1.0'
-    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.android.support:design:27.0.2'
+    compile 'com.android.support:support-v4:27.0.2'
+    compile 'com.android.support:cardview-v7:27.0.2'
     compile 'com.google.firebase:firebase-crash:11.6.2'
     compile 'com.google.firebase:firebase-core:11.6.2'
     compile 'com.google.firebase:firebase-messaging:11.6.2'

@@ -89,7 +89,7 @@ class EljurApiRequests {
     //Get rules!
     static Request getRules(RequestQueue queue, EljurPersona persona, final EljurApiClient.JournalismListener<PersonaInfo> listener) {
 
-        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_RULES).addParameter("vendor", persona.schoolDomain);
+        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_RULES);
 
         Request rulesRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
@@ -150,7 +150,7 @@ class EljurApiRequests {
 
     //Get periods!
     static Request getPeriods(RequestQueue queue, EljurPersona persona, String studentId, final EljurApiClient.JournalismListener<PeriodsInfo> listener) {
-        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_PERIODS).addParameter("weeks", "__yes").addParameter("student", studentId);
+        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_PERIODS).addParameter("student", studentId).addParameter("weeks", "__yes").addParameter("show_disabled", "__yes");
 
         Request periodsRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
@@ -170,6 +170,9 @@ class EljurApiRequests {
 
                 for (JsonElement periodEl : periods) {
                     JsonObject period = periodEl.getAsJsonObject();
+                    if(period.get("disabled").getAsBoolean())
+                        continue;
+
                     if (period.get("ambigious").getAsBoolean()) {
                         MajorObjectsHelper.addAmbigiousPeriodToPeriodsInfo(periodsInfo, MinorObjectsFactory.createAmbigiousPeriod(period.get("name").getAsString(), period.get("fullname").getAsString()));
                     } else {
@@ -216,7 +219,7 @@ class EljurApiRequests {
 
     //Get diary!
     static Request getDiary(RequestQueue queue, EljurPersona persona, final String studentId, String days, final boolean getTimes, final EljurApiClient.JournalismListener<DiaryEntry> listener) {
-        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_DIARY).addParameter("student", studentId).addParameter("days", days);
+        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_DIARY).addParameter("days", days).addParameter("student", studentId);
         if (getTimes)
             apiRequest.addParameter("rings", "__yes");
 
@@ -239,7 +242,7 @@ class EljurApiRequests {
 
     //Get marks!
     static Request getMarks(RequestQueue queue, EljurPersona persona, final String studentId, String days, final EljurApiClient.JournalismListener<MarksGrid> listener) {
-        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_MARKS).addParameter("student", studentId).addParameter("days", days);
+        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_MARKS).addParameter("days", days).addParameter("student", studentId);
 
         Request marksRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
@@ -261,7 +264,7 @@ class EljurApiRequests {
 
     //Get schedule!
     static Request getSchedule(RequestQueue queue, EljurPersona persona, final String studentId, String days, boolean getTimes, final EljurApiClient.JournalismListener<Schedule> listener) {
-        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_SCHEDULE).addParameter("studentId", studentId).addParameter("days", days);
+        EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_SCHEDULE).addParameter("days", days).addParameter("student", studentId);
         if (getTimes)
             apiRequest.addParameter("rings", "__yes");
 
@@ -552,6 +555,25 @@ class EljurApiRequests {
 
         queue.add(tokenRequest);
         return tokenRequest;
+    }
+
+    static Request getAds(RequestQueue queue, EljurPersona persona, PersonaInfo.Role role, String city, String region, String parallel, PersonaInfo.Gender gender, final EljurApiClient.JournalismListener<Boolean> listener){
+        EljurApiRequest apiRequest = new EljurApiRequest(persona, "getadvertising").addParameter("platform", "android").addParameter("role", role== PersonaInfo.Role.STUDENT?"student":"parent").addParameter("region", city).addParameter("city", region).addParameter("parallel", parallel).addParameter("gender", gender== PersonaInfo.Gender.MALE?"male":"female");
+
+        Request adsRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                listener.onSuccess(true);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.onNetworkError(error.networkResponse != null && error.networkResponse.statusCode == 403);
+            }
+        });
+
+        queue.add(adsRequest);
+        return adsRequest;
     }
 
     //Not enough data about returned json structure to parse it

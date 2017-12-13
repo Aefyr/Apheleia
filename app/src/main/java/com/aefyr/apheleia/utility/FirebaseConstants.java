@@ -23,5 +23,5 @@ public class FirebaseConstants {
     public static final String MESSAGE_SENT = "message_sent";
     public static final String LOGIN = "user_logged_in";
     public static final String CAUGHT_API_EXCEPTION = "api_exception";
-
+    public static final String INTENT_ACTION_GOT_FCM_MESSAGE = "com.aefyr.apheleia.action.GOT_FCM_MESSAGE";
 }

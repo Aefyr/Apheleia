@@ -120,6 +120,7 @@
     <string name="pref_watcher_via_cell_desc">По умолчанию для проверки используется только по WiFi</string>
     <string name="pref_quick_picker_desc">В Дневнике и Расписании, показывает внизу панель с помощью которой можно быстро переместиться к любому дню недели в списке</string>
     <string name="sending_error">При отправке сообщения возникла ошибка</string>
-
+    <string name="system_notification">Сообщение от разработчика</string>
+    <string name="sys_notification_delay">Через 5 секунд</string>
 
 </resources>

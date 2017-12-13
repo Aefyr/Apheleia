@@ -1,8 +1,11 @@
 package com.aefyr.apheleia;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,12 +20,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.aefyr.apheleia.fcm.NotificationsHelper;
 import com.aefyr.apheleia.fragments.DiaryFragment;
 import com.aefyr.apheleia.fragments.FinalsFragment;
 import com.aefyr.apheleia.fragments.MarksFragment;
@@ -44,17 +49,30 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
 
     private Helper helper;
     private FragmentManager fragmentManager;
     private DrawerLayout drawer;
+    private static final String TAG = "Apheleia/Main";
+    private MessagesBroadcastReceiver messagesBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        if (intent.getExtras() != null) {
+            if(intent.getStringExtra("message_dup")!=null){
+                String notificationMessage = intent.getStringExtra("message_dup");
+                Log.d(TAG, "Showing notification from FCM: " + notificationMessage);
+                NotificationsHelper.showDevAlert(this, notificationMessage);
+            }
+        }
+        messagesBroadcastReceiver = new MessagesBroadcastReceiver();
+        registerReceiver(messagesBroadcastReceiver, new IntentFilter(FirebaseConstants.INTENT_ACTION_GOT_FCM_MESSAGE));
 
         helper = Helper.getInstance(this);
         if (!helper.isLoggedIn() || helper.isTokenExpired()) {
@@ -486,5 +504,23 @@ public class MainActivity extends AppCompatActivity
             }
         }).setNegativeButton(getString(R.string.cancel), null).create().show();
 
+    }
+
+    private class MessagesBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction()==null)
+                return;
+
+            if(intent.getAction().equals(FirebaseConstants.INTENT_ACTION_GOT_FCM_MESSAGE)){
+                NotificationsHelper.showDevAlert(MainActivity.this, intent.getStringExtra("message"));
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(messagesBroadcastReceiver);
     }
 }

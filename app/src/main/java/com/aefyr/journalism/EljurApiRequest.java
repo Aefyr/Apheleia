@@ -1,8 +1,14 @@
 package com.aefyr.journalism;
 
+import android.util.Pair;
+
+import com.google.firebase.crash.FirebaseCrash;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 class EljurApiRequest {
@@ -26,20 +32,20 @@ class EljurApiRequest {
 
     private EljurPersona persona;
     private String method;
-    private HashMap<String, String> parameters;
+    private ArrayList<Pair<String, String>> parameters;
 
     EljurApiRequest(EljurPersona persona, String method) {
         this.persona = persona;
         this.method = method;
-        parameters = new HashMap<String, String>();
+        parameters = new ArrayList<>(4);
     }
 
     EljurApiRequest addParameter(String name, String value) {
-        parameters.put(name, value);
+        parameters.add(new Pair<String, String>(name, value));
         return this;
     }
 
-    String getRequestURL() {
+    /*String getRequestURL() {
         StringBuilder httpRequest = new StringBuilder(HTTPS + persona.schoolDomain + ELJUR + method + "?" + "vendor=" + persona.schoolDomain + BOUND + "&auth_token=" + persona.token + "&_="+System.currentTimeMillis());
 
         for (String k : parameters.keySet())
@@ -50,6 +56,30 @@ class EljurApiRequest {
                 //Well, it shouldn't happen I guess...
                 //TODO Gotta ad Firebase report here
             }
+        return httpRequest.toString();
+    }*/
+
+    String getRequestURL(){
+        StringBuilder httpRequest = new StringBuilder(HTTPS).append(persona.schoolDomain).append(ELJUR).append(method).append("?");
+
+        for(int i = 0; i<parameters.size(); i++){
+            if(i!=0)
+                httpRequest.append("&");
+
+            Pair<String, String> param = parameters.get(i);
+            try {
+                httpRequest.append(param.first).append("=").append(URLEncoder.encode(param.second, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                FirebaseCrash.report(e);
+            }
+        }
+
+        if(parameters.size()!=0)
+            httpRequest.append("&");
+
+        httpRequest.append("auth_token=").append(persona.token).append("&vendor=").append(persona.schoolDomain).append(BOUND).append("&_=").append(System.currentTimeMillis());
+
         return httpRequest.toString();
     }
 }

@@ -1,6 +1,7 @@
 package com.aefyr.apheleia.custom;
 
 import android.os.Build;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -24,12 +25,15 @@ public class ApheleiaRequest extends Request<String> {
     public ApheleiaRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.listener = listener;
+        Log.d("ApheleiaRequest", "Created request with URL: "+url);
     }
 
     @Override
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
         try {
-            return Response.success(new String(response.data, "UTF-8"), HttpHeaderParser.parseCacheHeaders(response));
+            String responeS = new String(response.data, "UTF-8");
+            Log.d("ApheleiaRequest", "Got response: "+responeS);
+            return Response.success(responeS, HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         }
