@@ -8,6 +8,7 @@ import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.MessagePerson;
 import com.aefyr.journalism.objects.minor.MinorObjectsFactory;
 import com.aefyr.journalism.objects.minor.ShortMessage;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -56,8 +57,9 @@ public class MessagesListAsyncParser {
                 return new AsyncParserTaskResult<MessagesList>(MajorObjectsFactory.createMessagesList(response.get("total").getAsInt(), response.get("count").getAsInt(), new ArrayList<ShortMessage>(0), folder));
             }
 
-            ArrayList<ShortMessage> shortMessages = new ArrayList<>();
-            for (JsonElement messageEl : response.getAsJsonArray("messages")) {
+            JsonArray jShortMessages = response.getAsJsonArray("messages");
+            ArrayList<ShortMessage> shortMessages = new ArrayList<>(jShortMessages.size());
+            for (JsonElement messageEl : jShortMessages) {
                 JsonObject message = messageEl.getAsJsonObject();
 
                 if (folder == MessagesList.Folder.INBOX) {
@@ -73,9 +75,10 @@ public class MessagesListAsyncParser {
                     if (message.get("users_to") == null)
                         continue;
 
-                    ArrayList<MessagePerson> receivers = new ArrayList<>();
+                    JsonArray jReceivers = message.getAsJsonArray("users_to");
+                    ArrayList<MessagePerson> receivers = new ArrayList<>(jReceivers.size());
 
-                    for (JsonElement receiverEl : message.getAsJsonArray("users_to")) {
+                    for (JsonElement receiverEl : jReceivers) {
 
                         JsonObject receiver = receiverEl.getAsJsonObject();
                         receivers.add(MinorObjectsFactory.createMessagePerson(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString()));

@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 class EljurApiRequests {
 
@@ -280,7 +281,7 @@ class EljurApiRequests {
 
                 JsonObject weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
 
-                ArrayList<WeekDay> weekDays = new ArrayList<>(5);
+                ArrayList<WeekDay> weekDays = new ArrayList<>(weekDaysObj.size());
                 for (Map.Entry<String, JsonElement> entry : weekDaysObj.entrySet()) {
                     JsonObject weekDay = entry.getValue().getAsJsonObject();
 
@@ -293,28 +294,38 @@ class EljurApiRequests {
                         }
                         continue;
                     }
-                    ArrayList<Lesson> lessons = new ArrayList<Lesson>();
-                    for (Map.Entry<String, JsonElement> entry2 : weekDay.getAsJsonObject("items").entrySet()) {
-                        JsonObject lessonObj = entry2.getValue().getAsJsonObject();
 
-                        Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num"), Utility.getStringFromJsonSafe(lessonObj, "name"), Utility.getStringFromJsonSafe(lessonObj, "room"), Utility.getStringFromJsonSafe(lessonObj, "teacher"));
+                    ArrayList<Lesson> lessons = null;
+                    LESSONS:
+                    {
+                        if(weekDay.get("items")==null)
+                            break LESSONS;
 
-                        if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
-                            try {
-                                MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
-                            } catch (JournalismException e) {
-                                listener.onApiError(e);
-                                return;
+                        JsonObject jLessons = weekDay.getAsJsonObject("items");
+                        lessons = new ArrayList<>(jLessons.size());
+                        for (Map.Entry<String, JsonElement> entry2 : jLessons.entrySet()) {
+                            JsonObject lessonObj = entry2.getValue().getAsJsonObject();
+
+                            Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num"), Utility.getStringFromJsonSafe(lessonObj, "name"), Utility.getStringFromJsonSafe(lessonObj, "room"), Utility.getStringFromJsonSafe(lessonObj, "teacher"));
+
+                            if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
+                                try {
+                                    MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
+                                } catch (JournalismException e) {
+                                    listener.onApiError(e);
+                                    return;
+                                }
                             }
-                        }
 
-                        lessons.add(lesson);
+                            lessons.add(lesson);
+                        }
                     }
 
                     ArrayList<Lesson> overtimeLessons = null;
                     if (weekDay.get("items_extday") != null) {
-                        overtimeLessons = new ArrayList<>();
-                        for (JsonElement otLessonEl : weekDay.getAsJsonArray("items_extday")) {
+                        JsonArray jOvertimeLessons = weekDay.getAsJsonArray("items_extday");
+                        overtimeLessons = new ArrayList<>(jOvertimeLessons.size());
+                        for (JsonElement otLessonEl : jOvertimeLessons) {
                             JsonObject otLessonObj = otLessonEl.getAsJsonObject();
                             Lesson otLesson = MinorObjectsFactory.createLesson("OT", Utility.getStringFromJsonSafe(otLessonObj, "name"), "OT", Utility.getStringFromJsonSafe(otLessonObj, "teacher"));
 
@@ -333,7 +344,7 @@ class EljurApiRequests {
 
                     WeekDay day;
                     try {
-                        day = MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons);
+                        day = MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons==null?new ArrayList<Lesson>(0):lessons);
                     } catch (JournalismException e) {
                         listener.onApiError(e);
                         return;
@@ -411,17 +422,22 @@ class EljurApiRequests {
                     return;
                 }
 
-                ArrayList<MessageReceiversGroup> groups = new ArrayList<MessageReceiversGroup>();
+                JsonArray jReceiversGroups = response.getAsJsonArray("groups");
+                ArrayList<MessageReceiversGroup> groups = new ArrayList<MessageReceiversGroup>(jReceiversGroups.size());
 
-                for (JsonElement groupEl : response.getAsJsonArray("groups")) {
+                for (JsonElement groupEl : jReceiversGroups) {
                     JsonObject group = groupEl.getAsJsonObject();
 
-                    ArrayList<MessageReceiver> receivers = new ArrayList<MessageReceiver>();
+                    ArrayList<MessageReceiver> receivers;
 
                     if (group.get("subgroups") != null) {
+                        receivers = new ArrayList<MessageReceiver>(0);
                         for (JsonElement subgroupEl : group.get("subgroups").getAsJsonArray()) {
                             JsonObject subgroup = subgroupEl.getAsJsonObject();
-                            for (JsonElement receiverEl : subgroup.getAsJsonArray("users")) {
+                            JsonArray jSubgroupMembers = subgroup.getAsJsonArray("users");
+                            receivers.ensureCapacity(receivers.size()+jSubgroupMembers.size());
+
+                            for (JsonElement receiverEl : jSubgroupMembers) {
                                 JsonObject receiver = receiverEl.getAsJsonObject();
 
                                 MessageReceiver receiverToAdd = MinorObjectsFactory.createMessageReceiver(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString(), (receiver.get("info") != null ? receiver.get("info").getAsString() : null));
@@ -430,7 +446,9 @@ class EljurApiRequests {
                             }
                         }
                     } else {
-                        for (JsonElement receiverEl : group.getAsJsonArray("users")) {
+                        JsonArray jGroupMembers = group.getAsJsonArray("users");
+                        receivers = new ArrayList<MessageReceiver>(jGroupMembers.size());
+                        for (JsonElement receiverEl : jGroupMembers) {
                             JsonObject receiver = receiverEl.getAsJsonObject();
 
                             MessageReceiver receiverToAdd = MinorObjectsFactory.createMessageReceiver(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString(), (receiver.get("info") != null ? receiver.get("info").getAsString() : null));
@@ -499,15 +517,18 @@ class EljurApiRequests {
                     return;
                 }
 
-                ArrayList<FinalSubject> subjects = new ArrayList<FinalSubject>();
+                JsonArray jSubjects = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonArray("items");
+                ArrayList<FinalSubject> subjects = new ArrayList<FinalSubject>(jSubjects.size());
 
-                for (JsonElement subjectEl : response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonArray("items")) {
+                for (JsonElement subjectEl : jSubjects) {
                     JsonObject subject = subjectEl.getAsJsonObject();
 
                     if (subject.get("assessments") != null && subject.getAsJsonArray("assessments").size() > 0) {
-                        ArrayList<FinalPeriod> periods = new ArrayList<FinalPeriod>();
 
-                        for (JsonElement periodEl : subject.getAsJsonArray("assessments")) {
+                        JsonArray jPeriods = subject.getAsJsonArray("assessments");
+                        ArrayList<FinalPeriod> periods = new ArrayList<FinalPeriod>(jPeriods.size());
+
+                        for (JsonElement periodEl : jPeriods) {
                             JsonObject period = periodEl.getAsJsonObject();
 
                             periods.add(MinorObjectsFactory.createFinalPeriod(period.get("period").getAsString(), period.get("value").getAsString(), (period.get("comment") != null && period.get("comment").getAsString().length() > 0) ? period.get("comment").getAsString() : null));

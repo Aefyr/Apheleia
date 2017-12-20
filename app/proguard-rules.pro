@@ -87,3 +87,9 @@
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
 }
+
+#-------- Begin: ProGuard rules for Crashlytics/FirebaseCrash
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+#-------- End: ProGuard rules for Crashlytics/FirebaseCrash

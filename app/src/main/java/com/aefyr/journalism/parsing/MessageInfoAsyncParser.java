@@ -9,6 +9,7 @@ import com.aefyr.journalism.objects.minor.MessageInfo;
 import com.aefyr.journalism.objects.minor.MessagePerson;
 import com.aefyr.journalism.objects.minor.MinorObjectsFactory;
 import com.aefyr.journalism.objects.minor.MinorObjectsHelper;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -42,8 +43,9 @@ public class MessageInfoAsyncParser {
 
             JsonObject message = Utility.getJsonFromResponse(rawResponse).getAsJsonObject("message");
 
-            ArrayList<MessagePerson> receivers = new ArrayList<MessagePerson>();
-            for (JsonElement receiverEl : message.getAsJsonArray("user_to")) {
+            JsonArray jReceivers = message.getAsJsonArray("user_to");
+            ArrayList<MessagePerson> receivers = new ArrayList<MessagePerson>(jReceivers.size());
+            for (JsonElement receiverEl : jReceivers) {
 
                 JsonObject receiver = receiverEl.getAsJsonObject();
                 receivers.add(MinorObjectsFactory.createMessagePerson(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString()));
@@ -59,8 +61,9 @@ public class MessageInfoAsyncParser {
             }
 
             if (message.get("files") != null) {
-                ArrayList<Attachment> attachments = new ArrayList<Attachment>();
-                for (JsonElement fileEl : message.getAsJsonArray("files")) {
+                JsonArray jFiles = message.getAsJsonArray("files");
+                ArrayList<Attachment> attachments = new ArrayList<Attachment>(jFiles.size());
+                for (JsonElement fileEl : jFiles) {
                     JsonObject file = fileEl.getAsJsonObject();
                     attachments.add(MinorObjectsFactory.createAttacment(file.get("filename").getAsString(), file.get("link").getAsString()));
                 }

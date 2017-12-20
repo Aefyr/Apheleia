@@ -21,7 +21,7 @@
     <string name="error_week_not_saved">Нет подключения к сети и выбранная неделя не сохранена!</string>
     <string name="fetch_network_error">Не удалось получить %s из-за ошибки сети, пожалуйста попробуйте позже</string>
     <string name="fetching_message">Получение сообщения…</string>
-    <string name="fetching_receivers">Получение списка получателей…</string>
+    <string name="fetching_receivers">Обновление списка получателей…</string>
     <string name="finals">Итоговые оценки</string>
     <string name="from" formatted="false">От кого: %s</string>
     <string name="help">Помощь</string>
