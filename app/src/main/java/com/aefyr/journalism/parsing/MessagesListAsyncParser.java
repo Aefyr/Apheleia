@@ -54,7 +54,7 @@ public class MessagesListAsyncParser {
             MessagesList.Folder folder = messagesParseTaskParams.folder;
 
             if (response == null || response.size() == 0 || response.get("messages") == null) {
-                return new AsyncParserTaskResult<MessagesList>(MajorObjectsFactory.createMessagesList(response.get("total").getAsInt(), response.get("count").getAsInt(), new ArrayList<ShortMessage>(0), folder));
+                return new AsyncParserTaskResult<MessagesList>(MajorObjectsFactory.createMessagesList(0, 0, new ArrayList<ShortMessage>(0), folder));
             }
 
             JsonArray jShortMessages = response.getAsJsonArray("messages");

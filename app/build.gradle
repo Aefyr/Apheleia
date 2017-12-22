@@ -7,8 +7,8 @@ android {
         applicationId "com.aefyr.apheleia"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 22
-        versionName "1.1.6.8"
+        versionCode 23
+        versionName "1.1.6.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
