@@ -444,6 +444,8 @@ public class MainActivity extends AppCompatActivity
             if(fragment!=currentFragment)
                 transaction.remove(fragment);
         }
+
+        //TODO Prolly change this to commitAllowingStateLoss
         transaction.commit();
     }
 
