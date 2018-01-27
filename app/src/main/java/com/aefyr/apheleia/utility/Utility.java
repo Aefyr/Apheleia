@@ -79,4 +79,15 @@ public class Utility {
         return new AlertDialog.Builder(c).setMessage(c.getString(R.string.no_periods)).setPositiveButton(c.getString(R.string.ok), null).create();
     }
 
+    public static int indexOfStringInArray(String s, String[] array){
+        int i = 0;
+        while(i<array.length){
+            if(array[i].equals(s))
+                return i;
+            i++;
+        }
+
+        return -1;
+    }
+
 }

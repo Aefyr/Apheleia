@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -46,8 +47,20 @@ public class MessageComposeActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.composeMessageViewPager);
 
-        receiversFragment = new MCReceiversFragment();
-        messageFragment = new MCMessageFragment();
+        if(savedInstanceState!=null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            receiversFragment = (MCReceiversFragment) fragmentManager.getFragment(savedInstanceState, "receivers");
+            messageFragment = (MCMessageFragment) fragmentManager.getFragment(savedInstanceState, "message");
+        }else {
+            receiversFragment = new MCReceiversFragment();
+            messageFragment = new MCMessageFragment();
+
+            if (replyIntent) {
+                receiversFragment.forceSetReceiver(getIntent().getStringExtra("receiver"));
+                messageFragment.setForcedMessageSubject(String.format(getString(R.string.reply_subject_prefix), getIntent().getStringExtra("subject")));
+                scrollToPage(1);
+            }
+        }
 
         final ArrayList<Fragment> fragments = new ArrayList<>();
         fragments.add(receiversFragment);
@@ -70,11 +83,7 @@ public class MessageComposeActivity extends AppCompatActivity {
             }
         });
 
-        if (replyIntent) {
-            receiversFragment.forceSetReceiver(getIntent().getStringExtra("receiver"));
-            messageFragment.setForcedMessageSubject(String.format(getString(R.string.reply_subject_prefix), getIntent().getStringExtra("subject")));
-            scrollToPage(1);
-        }
+
     }
 
     @Override
@@ -168,4 +177,12 @@ public class MessageComposeActivity extends AppCompatActivity {
             viewPager.setCurrentItem(page, true);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.putFragment(outState, "receivers", receiversFragment);
+        fragmentManager.putFragment(outState, "message", messageFragment);
+
+    }
 }

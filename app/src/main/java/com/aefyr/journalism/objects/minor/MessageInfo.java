@@ -4,12 +4,13 @@ package com.aefyr.journalism.objects.minor;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessagesList;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 
-public class MessageInfo {
+public class MessageInfo implements Serializable {
     MessagesList.Folder folder;
     MessagePerson sender;
     ArrayList<MessagePerson> receivers;

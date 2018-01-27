@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -21,19 +23,21 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.aefyr.apheleia.adapters.LandscapeModeSideMenuListViewAdapter;
 import com.aefyr.apheleia.fcm.NotificationsHelper;
 import com.aefyr.apheleia.fragments.DiaryFragment;
 import com.aefyr.apheleia.fragments.FinalsFragment;
 import com.aefyr.apheleia.fragments.MarksFragment;
 import com.aefyr.apheleia.fragments.MessagesFragment;
 import com.aefyr.apheleia.fragments.ScheduleFragment;
-import com.aefyr.apheleia.fragments.Tags;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Destroyer;
 import com.aefyr.apheleia.helpers.Helper;
@@ -94,34 +98,93 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        //Preparing UI
+        NavigationView navigationView = null;
+        LandscapeModeSideMenuListViewAdapter sideMenuListViewAdapter = null;
+        if(!lidlIsTabletMode()) {
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+            drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close).syncState();
 
-        initializeNavHeader(navigationView.getHeaderView(0));
+            navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+
+            initializeNavHeader(navigationView.getHeaderView(0));
+        }else {
+            ListView listView = findViewById(R.id.landscapeSideMenu);
+            sideMenuListViewAdapter = new LandscapeModeSideMenuListViewAdapter(listView, new LandscapeModeSideMenuListViewAdapter.OnSideMenuInteractionListener() {
+                @Override
+                public void onApheleiaFragmentSelected(String fragment) {
+                    setFragment(fragment);
+                }
+
+                @Override
+                public void onSettingsClick() {
+                    startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+                }
+
+                @Override
+                public void onLogoutClick() {
+                    logout();
+                }
+            });
+            listView.setAdapter(sideMenuListViewAdapter);
+            View header = ((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.nav_header_main, listView, false);
+            listView.addHeaderView(header);
+            initializeNavHeader(header);
+        }
 
         fragmentManager = getSupportFragmentManager();
 
-        if (getIntent().getStringExtra("requested_fragment") != null) {
-            if (getIntent().getStringExtra("requested_fragment").equals("messages")) {
-                currentFragment = new MessagesFragment();
-                currentApheleiaFragment = ApheleiaFragment.MESSAGES;
-                fragmentManager.beginTransaction().add(R.id.fragmentContainer, currentFragment, Tags.MESSAGES).commit();
-                navigationView.setCheckedItem(R.id.nav_messages);
-            }
-        } else {
-            currentFragment = new DiaryFragment();
-            currentApheleiaFragment = ApheleiaFragment.DIARY;
-            fragmentManager.beginTransaction().add(R.id.fragmentContainer, currentFragment, Tags.DIARY).commit();
-            navigationView.setCheckedItem(R.id.nav_diary);
-        }
+        //Dealing with instance state
+        if(savedInstanceState==null) {
+            if (getIntent().getStringExtra("requested_fragment") != null) {
+                if (getIntent().getStringExtra("requested_fragment").equals("messages")) {
+                    currentFragment = new MessagesFragment();
+                    currentApheleiaFragment = FRAGMENT_MESSAGES;
+                    fragmentManager.beginTransaction().add(R.id.fragmentContainer, currentFragment, FRAGMENT_MESSAGES).commit();
 
-        checkPeriods(false);
+                    if (navigationView != null)
+                        navigationView.setCheckedItem(R.id.nav_messages);
+                    else
+                        sideMenuListViewAdapter.lidlSelect(currentApheleiaFragment);
+                }
+            } else {
+                currentFragment = new DiaryFragment();
+                currentApheleiaFragment = FRAGMENT_DIARY;
+                fragmentManager.beginTransaction().add(R.id.fragmentContainer, currentFragment, FRAGMENT_DIARY).commit();
+
+                if (navigationView != null)
+                    navigationView.setCheckedItem(R.id.nav_diary);
+                else
+                    sideMenuListViewAdapter.lidlSelect(currentApheleiaFragment);
+            }
+
+            checkPeriods(false);
+        }else {
+            currentFragment = fragmentManager.findFragmentByTag(currentApheleiaFragment);
+            if(!lidlIsTabletMode()){
+                switch (currentApheleiaFragment){
+                    case FRAGMENT_DIARY:
+                        navigationView.setCheckedItem(R.id.nav_diary);
+                        break;
+                    case FRAGMENT_MARKS:
+                        navigationView.setCheckedItem(R.id.nav_marks);
+                        break;
+                    case FRAGMENT_FINALS:
+                        navigationView.setCheckedItem(R.id.nav_finals);
+                        break;
+                    case FRAGMENT_SCHEDULE:
+                        navigationView.setCheckedItem(R.id.nav_schedule);
+                        break;
+                    case FRAGMENT_MESSAGES:
+                        navigationView.setCheckedItem(R.id.nav_messages);
+                        break;
+                }
+            }else {
+                sideMenuListViewAdapter.lidlSelect(currentApheleiaFragment);
+            }
+        }
     }
 
     @Override
@@ -144,6 +207,16 @@ public class MainActivity extends AppCompatActivity
         timePeriodSwitchButton = menu.findItem(R.id.action_time_period_switcher);
         mailFolderSwitchButton = menu.findItem(R.id.action_mail_folder_switch);
 
+        mailFolderSwitchButton.setVisible(currentApheleiaFragment.equals(FRAGMENT_MESSAGES));
+        timePeriodSwitchButton.setVisible(currentApheleiaFragment.equals(FRAGMENT_DIARY)||currentApheleiaFragment.equals(FRAGMENT_MARKS)||currentApheleiaFragment.equals(FRAGMENT_SCHEDULE));
+
+        if(currentApheleiaFragment.equals(FRAGMENT_MESSAGES)){
+            if (((MessagesFragment) currentFragment).isInboxSelected())
+                mailFolderSwitchButton.setIcon(R.drawable.ic_send_white_36dp);
+            else
+                mailFolderSwitchButton.setIcon(R.drawable.ic_inbox_white_36dp);
+        }
+
         return true;
     }
 
@@ -165,7 +238,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.action_mail_folder_switch:
 
-                if (currentApheleiaFragment == ApheleiaFragment.MESSAGES) {
+                if (currentApheleiaFragment.equals(FRAGMENT_MESSAGES)) {
                     ((MessagesFragment) currentFragment).toggleFolder();
                     if (((MessagesFragment) currentFragment).isInboxSelected())
                         mailFolderSwitchButton.setIcon(R.drawable.ic_send_white_36dp);
@@ -178,13 +251,13 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_time_period_switcher:
 
                 switch (currentApheleiaFragment) {
-                    case DIARY:
+                    case FRAGMENT_DIARY:
                         ((DiaryFragment) currentFragment).showTimePeriodSwitcherDialog();
                         break;
-                    case MARKS:
+                    case FRAGMENT_MARKS:
                         ((MarksFragment) currentFragment).showTimePeriodSwitcherDialog();
                         break;
-                    case SCHEDULE:
+                    case FRAGMENT_SCHEDULE:
                         ((ScheduleFragment) currentFragment).showTimePeriodSwitcherDialog();
                         break;
                 }
@@ -203,17 +276,17 @@ public class MainActivity extends AppCompatActivity
         boolean doNotClose = false;
 
         if (id == R.id.nav_diary) {
-            setFragment(ApheleiaFragment.DIARY);
+            setFragment(FRAGMENT_DIARY);
         } else if (id == R.id.nav_marks) {
-            setFragment(ApheleiaFragment.MARKS);
+            setFragment(FRAGMENT_MARKS);
 
         } else if (id == R.id.nav_finals) {
-            setFragment(ApheleiaFragment.FINALS);
+            setFragment(FRAGMENT_FINALS);
         } else if (id == R.id.nav_schedule) {
-            setFragment(ApheleiaFragment.SCHEDULE);
+            setFragment(FRAGMENT_SCHEDULE);
 
         } else if (id == R.id.nav_messages) {
-            setFragment(ApheleiaFragment.MESSAGES);
+            setFragment(FRAGMENT_MESSAGES);
 
         } else if (id == R.id.nav_logout) {
             logout();
@@ -228,26 +301,33 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private enum ApheleiaFragment {
-        DIARY, MARKS, SCHEDULE, MESSAGES, FINALS
+    private boolean lidlIsTabletMode(){
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && (((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) || ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
     }
 
-    private Fragment currentFragment;
-    private ApheleiaFragment currentApheleiaFragment = ApheleiaFragment.DIARY;
+    public static final String FRAGMENT_DIARY = "diary";
+    public static final String FRAGMENT_MARKS = "marks";
+    public static final String FRAGMENT_SCHEDULE = "schedule";
+    public static final String FRAGMENT_MESSAGES = "messages";
+    public static final String FRAGMENT_FINALS = "finals";
 
-    private void setFragment(ApheleiaFragment fragment) {
-        if (fragment == currentApheleiaFragment)
+
+    private Fragment currentFragment;
+    private static String currentApheleiaFragment = FRAGMENT_DIARY;
+
+    private void setFragment(String fragment) {
+        if (fragment.equals(currentApheleiaFragment))
             return;
 
         currentApheleiaFragment = fragment;
 
         FragmentTransaction transaction = fragmentManager.beginTransaction().hide(currentFragment).setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit);
         switch (fragment) {
-            case DIARY:
-                Fragment diary = fragmentManager.findFragmentByTag(Tags.DIARY);
+            case FRAGMENT_DIARY:
+                Fragment diary = fragmentManager.findFragmentByTag(FRAGMENT_DIARY);
                 if (diary == null) {
                     diary = new DiaryFragment();
-                    transaction.add(R.id.fragmentContainer, diary, Tags.DIARY);
+                    transaction.add(R.id.fragmentContainer, diary, FRAGMENT_DIARY);
                 } else {
                     transaction.show(diary);
                 }
@@ -255,11 +335,11 @@ public class MainActivity extends AppCompatActivity
                 timePeriodSwitchButton.setVisible(true);
                 mailFolderSwitchButton.setVisible(false);
                 break;
-            case MARKS:
-                Fragment marks = fragmentManager.findFragmentByTag(Tags.MARKS);
+            case FRAGMENT_MARKS:
+                Fragment marks = fragmentManager.findFragmentByTag(FRAGMENT_MARKS);
                 if (marks == null) {
                     marks = new MarksFragment();
-                    transaction.add(R.id.fragmentContainer, marks, Tags.MARKS);
+                    transaction.add(R.id.fragmentContainer, marks, FRAGMENT_MARKS);
                 } else {
                     transaction.show(marks);
                 }
@@ -267,11 +347,11 @@ public class MainActivity extends AppCompatActivity
                 timePeriodSwitchButton.setVisible(true);
                 mailFolderSwitchButton.setVisible(false);
                 break;
-            case SCHEDULE:
-                Fragment schedule = fragmentManager.findFragmentByTag(Tags.SCHEDULE);
+            case FRAGMENT_SCHEDULE:
+                Fragment schedule = fragmentManager.findFragmentByTag(FRAGMENT_SCHEDULE);
                 if (schedule == null) {
                     schedule = new ScheduleFragment();
-                    transaction.add(R.id.fragmentContainer, schedule, Tags.SCHEDULE);
+                    transaction.add(R.id.fragmentContainer, schedule, FRAGMENT_SCHEDULE);
                 } else {
                     transaction.show(schedule);
                 }
@@ -279,11 +359,11 @@ public class MainActivity extends AppCompatActivity
                 timePeriodSwitchButton.setVisible(true);
                 mailFolderSwitchButton.setVisible(false);
                 break;
-            case MESSAGES:
-                Fragment messages = fragmentManager.findFragmentByTag(Tags.MESSAGES);
+            case FRAGMENT_MESSAGES:
+                Fragment messages = fragmentManager.findFragmentByTag(FRAGMENT_MESSAGES);
                 if (messages == null) {
                     messages = new MessagesFragment();
-                    transaction.add(R.id.fragmentContainer, messages, Tags.MESSAGES);
+                    transaction.add(R.id.fragmentContainer, messages, FRAGMENT_MESSAGES);
                 } else {
                     transaction.show(messages);
                 }
@@ -291,11 +371,11 @@ public class MainActivity extends AppCompatActivity
                 timePeriodSwitchButton.setVisible(false);
                 mailFolderSwitchButton.setVisible(true);
                 break;
-            case FINALS:
-                Fragment finals = fragmentManager.findFragmentByTag(Tags.FINALS);
+            case FRAGMENT_FINALS:
+                Fragment finals = fragmentManager.findFragmentByTag(FRAGMENT_FINALS);
                 if (finals == null) {
                     finals = new FinalsFragment();
-                    transaction.add(R.id.fragmentContainer, finals, Tags.FINALS);
+                    transaction.add(R.id.fragmentContainer, finals, FRAGMENT_FINALS);
                 } else {
                     transaction.show(finals);
                 }
@@ -345,13 +425,16 @@ public class MainActivity extends AppCompatActivity
                 public void onClick(DialogInterface dialogInterface, int i) {
                     studentPickerDialog.dismiss();
                     if (studentsIds[i].equals(profileHelper.getCurrentStudentId())) {
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(drawer!=null)
+                            drawer.closeDrawer(GravityCompat.START);
                         return;
                     }
                     studentName.setText(studentsNames[i]);
                     profileHelper.setCurrentStudent(studentsIds[i]);
                     studentSwitched();
-                    drawer.closeDrawer(GravityCompat.START);
+
+                    if(drawer!=null)
+                        drawer.closeDrawer(GravityCompat.START);
                 }
             }).setNegativeButton(getString(R.string.cancel), null).create();
 

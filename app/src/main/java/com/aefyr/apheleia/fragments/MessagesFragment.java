@@ -4,14 +4,17 @@ package com.aefyr.apheleia.fragments;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.ArraySet;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +42,7 @@ import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
-import java.util.HashSet;
+import java.io.Serializable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,7 +64,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     private MessagesHelper messagesHelper;
 
     private static MessagesList.Folder currentFolder;
-    private HashSet<AsyncTask> tasks;
+    private ArraySet<AsyncTask> tasks;
     private MessagesList messagesList;
 
 
@@ -91,7 +94,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         apiClient = EljurApiClient.getInstance(getActivity());
         connectionHelper = ConnectionHelper.getInstance(getActivity());
         messagesHelper = MessagesHelper.getInstance(getActivity());
-        tasks = new HashSet<>();
+        tasks = new ArraySet<>();
 
         if (currentFolder == null)
             currentFolder = MessagesList.Folder.INBOX;
@@ -102,7 +105,20 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadMessages(currentFolder);
+
+        if(savedInstanceState!=null){
+            Log.d("AMF", "savedInstanceState found");
+            Serializable messages = savedInstanceState.getSerializable("messages");
+            if(messages!=null) {
+                setMessagesToAdapter((MessagesList) messages);
+                Log.d("AMF", "Got messages from savedInstanceState");
+                firstLoad = false;
+            }else
+                loadMessages(currentFolder);
+
+            openedMessage = (ShortMessage) savedInstanceState.getSerializable("openedMessage");
+        }else
+            loadMessages(currentFolder);
     }
 
     private static final int COMPOSE_FAB_VISIBILITY_CHANGE_THRESHOLD_IN_DP = 4;
@@ -149,12 +165,14 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
     private void setMessagesToAdapter(MessagesList messagesList) {
+        this.messagesList = messagesList;
+
         if (messagesAdapter == null) {
-            messagesAdapter = new MessagesAdapter(getActivity(), messagesList.getMessages(), this);
+            messagesAdapter = new MessagesAdapter(getActivity(), messagesList==null?null:messagesList.getMessages(), this);
             messagesAdapter.setHasStableIds(true);
             messagesRecycler.setAdapter(messagesAdapter);
         } else
-            messagesAdapter.setMessages(messagesList.getMessages());
+            messagesAdapter.setMessages(messagesList==null?null:messagesList.getMessages());
         checkEmptiness(messagesList);
     }
 
@@ -182,10 +200,9 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         currentRequest = apiClient.getMessages(persona, folder, false, new EljurApiClient.JournalismListener<MessagesList>() {
             @Override
             public void onSuccess(MessagesList result) {
-                messagesList = result;
                 System.out.println("Set messages!");
-                messagesHelper.saveMessages(messagesList, folder == MessagesList.Folder.INBOX, null);
-                setMessagesToAdapter(messagesList);
+                messagesHelper.saveMessages(result, folder == MessagesList.Folder.INBOX, null);
+                setMessagesToAdapter(result);
                 refreshLayout.setRefreshing(false);
             }
 
@@ -211,8 +228,8 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     private boolean folderToggled;
 
     public void toggleFolder() {
-        if (!currentRequest.hasHadResponseDelivered())
-            currentRequest.cancel();
+        cancelRequest();
+
         if (currentFolder == MessagesList.Folder.INBOX)
             currentFolder = MessagesList.Folder.SENT;
         else
@@ -269,12 +286,18 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void checkEmptiness(MessagesList list) {
-        if (list.getMessages().size() == 0)
+        if (messagesList==null||list.getMessages().size() == 0)
             emptyMessages.setVisibility(View.VISIBLE);
         else
             emptyMessages.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("messages", messagesList);
+        outState.putSerializable("openedMessage", openedMessage);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -303,7 +326,9 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void updateActionBarTitle() {
-        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MESSAGES, FirebaseAnalytics.getInstance(getActivity()));
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null || currentFolder == MessagesList.Folder.INBOX) ? R.string.inbox : R.string.sent));
+        if(!isHidden()) {
+            AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MESSAGES, FirebaseAnalytics.getInstance(getActivity()));
+            ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString((currentFolder == null || currentFolder == MessagesList.Folder.INBOX) ? R.string.inbox : R.string.sent));
+        }
     }
 }

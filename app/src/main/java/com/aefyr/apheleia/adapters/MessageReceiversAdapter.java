@@ -1,6 +1,8 @@
 package com.aefyr.apheleia.adapters;
 
 import android.animation.ObjectAnimator;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -45,7 +47,7 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
 
     public MessageReceiversAdapter(MessageReceiversInfo receiversInfo) {
         this.receiversInfo = receiversInfo;
-        innerRecyclerVisibilities = new boolean[receiversInfo.getGroups().size()];
+        innerRecyclerVisibilities = new boolean[receiversInfo==null?0:receiversInfo.getGroups().size()];
         Arrays.fill(innerRecyclerVisibilities, false);
 
 
@@ -118,7 +120,7 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
 
     @Override
     public int getItemCount() {
-        return receiversInfo.getGroups().size();
+        return receiversInfo==null?0:receiversInfo.getGroups().size();
     }
 
     @Override
@@ -188,4 +190,19 @@ public class MessageReceiversAdapter extends RecyclerView.Adapter<MessageReceive
             });
         }
     }
+
+    public void writeStateToBundle(Bundle bundle){
+        bundle.putSerializable("MRA_checkedReceivers", checkedReceivers);
+        bundle.putSerializable("MRA_receiversData", receiversInfo);
+        bundle.putBooleanArray("MRA_visibleGroups", innerRecyclerVisibilities);
+    }
+
+    public void restoreStateFromBundle(Bundle bundle){
+        receiversInfo = (MessageReceiversInfo) bundle.getSerializable("MRA_receiversData");
+        checkedReceivers = (HashSet<String>) bundle.getSerializable("MRA_checkedReceivers");
+        innerRecyclerVisibilities = bundle.getBooleanArray("MRA_visibleGroups");
+
+        notifyDataSetChanged();
+    }
+
 }

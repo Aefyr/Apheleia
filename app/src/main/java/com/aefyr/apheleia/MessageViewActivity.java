@@ -5,9 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,11 +31,14 @@ import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
+import java.io.Serializable;
+
 public class MessageViewActivity extends AppCompatActivity {
 
     private Request messageGetRequest;
     private boolean inbox;
     private String messageId;
+    private MessageInfo message;
 
     private View messageLayout;
     private TextView subject;
@@ -69,12 +74,17 @@ public class MessageViewActivity extends AppCompatActivity {
         if (!inbox)
             replyFab.hide();
 
-        loadingDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        loadingDialog.setCancelable(false);
-        loadingDialog.setCanceledOnTouchOutside(false);
-        loadingDialog.setMessage(getString(R.string.fetching_message));
+        if(savedInstanceState!=null) {
+            Log.d("MVA", "savedInstanceState found!");
+            Serializable message = savedInstanceState.getSerializable("message");
+            if(message!=null) {
+                setMessage((MessageInfo) message);
+                Log.d("MVA", "Loaded message from savedInstanceState");
+            }else
+                getMessage();
+        }else
+            getMessage();
 
-        getMessage();
     }
 
     @Override
@@ -89,6 +99,8 @@ public class MessageViewActivity extends AppCompatActivity {
     }
 
     private void setMessage(final MessageInfo message) {
+        this.message = message;
+
         AnalyticsHelper.viewedMessage(FirebaseAnalytics.getInstance(this));
         messageLayout.setVisibility(View.VISIBLE);
 
@@ -154,10 +166,16 @@ public class MessageViewActivity extends AppCompatActivity {
             }
         }
 
-        loadingDialog.dismiss();
+        if(loadingDialog!=null&&loadingDialog.isShowing())
+            loadingDialog.dismiss();
     }
 
     private void getMessage() {
+        loadingDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        loadingDialog.setCancelable(false);
+        loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog.setMessage(getString(R.string.fetching_message));
+
         loadingDialog.show();
 
         messageGetRequest = EljurApiClient.getInstance(this).getMessageInfo(Helper.getInstance(this).getPersona(), inbox ? MessagesList.Folder.INBOX : MessagesList.Folder.SENT, messageId, new EljurApiClient.JournalismListener<MessageInfo>() {
@@ -202,8 +220,14 @@ public class MessageViewActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("message", message);
+    }
+
+    @Override
     protected void onDestroy() {
-        if (!messageGetRequest.hasHadResponseDelivered())
+        if (messageGetRequest!=null&&!messageGetRequest.hasHadResponseDelivered())
             messageGetRequest.cancel();
         super.onDestroy();
     }

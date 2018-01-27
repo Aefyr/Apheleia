@@ -2,11 +2,14 @@ package com.aefyr.apheleia.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +35,8 @@ import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
+import java.io.Serializable;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -50,6 +55,8 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private ProfileHelper profileHelper;
     private FinalsHelper finalsHelper;
     private ConnectionHelper connectionHelper;
+
+    private Finals finals;
 
     public FinalsFragment() {
         // Required empty public constructor
@@ -80,10 +87,12 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        studentSwitched();
+        studentSwitched(savedInstanceState);
     }
 
     private void setFinalsToAdapter(Finals finals) {
+        this.finals = finals;
+
         if (finalsAdapter == null) {
             finalsAdapter = new FinalsAdapter(getActivity(), finals);
             finalsAdapter.setHasStableIds(true);
@@ -147,10 +156,24 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
         loadFinals();
     }
 
-    public void studentSwitched() {
-        firstLoad = true;
+    public void studentSwitched(Bundle savedInstanceState) {
         currentStudent = profileHelper.getCurrentStudentId();
-        loadFinals();
+
+        if(savedInstanceState!=null) {
+            Log.d("AFF", "savedInstanceState found");
+            Serializable finals = savedInstanceState.getSerializable("finals");
+            if(finals!=null){
+                setFinalsToAdapter((Finals) finals);
+                finalsRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
+                Log.d("AFF", "Got finals from savedInstanceState");
+            }else {
+                firstLoad = true;
+                loadFinals();
+            }
+        }else {
+            firstLoad = true;
+            loadFinals();
+        }
     }
 
     private void checkEmptiness(Finals finals) {
@@ -179,16 +202,28 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
         if (!hidden) {
             updateActionBarTitle();
             if (!currentStudent.equals(profileHelper.getCurrentStudentId()))
-                studentSwitched();
+                studentSwitched(null);
         } else
             refreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("finals", finals);
+
+        int[] pos = new int[((StaggeredGridLayoutManager) finalsRecycler.getLayoutManager()).getSpanCount()];
+        ((StaggeredGridLayoutManager) finalsRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);
+        Log.d("AFF", "scrollPos=" + pos[0] + ", " + pos[1]);
+        outState.putInt("scrollPosition", pos[0]);
     }
 
     @Override
     public void onAction(Action action) {
         switch (action) {
             case STUDENT_SWITCHED:
-                studentSwitched();
+                studentSwitched(null);
                 break;
             case UPDATE_REQUESTED:
                 loadFinals();
@@ -197,7 +232,9 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     private void updateActionBarTitle() {
-        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_FINALS, FirebaseAnalytics.getInstance(getActivity()));
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.finals));
+        if(!isHidden()) {
+            AnalyticsHelper.viewSection(FirebaseConstants.SECTION_FINALS, FirebaseAnalytics.getInstance(getActivity()));
+            ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.finals));
+        }
     }
 }

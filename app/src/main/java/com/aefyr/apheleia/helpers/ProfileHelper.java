@@ -17,10 +17,12 @@ import java.util.Set;
 public class ProfileHelper {
     private static ProfileHelper instance;
     private SharedPreferences preferences;
+    private boolean demoMode;
 
     private ProfileHelper(Context c) {
         instance = this;
         preferences = PreferenceManager.getDefaultSharedPreferences(c);
+        demoMode = preferences.getBoolean("debug_fake_name", false);
     }
 
     public static ProfileHelper getInstance(Context c) {
@@ -44,7 +46,7 @@ public class ProfileHelper {
     }
 
     public String getStudentName(String studentId) {
-        return preferences.getString("student_name_" + studentId, "Tony Barrera");
+        return demoMode?"Немцов Руслан":preferences.getString("student_name_" + studentId, "Tony Barrera");
     }
 
     public void setStudentName(String name, String studentId) {
@@ -52,7 +54,7 @@ public class ProfileHelper {
     }
 
     public String getStudentClass(String studentId) {
-        return preferences.getString("student_class_" + studentId, "999X");
+        return demoMode?"5В":preferences.getString("student_class_" + studentId, "999X");
     }
 
     public void setStudentClass(String clazz, String studentId) {
@@ -76,7 +78,7 @@ public class ProfileHelper {
     }
 
     public String getName() {
-        return preferences.getString("name", "n");
+        return demoMode?"Агния Немцова":preferences.getString("name", "n");
     }
 
     public void setName(String name) {

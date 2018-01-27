@@ -3,6 +3,7 @@ package com.aefyr.apheleia.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import com.aefyr.apheleia.LoginActivity;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MarksGridRecyclerAdapter;
+import com.aefyr.apheleia.custom.PreloadLayoutManager;
 import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;
@@ -37,6 +40,7 @@ import com.android.volley.Request;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -63,6 +67,8 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private int requestedPeriod;
 
     private AlertDialog periodsPickerDialog;
+
+    private MarksGrid marks;
 
     public MarksFragment() {
         // Required empty public constructor
@@ -95,7 +101,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        studentSwitched();
+        studentSwitched(savedInstanceState);
     }
 
     private boolean loadedFromMemory = false;
@@ -191,6 +197,8 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private void setGridToAdapter(MarksGrid grid) {
+        marks = grid;
+
         if (gridRecyclerAdapter == null) {
             gridRecyclerAdapter = new MarksGridRecyclerAdapter(getActivity(), grid);
             gridRecyclerAdapter.setHasStableIds(true);
@@ -205,9 +213,8 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private String[] periodsNames;
     private boolean brokenStudent = false;
 
-    private void studentSwitched() {
+    private void studentSwitched(Bundle savedInstanceState) {
         cancelRequest();
-        firstLoad = true;
         brokenStudent = false;
         setEmptinessTextShown(false);
 
@@ -245,7 +252,22 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }).create();
 
         requestedPeriod = selectedPeriod;
-        refreshMarks();
+
+        if(savedInstanceState!=null){
+            Log.d("AMGF", "savedInstanceState found");
+            Serializable marks = savedInstanceState.getSerializable("marks");
+            if(marks!=null) {
+                setGridToAdapter((MarksGrid) marks);
+                marksRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
+                Log.d("AMGF", "Got marks from savedInstanceState");
+            }else {
+                firstLoad = true;
+                refreshMarks();
+            }
+        }else {
+            firstLoad = true;
+            refreshMarks();
+        }
     }
 
     public void showTimePeriodSwitcherDialog() {
@@ -271,10 +293,27 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         if (!hidden) {
             updateActionBarTitle();
             if (!currentStudent.equals(profileHelper.getCurrentStudentId()))
-                studentSwitched();
+                studentSwitched(null);
         } else {
             cancelRequest();
             refreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("marks", marks);
+
+        if(marksRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+            int[] pos = new int[2];
+            ((StaggeredGridLayoutManager) marksRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);
+            Log.d("AMGF", "scrollPos=" + pos[0] + ", " + pos[1]);
+            outState.putInt("scrollPosition", pos[0]);
+        }else {
+            Log.d("AMGF", "scrollPos=" + ((LinearLayoutManager) marksRecycler.getLayoutManager()).findFirstVisibleItemPosition());
+            outState.putInt("scrollPosition", ((LinearLayoutManager) marksRecycler.getLayoutManager()).findFirstVisibleItemPosition());
         }
     }
 
@@ -295,7 +334,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onAction(Action action) {
         switch (action) {
             case STUDENT_SWITCHED:
-                studentSwitched();
+                studentSwitched(null);
                 break;
             case UPDATE_REQUESTED:
                 refreshMarks();
@@ -304,7 +343,9 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private void updateActionBarTitle() {
-        AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MARKS, FirebaseAnalytics.getInstance(getActivity()));
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
+        if(!isHidden()) {
+            AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MARKS, FirebaseAnalytics.getInstance(getActivity()));
+            ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
+        }
     }
 }

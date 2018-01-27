@@ -4,6 +4,7 @@ package com.aefyr.apheleia.fragments;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
@@ -49,12 +50,17 @@ public class MCReceiversFragment extends Fragment {
         receiversRecycler.addItemDecoration(dividerItemDecoration);
         receiversRecycler.setItemViewCacheSize(4);
 
-        progressDialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage(getString(R.string.fetching_receivers));
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setCancelable(false);
+        if(savedInstanceState==null) {
+            progressDialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage(getString(R.string.fetching_receivers));
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setCancelable(false);
 
-        loadReceivers();
+            loadReceivers();
+        }else {
+            setReceiversInfoToAdapter(null);
+            receiversAdapter.restoreStateFromBundle(savedInstanceState);
+        }
 
         return view;
     }
@@ -123,8 +129,14 @@ public class MCReceiversFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        if (!receiversGetRequest.hasHadResponseDelivered())
+        if (receiversGetRequest!=null&&!receiversGetRequest.hasHadResponseDelivered())
             receiversGetRequest.cancel();
         super.onDetach();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        receiversAdapter.writeStateToBundle(outState);
     }
 }

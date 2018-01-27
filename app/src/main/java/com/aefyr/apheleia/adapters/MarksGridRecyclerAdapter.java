@@ -86,7 +86,7 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
 
             int itemsCount = (int) (Utility.displayWidthPx(itemView.getResources()) / Utility.dpToPx(46, itemView.getResources()));
             if ((Utility.displayWidthDp(itemView.getResources()) >= 720))
-                itemsCount /= 2;
+                itemsCount /= 3;
 
             GridLayoutManager m = new GridLayoutManager(itemView.getContext(), itemsCount);
             m.setInitialPrefetchItemCount(128);
