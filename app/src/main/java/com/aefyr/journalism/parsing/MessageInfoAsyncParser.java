@@ -30,11 +30,19 @@ public class MessageInfoAsyncParser {
         return instance == null ? new MessageInfoAsyncParser() : instance;
     }
 
-    public void parseMessage(String rawMessage, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessageInfo> listener) {
-        new MessageInfoParseTask().execute(new AsyncParserParams<MessageInfo>(rawMessage, folder == MessagesList.Folder.INBOX ? "i" : "s", listener));
+    public static final int ALL_RECEIVERS = -1;
+
+    public void parseMessage(String rawMessage, MessagesList.Folder folder, int parsedReceiversCount, EljurApiClient.JournalismListener<MessageInfo> listener) {
+        new MessageInfoParseTask(parsedReceiversCount).execute(new AsyncParserParams<MessageInfo>(rawMessage, folder == MessagesList.Folder.INBOX ? "i" : "s", listener));
     }
 
     private class MessageInfoParseTask extends AsyncParserBase<MessageInfo> {
+        int parsedReceiversCount;
+
+        public MessageInfoParseTask(int parsedReceiversCount){
+            this.parsedReceiversCount = parsedReceiversCount;
+        }
+
         @Override
         protected AsyncParserTaskResult<MessageInfo> doInBackground(AsyncParserParams<MessageInfo>... params) {
             bindJournalismListener(params[0].listener);
@@ -44,18 +52,20 @@ public class MessageInfoAsyncParser {
             JsonObject message = Utility.getJsonFromResponse(rawResponse).getAsJsonObject("message");
 
             JsonArray jReceivers = message.getAsJsonArray("user_to");
-            ArrayList<MessagePerson> receivers = new ArrayList<MessagePerson>(jReceivers.size());
-            for (JsonElement receiverEl : jReceivers) {
 
-                JsonObject receiver = receiverEl.getAsJsonObject();
+            if(parsedReceiversCount==ALL_RECEIVERS)
+                parsedReceiversCount = jReceivers.size();
+
+            ArrayList<MessagePerson> receivers = new ArrayList<MessagePerson>(parsedReceiversCount);
+            for(int i = 0; i<parsedReceiversCount; i++){
+                JsonObject receiver = jReceivers.get(i).getAsJsonObject();
                 receivers.add(MinorObjectsFactory.createMessagePerson(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString()));
             }
-
 
             JsonObject sender = message.getAsJsonObject("user_from");
             MessageInfo messageInfo;
             try {
-                messageInfo = MinorObjectsFactory.createMessageInfo(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("text").getAsString(), message.get("date").getAsString(), folder, MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), receivers);
+                messageInfo = MinorObjectsFactory.createMessageInfo(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("text").getAsString(), message.get("date").getAsString(), folder, MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), receivers, jReceivers.size());
             } catch (JournalismException e) {
                 return new AsyncParserTaskResult<>(e);
             }

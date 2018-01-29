@@ -228,8 +228,6 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         brokenStudent = false;
         setEmptinessTextShown(false);
 
-        currentStudent = profileHelper.getCurrentStudentId();
-
         if(periodsHelper.getCurrentWeek() == null){
             brokenStudent = true;
             setDiaryEntryToAdapter(null);
@@ -275,16 +273,19 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         if(savedInstanceState!=null){
             Log.d("ADF", "savedInstanceState found");
+            currentStudent = savedInstanceState.getString("currentStudent");
             Serializable diary = savedInstanceState.getSerializable("diary");
             if(diary!=null) {
                 setDiaryEntryToAdapter((DiaryEntry) diary);
                 diaryRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
                 Log.d("ADF", "Got diary from savedInstanceState");
             }else {
+                currentStudent = profileHelper.getCurrentStudentId();
                 firstLoad = true;
                 refreshDiary();
             }
         }else {
+            currentStudent = profileHelper.getCurrentStudentId();
             firstLoad = true;
             refreshDiary();
         }
@@ -352,6 +353,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("diary", diary);
+        outState.putString("currentStudent", currentStudent);
 
         if(diaryRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             int[] pos = new int[2];

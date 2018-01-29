@@ -1,7 +1,10 @@
 package com.aefyr.apheleia;
 
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -40,6 +43,9 @@ public class MessageComposeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_compose);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name), BitmapFactory.decodeResource(getResources(), R.mipmap.icon), getResources().getColor(R.color.colorRecentsTab)));
+
         boolean replyIntent = getIntent().getStringExtra("receiver") != null;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -54,12 +60,6 @@ public class MessageComposeActivity extends AppCompatActivity {
         }else {
             receiversFragment = new MCReceiversFragment();
             messageFragment = new MCMessageFragment();
-
-            if (replyIntent) {
-                receiversFragment.forceSetReceiver(getIntent().getStringExtra("receiver"));
-                messageFragment.setForcedMessageSubject(String.format(getString(R.string.reply_subject_prefix), getIntent().getStringExtra("subject")));
-                scrollToPage(1);
-            }
         }
 
         final ArrayList<Fragment> fragments = new ArrayList<>();
@@ -82,6 +82,14 @@ public class MessageComposeActivity extends AppCompatActivity {
                 return getString(position == 0 ? R.string.receivers : R.string.message);
             }
         });
+
+        if(savedInstanceState==null){
+            if (replyIntent) {
+                receiversFragment.forceSetReceiver(getIntent().getStringExtra("receiver"));
+                messageFragment.setForcedMessageSubject(String.format(getString(R.string.reply_subject_prefix), getIntent().getStringExtra("subject")));
+                scrollToPage(1);
+            }
+        }
 
 
     }
@@ -116,53 +124,57 @@ public class MessageComposeActivity extends AppCompatActivity {
             return;
         }
 
-        sendingDialog = new ProgressDialog(this);
-        sendingDialog.setMessage(getString(R.string.sending_message));
-        sendingDialog.setCancelable(false);
-        sendingDialog.setCanceledOnTouchOutside(false);
-        sendingDialog.show();
-
-        messageSendRequest = EljurApiClient.getInstance(this).sendMessage(Helper.getInstance(this).getPersona(), messageFragment.getMessageSubject(), messageFragment.getMessageText(), receiversFragment.getReceiversIds(), new EljurApiClient.JournalismListener<SentMessageResponse>() {
+        new AlertDialog.Builder(this).setMessage(R.string.send_confirmation).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
-            public void onSuccess(SentMessageResponse result) {
-                AnalyticsHelper.sentMessage(FirebaseAnalytics.getInstance(MessageComposeActivity.this));
-                sendingDialog.dismiss();
-                Chief.makeAToast(MessageComposeActivity.this, result.wasSent()?getString(R.string.message_sent):getString(R.string.sending_error));
-                finish();
-            }
+            public void onClick(DialogInterface dialog, int which) {
+                sendingDialog = new ProgressDialog(MessageComposeActivity.this);
+                sendingDialog.setMessage(getString(R.string.sending_message));
+                sendingDialog.setCancelable(false);
+                sendingDialog.setCanceledOnTouchOutside(false);
+                sendingDialog.show();
 
-            @Override
-            public void onNetworkError(boolean tokenIsWrong) {
-                if (tokenIsWrong) {
-                    LoginActivity.tokenExpired(MessageComposeActivity.this);
-                    return;
-                }
-                AlertDialog networkErrorDialog = new AlertDialog.Builder(MessageComposeActivity.this).setMessage(getString(R.string.network_error_tip)).setTitle(getString(R.string.cant_send_message)).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                messageSendRequest = EljurApiClient.getInstance(MessageComposeActivity.this).sendMessage(Helper.getInstance(MessageComposeActivity.this).getPersona(), messageFragment.getMessageSubject(), messageFragment.getMessageText(), receiversFragment.getReceiversIds(), new EljurApiClient.JournalismListener<SentMessageResponse>() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onSuccess(SentMessageResponse result) {
+                        AnalyticsHelper.sentMessage(FirebaseAnalytics.getInstance(MessageComposeActivity.this));
+                        sendingDialog.dismiss();
+                        Chief.makeAToast(MessageComposeActivity.this, result.wasSent()?getString(R.string.message_sent):getString(R.string.sending_error));
                         finish();
                     }
-                }).setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        sendMessage();
-                    }
-                }).setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        finish();
-                    }
-                }).create();
-                networkErrorDialog.setCanceledOnTouchOutside(false);
-                networkErrorDialog.show();
-            }
 
-            @Override
-            public void onApiError(JournalismException e) {
-                //Apparently, this never happens
-            }
-        });
+                    @Override
+                    public void onNetworkError(boolean tokenIsWrong) {
+                        if (tokenIsWrong) {
+                            LoginActivity.tokenExpired(MessageComposeActivity.this);
+                            return;
+                        }
+                        AlertDialog networkErrorDialog = new AlertDialog.Builder(MessageComposeActivity.this).setMessage(getString(R.string.network_error_tip)).setTitle(getString(R.string.cant_send_message)).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        }).setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                sendMessage();
+                            }
+                        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                finish();
+                            }
+                        }).create();
+                        networkErrorDialog.setCanceledOnTouchOutside(false);
+                        networkErrorDialog.show();
+                    }
 
+                    @Override
+                    public void onApiError(JournalismException e) {
+                        //Apparently, this never happens
+                    }
+                });
+            }
+        }).create().show();
     }
 
     @Override

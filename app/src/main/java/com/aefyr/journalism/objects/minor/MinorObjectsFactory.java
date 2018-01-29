@@ -189,7 +189,7 @@ public class MinorObjectsFactory {
         return sender;
     }
 
-    public static MessageInfo createMessageInfo(String id, String subject, String text, String rawDate, MessagesList.Folder folder, MessagePerson sender, ArrayList<MessagePerson> receivers) throws JournalismException {
+    public static MessageInfo createMessageInfo(String id, String subject, String text, String rawDate, MessagesList.Folder folder, MessagePerson sender, ArrayList<MessagePerson> parsedReceivers, int actualReceiversCount) throws JournalismException {
         MessageInfo message = new MessageInfo();
 
         message.parseDate(rawDate);
@@ -197,8 +197,9 @@ public class MinorObjectsFactory {
         message.subject = subject;
         message.text = text;
         message.sender = sender;
-        message.receivers = receivers;
+        message.parsedReceivers = parsedReceivers;
         message.folder = folder;
+        message.receiversCount = actualReceiversCount;
 
         return message;
     }

@@ -91,12 +91,12 @@ public class EljurApiClient {
         return EljurApiRequests.getMessages(queue, persona, folder, unreadOnly, listener);
     }
 
-    public Request getMessageInfo(EljurPersona persona, MessagesList.Folder folder, String messageId, JournalismListener<MessageInfo> listener) {
-        return EljurApiRequests.getMessageInfo(queue, persona, folder, messageId, listener);
+    public Request getMessageInfo(EljurPersona persona, MessagesList.Folder folder, String messageId, int numberOfReceiversToParse, JournalismListener<MessageInfo> listener) {
+        return EljurApiRequests.getMessageInfo(queue, persona, folder, messageId, numberOfReceiversToParse, listener);
     }
 
-    public Request getMessageInfoFromMessage(EljurPersona persona, ShortMessage message, JournalismListener<MessageInfo> listener) {
-        return EljurApiRequests.getMessageInfo(queue, persona, message.getFolder(), message.getId(), listener);
+    public Request getMessageInfoFromMessage(EljurPersona persona, ShortMessage message, int numberOfReceiversToParse, JournalismListener<MessageInfo> listener) {
+        return EljurApiRequests.getMessageInfo(queue, persona, message.getFolder(), message.getId(), numberOfReceiversToParse, listener);
     }
 
     public Request getMessagesReceivers(EljurPersona persona, JournalismListener<MessageReceiversInfo> listener) {

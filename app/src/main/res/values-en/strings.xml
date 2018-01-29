@@ -122,6 +122,7 @@
     <string name="watcher_first_check_warning">First new messages check will count all you unread messages as new</string>
     <string name="watcher_traffic_warning">Allowing messages check via cell network will increase your mobile traffic usage significantly.\n\nEach unread message in your inbox will cost you approximately 1.5 megabytes of traffic per month, this includes all of the unread messages you have, not only new ones.</string>
     <string name="sending_error">Error occurred while sending message</string>
+    <string name="send_confirmation">Send message?</string>
 
     <!-- Finals -->
     <string name="finals">Finals</string>

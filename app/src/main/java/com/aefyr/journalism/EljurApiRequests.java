@@ -390,13 +390,13 @@ class EljurApiRequests {
     }
 
     //Get message info!
-    static Request getMessageInfo(RequestQueue queue, EljurPersona persona, final MessagesList.Folder folder, String messageId, final EljurApiClient.JournalismListener<MessageInfo> listener) {
+    static Request getMessageInfo(RequestQueue queue, EljurPersona persona, final MessagesList.Folder folder, String messageId, final int numberOfReceiversToParse, final EljurApiClient.JournalismListener<MessageInfo> listener) {
         EljurApiRequest apiRequest = new EljurApiRequest(persona, EljurApiRequest.GET_MESSAGE_INFO).addParameter("id", messageId);
 
         Request messageInfoRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
             @Override
             public void onResponse(String rawResponse) {
-                MessageInfoAsyncParser.getInstance().parseMessage(rawResponse, folder, listener);
+                MessageInfoAsyncParser.getInstance().parseMessage(rawResponse, folder, numberOfReceiversToParse, listener);
             }
         }, new Response.ErrorListener() {
             @Override

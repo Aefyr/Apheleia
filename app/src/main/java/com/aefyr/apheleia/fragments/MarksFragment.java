@@ -218,8 +218,6 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         brokenStudent = false;
         setEmptinessTextShown(false);
 
-        currentStudent = profileHelper.getCurrentStudentId();
-
         if(periodsHelper.getCurrentPeriod() == null){
             brokenStudent = true;
             setGridToAdapter(null);
@@ -255,16 +253,19 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         if(savedInstanceState!=null){
             Log.d("AMGF", "savedInstanceState found");
+            currentStudent = savedInstanceState.getString("currentStudent");
             Serializable marks = savedInstanceState.getSerializable("marks");
             if(marks!=null) {
                 setGridToAdapter((MarksGrid) marks);
                 marksRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
                 Log.d("AMGF", "Got marks from savedInstanceState");
             }else {
+                currentStudent = profileHelper.getCurrentStudentId();
                 firstLoad = true;
                 refreshMarks();
             }
         }else {
+            currentStudent = profileHelper.getCurrentStudentId();
             firstLoad = true;
             refreshMarks();
         }
@@ -303,8 +304,8 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        super.onSaveInstanceState(outState);
         outState.putSerializable("marks", marks);
+        outState.putString("currentStudent", currentStudent);
 
         if(marksRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             int[] pos = new int[2];

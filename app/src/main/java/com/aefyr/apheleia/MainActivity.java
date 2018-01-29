@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name), BitmapFactory.decodeResource(getResources(), R.mipmap.icon), getResources().getColor(R.color.colorRecentsTab)));
+
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             if(intent.getStringExtra("message_dup")!=null){
@@ -89,10 +92,6 @@ public class MainActivity extends AppCompatActivity
             Tutorial.showTutorial(this);
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("first_launch", false).apply();
         }
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name), BitmapFactory.decodeResource(getResources(), R.mipmap.icon), getResources().getColor(R.color.colorRecentsTab)));
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

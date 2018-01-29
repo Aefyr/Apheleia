@@ -157,20 +157,21 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     public void studentSwitched(Bundle savedInstanceState) {
-        currentStudent = profileHelper.getCurrentStudentId();
-
         if(savedInstanceState!=null) {
             Log.d("AFF", "savedInstanceState found");
+            currentStudent = savedInstanceState.getString("currentStudent");
             Serializable finals = savedInstanceState.getSerializable("finals");
             if(finals!=null){
                 setFinalsToAdapter((Finals) finals);
                 finalsRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
                 Log.d("AFF", "Got finals from savedInstanceState");
             }else {
+                currentStudent = profileHelper.getCurrentStudentId();
                 firstLoad = true;
                 loadFinals();
             }
         }else {
+            currentStudent = profileHelper.getCurrentStudentId();
             firstLoad = true;
             loadFinals();
         }
@@ -210,8 +211,8 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        super.onSaveInstanceState(outState);
         outState.putSerializable("finals", finals);
+        outState.putString("currentStudent", currentStudent);
 
         int[] pos = new int[((StaggeredGridLayoutManager) finalsRecycler.getLayoutManager()).getSpanCount()];
         ((StaggeredGridLayoutManager) finalsRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);

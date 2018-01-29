@@ -241,8 +241,6 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         brokenStudent = false;
         setEmptinessTextShown(false);
 
-        currentStudent = profileHelper.getCurrentStudentId();
-
         if(periodsHelper.getCurrentScheduleWeek() == null){
             brokenStudent = true;
             setScheduleToAdapter(null);
@@ -288,16 +286,19 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         if(savedInstanceState!=null){
             Log.d("ASF", "savedInstanceState found");
+            currentStudent = savedInstanceState.getString("currentStudent");
             Serializable schedule = savedInstanceState.getSerializable("schedule");
             if(schedule!=null) {
                 setScheduleToAdapter((Schedule) schedule);
                 scheduleRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
                 Log.d("ASF", "Got diary from savedInstanceState");
             }else {
+                currentStudent = profileHelper.getCurrentStudentId();
                 firstLoad = true;
                 refreshSchedule();
             }
         }else {
+            currentStudent = profileHelper.getCurrentStudentId();
             firstLoad = true;
             refreshSchedule();
         }
@@ -366,6 +367,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("schedule", schedule);
+        outState.putString("currentStudent", currentStudent);
 
         if(scheduleRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             int[] pos = new int[2];

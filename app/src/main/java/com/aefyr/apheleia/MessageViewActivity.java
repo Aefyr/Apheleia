@@ -1,11 +1,13 @@
 package com.aefyr.apheleia;
 
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -56,6 +58,9 @@ public class MessageViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_view);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name), BitmapFactory.decodeResource(getResources(), R.mipmap.icon), getResources().getColor(R.color.colorRecentsTab)));
 
         getSupportActionBar().setTitle(getString(R.string.viewing_message));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -109,7 +114,7 @@ public class MessageViewActivity extends AppCompatActivity {
         text.setText(message.getText());
 
 
-        int receiversCount = message.getReceivers().size();
+        int receiversCount = message.receiversCount();
         String receiversInfo;
         if (inbox) {
             sender.setText(String.format(getString(R.string.from), message.getSender().getCompositeName(true, true, true)));
@@ -117,7 +122,7 @@ public class MessageViewActivity extends AppCompatActivity {
                 receiversInfo = String.format(getString(R.string.to_many), getString(R.string.you), receiversCount - 1);
             } else {
                 StringBuilder receiversBuilder = new StringBuilder();
-                for (MessagePerson receiver : message.getReceivers()) {
+                for (MessagePerson receiver : message.getParsedReceivers()) {
                     receiversBuilder.append(receiver.getCompositeName(true, false, true)).append(", ");
                 }
                 receiversInfo = String.format(getString(R.string.to), receiversBuilder.toString().substring(0, receiversBuilder.length() - 2));
@@ -136,10 +141,10 @@ public class MessageViewActivity extends AppCompatActivity {
         } else {
             sender.setText(String.format(getString(R.string.from), getString(R.string.you)));
             if (receiversCount > 3) {
-                receiversInfo = String.format(getString(R.string.to_many), message.getReceivers().get(0).getCompositeName(true, false, true), receiversCount - 1);
+                receiversInfo = String.format(getString(R.string.to_many), message.getParsedReceivers().get(0).getCompositeName(true, false, true), receiversCount - 1);
             } else {
                 StringBuilder receiversBuilder = new StringBuilder();
-                for (MessagePerson receiver : message.getReceivers()) {
+                for (MessagePerson receiver : message.getParsedReceivers()) {
                     receiversBuilder.append(receiver.getCompositeName(true, false, true)).append(", ");
                 }
                 receiversInfo = String.format(getString(R.string.to), receiversBuilder.toString().substring(0, receiversBuilder.length() - 2));
@@ -178,7 +183,7 @@ public class MessageViewActivity extends AppCompatActivity {
 
         loadingDialog.show();
 
-        messageGetRequest = EljurApiClient.getInstance(this).getMessageInfo(Helper.getInstance(this).getPersona(), inbox ? MessagesList.Folder.INBOX : MessagesList.Folder.SENT, messageId, new EljurApiClient.JournalismListener<MessageInfo>() {
+        messageGetRequest = EljurApiClient.getInstance(this).getMessageInfo(Helper.getInstance(this).getPersona(), inbox ? MessagesList.Folder.INBOX : MessagesList.Folder.SENT, messageId, 4, new EljurApiClient.JournalismListener<MessageInfo>() {
             @Override
             public void onSuccess(MessageInfo result) {
                 setMessage(result);

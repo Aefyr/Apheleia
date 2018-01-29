@@ -13,7 +13,8 @@ import java.util.ArrayList;
 public class MessageInfo implements Serializable {
     MessagesList.Folder folder;
     MessagePerson sender;
-    ArrayList<MessagePerson> receivers;
+    int receiversCount;
+    ArrayList<MessagePerson> parsedReceivers;
     ArrayList<Attachment> attachments;
 
     String id;
@@ -30,8 +31,12 @@ public class MessageInfo implements Serializable {
         return sender;
     }
 
-    public ArrayList<MessagePerson> getReceivers() {
-        return receivers;
+    public ArrayList<MessagePerson> getParsedReceivers() {
+        return parsedReceivers;
+    }
+
+    public int receiversCount(){
+        return receiversCount;
     }
 
     public String getText() {
