@@ -55,6 +55,8 @@ public class MessageInfoAsyncParser {
 
             if(parsedReceiversCount==ALL_RECEIVERS)
                 parsedReceiversCount = jReceivers.size();
+            else
+                parsedReceiversCount = parsedReceiversCount>jReceivers.size()?jReceivers.size():parsedReceiversCount;
 
             ArrayList<MessagePerson> receivers = new ArrayList<MessagePerson>(parsedReceiversCount);
             for(int i = 0; i<parsedReceiversCount; i++){
