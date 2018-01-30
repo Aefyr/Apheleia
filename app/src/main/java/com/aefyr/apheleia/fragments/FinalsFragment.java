@@ -216,7 +216,6 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
         int[] pos = new int[((StaggeredGridLayoutManager) finalsRecycler.getLayoutManager()).getSpanCount()];
         ((StaggeredGridLayoutManager) finalsRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);
-        Log.d("AFF", "scrollPos=" + pos[0] + ", " + pos[1]);
         outState.putInt("scrollPosition", pos[0]);
     }
 

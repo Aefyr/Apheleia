@@ -356,9 +356,8 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         outState.putString("currentStudent", currentStudent);
 
         if(diaryRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-            int[] pos = new int[2];
+            int[] pos = new int[((StaggeredGridLayoutManager) diaryRecycler.getLayoutManager()).getSpanCount()];
             ((StaggeredGridLayoutManager) diaryRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);
-            Log.d("ADF", "scrollPos=" + pos[0] + ", " + pos[1]);
             outState.putInt("scrollPosition", pos[0]);
         }else {
             Log.d("ADF", "scrollPos=" + ((PreloadLayoutManager) diaryRecycler.getLayoutManager()).findFirstVisibleItemPosition());

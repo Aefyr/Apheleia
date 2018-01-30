@@ -1,5 +1,7 @@
 package com.aefyr.journalism;
 
+import android.util.Log;
+
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.PersonaInfo;
 import com.google.firebase.crash.FirebaseCrash;
@@ -15,8 +17,13 @@ public class Utility {
             return new JsonParser().parse(rawResponse).getAsJsonObject().getAsJsonObject("response").getAsJsonObject("result");
         } catch (Exception e) {
             e.printStackTrace();
-            FirebaseCrash.log(e.getMessage());
-            FirebaseCrash.report(new JournalismException("Unable to get response Json object"));
+            try {
+                FirebaseCrash.log(e.getMessage());
+                FirebaseCrash.report(new JournalismException("Unable to get response Json object"));
+            }catch (IllegalStateException e1){
+                Log.wtf("Journalism", "Unable to report an exception that has occurred during Json parsing to Firebase");
+            }
+
             return null;
         }
 
@@ -26,7 +33,13 @@ public class Utility {
         try {
             return new JsonParser().parse(rawResponse).getAsJsonObject();
         } catch (Exception e){
-            FirebaseCrash.report(e);
+            e.printStackTrace();
+            try {
+                FirebaseCrash.log(e.getMessage());
+                FirebaseCrash.report(new JournalismException("Unable to get response Json object"));
+            }catch (IllegalStateException e1){
+                Log.wtf("Journalism", "Unable to report an exception that has occurred during Json parsing to Firebase");
+            }
             return null;
         }
     }

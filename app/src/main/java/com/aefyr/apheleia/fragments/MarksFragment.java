@@ -308,9 +308,8 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         outState.putString("currentStudent", currentStudent);
 
         if(marksRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-            int[] pos = new int[2];
+            int[] pos = new int[((StaggeredGridLayoutManager) marksRecycler.getLayoutManager()).getSpanCount()];
             ((StaggeredGridLayoutManager) marksRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);
-            Log.d("AMGF", "scrollPos=" + pos[0] + ", " + pos[1]);
             outState.putInt("scrollPosition", pos[0]);
         }else {
             Log.d("AMGF", "scrollPos=" + ((LinearLayoutManager) marksRecycler.getLayoutManager()).findFirstVisibleItemPosition());

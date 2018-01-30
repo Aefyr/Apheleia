@@ -370,9 +370,8 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         outState.putString("currentStudent", currentStudent);
 
         if(scheduleRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-            int[] pos = new int[2];
+            int[] pos = new int[((StaggeredGridLayoutManager) scheduleRecycler.getLayoutManager()).getSpanCount()];
             ((StaggeredGridLayoutManager) scheduleRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);
-            Log.d("ASF", "scrollPos=" + pos[0] + ", " + pos[1]);
             outState.putInt("scrollPosition", pos[0]);
         }else {
             Log.d("ASF", "scrollPos=" + ((PreloadLayoutManager) scheduleRecycler.getLayoutManager()).findFirstVisibleItemPosition());
