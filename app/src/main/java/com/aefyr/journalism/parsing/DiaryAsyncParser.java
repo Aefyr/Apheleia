@@ -84,7 +84,7 @@ public class DiaryAsyncParser {
 
                     for (Map.Entry<String, JsonElement> jLessonKey : jLessons.entrySet()) {
                         JsonObject lessonObj = jLessonKey.getValue().getAsJsonObject();
-                        Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num"), Utility.getStringFromJsonSafe(lessonObj, "name"), Utility.getStringFromJsonSafe(lessonObj, "room"), Utility.getStringFromJsonSafe(lessonObj, "teacher"));
+                        Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num", "0"), Utility.getStringFromJsonSafe(lessonObj, "name", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "room", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "teacher", "Неизвестно"));
 
                         if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
                             try {
@@ -119,7 +119,7 @@ public class DiaryAsyncParser {
 
                             for (JsonElement attachmentEl : jAttachments) {
                                 JsonObject attachment = attachmentEl.getAsJsonObject();
-                                attachments.add(MinorObjectsFactory.createAttacment(attachment.get("filename").getAsString(), attachment.get("link").getAsString()));
+                                attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
                             }
                             MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
                             ;
@@ -162,7 +162,7 @@ public class DiaryAsyncParser {
 
                     for (JsonElement otLessonEl : jOvertimeLessons) {
                         JsonObject otLessonObj = otLessonEl.getAsJsonObject();
-                        Lesson otLesson = MinorObjectsFactory.createLesson("OT", Utility.getStringFromJsonSafe(otLessonObj, "name"), "OT", Utility.getStringFromJsonSafe(otLessonObj, "teacher"));
+                        Lesson otLesson = MinorObjectsFactory.createLesson("OT", Utility.getStringFromJsonSafe(otLessonObj, "name", "Неизвестно"), "OT", Utility.getStringFromJsonSafe(otLessonObj, "teacher", "Неизвестно"));
 
                         if (otLessonObj.get("starttime") != null && otLessonObj.get("endtime") != null) {
                             try {
@@ -197,7 +197,7 @@ public class DiaryAsyncParser {
 
                             for (JsonElement attachmentEl : jAttachments) {
                                 JsonObject attachment = attachmentEl.getAsJsonObject();
-                                attachments.add(MinorObjectsFactory.createAttacment(attachment.get("filename").getAsString(), attachment.get("link").getAsString()));
+                                attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
                             }
                             MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
                         }

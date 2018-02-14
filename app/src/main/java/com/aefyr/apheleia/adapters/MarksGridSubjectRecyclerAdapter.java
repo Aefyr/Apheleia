@@ -1,10 +1,13 @@
 package com.aefyr.apheleia.adapters;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -21,16 +24,15 @@ import com.aefyr.journalism.objects.minor.SubjectInGrid;
 class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubjectRecyclerAdapter.MarksGridSubjectViewHolder> {
 
     private SubjectInGrid subject;
-    private static LayoutInflater inflater;
+    private LayoutInflater inflater;
     private static TimeLord timeLord;
 
     MarksGridSubjectRecyclerAdapter(SubjectInGrid subject, LayoutInflater inflater2) {
         this.subject = subject;
+        inflater = inflater2;
 
-        if (inflater == null) {
-            inflater = inflater2;
+        if(timeLord == null)
             timeLord = TimeLord.getInstance();
-        }
     }
 
     void setSubject(SubjectInGrid subject) {
@@ -54,7 +56,8 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
             holder.mark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Chief.makeAnAlert(view.getContext(), mark.getComment());
+                    if(!((Activity)inflater.getContext()).isFinishing())
+                        Chief.makeAnAlert(inflater.getContext(), mark.getComment());
                 }
             });
             holder.mark.setBackgroundResource(R.drawable.mark_circle);

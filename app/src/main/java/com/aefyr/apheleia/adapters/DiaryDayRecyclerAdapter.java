@@ -1,8 +1,10 @@
 package com.aefyr.apheleia.adapters;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +31,7 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
     private static TimeLord timeLord;
     private static DiaryRecyclerAdapter.OnLinkOpenRequestListener linkOpenRequestListener;
 
-    private static LayoutInflater inflater;
+    private LayoutInflater inflater;
 
     private static String OVERTIME;
     private static int COLOR_NORMAL_LESSON;
@@ -39,9 +41,9 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
 
     DiaryDayRecyclerAdapter(WeekDay day, LayoutInflater inflater2) {
         this.day = day;
+        inflater = inflater2;
 
-        if (inflater == null) {
-            inflater = inflater2;
+        if (timeLord == null) {
             timeLord = TimeLord.getInstance();
             initializeStaticResources(inflater2.getContext().getResources());
         }
@@ -81,7 +83,8 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
             holder.lessonNumber.setTextColor(COLOR_NORMAL_LESSON);
         }
 
-        holder.lessonName.setText(lesson.getName());
+        //Cause, apparently, sometimes there are HTML tags in lesson name for no real reason >_<
+        holder.lessonName.setText(Html.fromHtml(lesson.getName()));
 
         if (lesson.hasTimes()) {
             holder.lessonTimes.setText(String.format("%s - %s", timeLord.getLessonTime(lesson.getStartTime()), timeLord.getLessonTime(lesson.getEndTime())));
@@ -155,7 +158,8 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
                     markButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Chief.makeAnAlert(view.getContext(), mark.getComment());
+                            if(!((Activity)inflater.getContext()).isFinishing())
+                                Chief.makeAnAlert(inflater.getContext(), mark.getComment());
                         }
                     });
                 } else {

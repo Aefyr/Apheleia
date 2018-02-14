@@ -298,7 +298,7 @@ class EljurApiRequests {
                     ArrayList<Lesson> lessons = null;
                     LESSONS:
                     {
-                        if(weekDay.get("items")==null)
+                        if(weekDay.get("items")==null||(weekDay.get("items").isJsonArray() && weekDay.get("items").getAsJsonArray().size()==0))
                             break LESSONS;
 
                         JsonObject jLessons = weekDay.getAsJsonObject("items");
@@ -306,7 +306,7 @@ class EljurApiRequests {
                         for (Map.Entry<String, JsonElement> entry2 : jLessons.entrySet()) {
                             JsonObject lessonObj = entry2.getValue().getAsJsonObject();
 
-                            Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num"), Utility.getStringFromJsonSafe(lessonObj, "name"), Utility.getStringFromJsonSafe(lessonObj, "room"), Utility.getStringFromJsonSafe(lessonObj, "teacher"));
+                            Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num", "0"), Utility.getStringFromJsonSafe(lessonObj, "name", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "room", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "teacher", "Неизвестно"));
 
                             if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
                                 try {
@@ -327,7 +327,7 @@ class EljurApiRequests {
                         overtimeLessons = new ArrayList<>(jOvertimeLessons.size());
                         for (JsonElement otLessonEl : jOvertimeLessons) {
                             JsonObject otLessonObj = otLessonEl.getAsJsonObject();
-                            Lesson otLesson = MinorObjectsFactory.createLesson("OT", Utility.getStringFromJsonSafe(otLessonObj, "name"), "OT", Utility.getStringFromJsonSafe(otLessonObj, "teacher"));
+                            Lesson otLesson = MinorObjectsFactory.createLesson("OT", Utility.getStringFromJsonSafe(otLessonObj, "name", "Неизвестно"), "OT", Utility.getStringFromJsonSafe(otLessonObj, "teacher", "Неизвестно"));
 
                             if (otLessonObj.get("starttime") != null && otLessonObj.get("endtime") != null) {
                                 try {

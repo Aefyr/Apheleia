@@ -52,14 +52,14 @@ public class Utility {
         return PersonaInfo.Gender.UNKNOWN;
     }
 
-    public static String getStringFromJsonSafe(JsonObject jsonObject, String key){
+    public static String getStringFromJsonSafe(JsonObject jsonObject, String key, String defaultValue){
         try {
             return jsonObject.get(key).getAsString();
         }catch (Exception e){
             e.printStackTrace();
             FirebaseCrash.log(e.getMessage());
             FirebaseCrash.report(new JournalismException("Unable to retrieve key \""+key+"\" from JsonObject: "+jsonObject.toString()));
-            return "Неизвестно";
+            return defaultValue;
         }
     }
 

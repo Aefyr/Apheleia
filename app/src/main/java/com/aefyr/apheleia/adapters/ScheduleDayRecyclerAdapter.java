@@ -2,6 +2,7 @@ package com.aefyr.apheleia.adapters;
 
 import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ class ScheduleDayRecyclerAdapter extends RecyclerView.Adapter<ScheduleDayRecycle
     private WeekDay day;
     private static TimeLord timeLord;
 
-    private static LayoutInflater inflater;
+    private LayoutInflater inflater;
 
     private static String TEACHER;
     private static String ROOM;
@@ -31,10 +32,10 @@ class ScheduleDayRecyclerAdapter extends RecyclerView.Adapter<ScheduleDayRecycle
 
     ScheduleDayRecyclerAdapter(WeekDay day, LayoutInflater inflater2) {
         this.day = day;
+        inflater = inflater2;
 
-        if (inflater == null) {
+        if (timeLord == null) {
             timeLord = TimeLord.getInstance();
-            inflater = inflater2;
             initializeStaticResources(inflater.getContext().getResources());
         }
     }
@@ -71,7 +72,7 @@ class ScheduleDayRecyclerAdapter extends RecyclerView.Adapter<ScheduleDayRecycle
             holder.lessonNumber.setTextColor(COLOR_NORMAL_LESSON);
         }
 
-        holder.lessonName.setText(lesson.getName());
+        holder.lessonName.setText(Html.fromHtml(lesson.getName()));
 
         if (lesson.hasTimes()) {
             holder.lessonTimes.setText(String.format("%s - %s", timeLord.getLessonTime(lesson.getStartTime()), timeLord.getLessonTime(lesson.getEndTime())));
