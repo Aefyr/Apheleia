@@ -11,5 +11,6 @@
         style="@style/QuickWeekDayPickButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:text="M" />
 </FrameLayout>

@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.PersonaInfo;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -18,8 +18,8 @@ public class Utility {
         } catch (Exception e) {
             e.printStackTrace();
             try {
-                FirebaseCrash.log(e.getMessage());
-                FirebaseCrash.report(new JournalismException("Unable to get response Json object"));
+                Crashlytics.log(e.getMessage());
+                Crashlytics.logException(new JournalismException("Unable to get response Json object"));
             }catch (IllegalStateException e1){
                 Log.wtf("Journalism", "Unable to report an exception that has occurred during Json parsing to Firebase");
             }
@@ -35,8 +35,8 @@ public class Utility {
         } catch (Exception e){
             e.printStackTrace();
             try {
-                FirebaseCrash.log(e.getMessage());
-                FirebaseCrash.report(new JournalismException("Unable to get response Json object"));
+                Crashlytics.log(e.getMessage());
+                Crashlytics.logException(new JournalismException("Unable to get response Json object"));
             }catch (IllegalStateException e1){
                 Log.wtf("Journalism", "Unable to report an exception that has occurred during Json parsing to Firebase");
             }
@@ -57,8 +57,8 @@ public class Utility {
             return jsonObject.get(key).getAsString();
         }catch (Exception e){
             e.printStackTrace();
-            FirebaseCrash.log(e.getMessage());
-            FirebaseCrash.report(new JournalismException("Unable to retrieve key \""+key+"\" from JsonObject: "+jsonObject.toString()));
+            Crashlytics.log(e.getMessage());
+            Crashlytics.logException(new JournalismException("Unable to retrieve key \""+key+"\" from JsonObject: "+jsonObject.toString()));
             return defaultValue;
         }
     }

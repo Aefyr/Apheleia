@@ -27,8 +27,8 @@ import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.Token;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -171,14 +171,14 @@ public class LoginActivity extends AppCompatActivity {
                     public void onNetworkError() {
                         signIn.setEnabled(true);
                         progressDialog.hide();
-                        showAlert(getString(R.string.network_error), getString(R.string.network_error_tip));
+                        showAlert(getString(R.string.eljur_connection_error), getString(R.string.eljur_connection_error_desc));
                     }
 
                     @Override
                     public void onApiError(JournalismException e) {
                         signIn.setEnabled(true);
                         progressDialog.hide();
-                        FirebaseCrash.report(e);
+                        Crashlytics.logException(e);
                         Chief.makeApiErrorAlert(LoginActivity.this, false);
                     }
 

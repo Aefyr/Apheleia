@@ -44,8 +44,8 @@ import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.DiaryEntry;
 import com.aefyr.journalism.objects.minor.WeekDay;
 import com.android.volley.Request;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -194,7 +194,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             public void onApiError(JournalismException e) {
                 if (!loadedFromMemory)
                     antiScroll();
-                FirebaseCrash.report(e);
+                Crashlytics.logException(e);
                 Chief.makeApiErrorAlert(getActivity(), false);
                 refreshLayout.setRefreshing(false);
             }
@@ -254,7 +254,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 weekNames[i++] = target.format(parser.parse(dates[0])) + " - " + target.format(parser.parse(dates[1]));
             } catch (ParseException e) {
                 e.printStackTrace();
-                FirebaseCrash.report(e);
+                Crashlytics.logException(e);
                 weekNames[i++] = "????? - ?????";
             }
         }

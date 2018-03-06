@@ -1,5 +1,7 @@
 package com.aefyr.journalism.parsing;
 
+import android.util.Log;
+
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.Utility;
 import com.aefyr.journalism.exceptions.JournalismException;
@@ -79,11 +81,23 @@ public class DiaryAsyncParser {
                         break LESSONS;
                     }
 
-                    JsonObject jLessons = weekDay.get("items").getAsJsonObject();
+                    JsonArray jLessons;
+                    if(weekDay.get("items").isJsonArray()){
+                        jLessons = weekDay.get("items").getAsJsonArray();
+                    }else {
+                        jLessons = new JsonArray();
+                        JsonObject jLessonsObj = weekDay.get("items").getAsJsonObject();
+
+                        for (Map.Entry<String, JsonElement> jLessonKey : jLessonsObj.entrySet()) {
+                            jLessons.add(jLessonKey.getValue());
+                        }
+                    }
+
+
                     lessons = new ArrayList<>(jLessons.size());
 
-                    for (Map.Entry<String, JsonElement> jLessonKey : jLessons.entrySet()) {
-                        JsonObject lessonObj = jLessonKey.getValue().getAsJsonObject();
+                    for (JsonElement jLessonEl: jLessons) {
+                        JsonObject lessonObj = jLessonEl.getAsJsonObject();
                         Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num", "0"), Utility.getStringFromJsonSafe(lessonObj, "name", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "room", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "teacher", "Неизвестно"));
 
                         if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {

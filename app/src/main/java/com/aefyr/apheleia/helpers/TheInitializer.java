@@ -17,7 +17,7 @@ import com.aefyr.journalism.objects.major.PersonaInfo;
 import com.aefyr.journalism.objects.major.Schedule;
 import com.aefyr.journalism.objects.minor.Student;
 import com.android.volley.Request;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.HashSet;
 
@@ -124,8 +124,8 @@ public class TheInitializer {
 
                                     @Override
                                     public void onApiError(JournalismException e) {
-                                        FirebaseCrash.report(e);
-                                        fail(null);
+                                        Crashlytics.logException(e);
+                                        fail("Ошибка при инициализации. Не удалось синхронизировать дневник");
                                     }
                                 });
 
@@ -150,8 +150,8 @@ public class TheInitializer {
 
                                     @Override
                                     public void onApiError(JournalismException e) {
-                                        FirebaseCrash.report(e);
-                                        fail(null);
+                                        Crashlytics.logException(e);
+                                        fail("Ошибка при инициализации. Не удалось синхронизировать оценки");
                                     }
                                 });
 
@@ -160,7 +160,7 @@ public class TheInitializer {
                                     public void onSuccess(Schedule schedule) {
                                         profileHelper.setCurrentStudent(s.id());
                                         if (!ScheduleHelper.getInstance(c).saveSchedule(schedule, periodsHelper.getCurrentScheduleWeek()))
-                                            fail("Критическая ошибка. Не удалось сериализовать расписание");
+                                            fail("Ошибка при инициализации. Не удалось сериализовать расписание");
 
                                         if (++i == actionsGoal) {
                                             done();
@@ -176,8 +176,8 @@ public class TheInitializer {
 
                                     @Override
                                     public void onApiError(JournalismException e) {
-                                        FirebaseCrash.report(e);
-                                        fail(null);
+                                        Crashlytics.logException(e);
+                                        fail("Ошибка при инициализации. Не удалось синхронизировать расписание");
                                     }
                                 });
 
@@ -190,8 +190,8 @@ public class TheInitializer {
 
                             @Override
                             public void onApiError(JournalismException e) {
-                                FirebaseCrash.report(e);
-                                fail(null);
+                                Crashlytics.logException(e);
+                                fail("Ошибка при инициализации. Не удалось синхронизировать периоды обучения");
                             }
                         });
 
@@ -216,8 +216,8 @@ public class TheInitializer {
 
                             @Override
                             public void onApiError(JournalismException e) {
-                                FirebaseCrash.report(e);
-                                fail(null);
+                                Crashlytics.logException(e);
+                                fail("Ошибка при инициализации. Не удалось синхронизировать расписание");
                             }
                         });
 
@@ -251,8 +251,8 @@ public class TheInitializer {
 
                         @Override
                         public void onApiError(JournalismException e) {
-                            FirebaseCrash.report(e);
-                            fail(null);
+                            Crashlytics.logException(e);
+                            fail("Ошибка при инициализации. Не удалось синхронизировать сообщения");
                         }
                     });
 
@@ -265,7 +265,7 @@ public class TheInitializer {
 
                 @Override
                 public void onApiError(JournalismException e) {
-                    FirebaseCrash.report(e);
+                    Crashlytics.logException(e);
                     switch (e.getMessage()) {
                         case "unsupported role":
                             fail(c.getString(R.string.unupported_role));

@@ -37,8 +37,8 @@ import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MarksGrid;
 import com.android.volley.Request;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -176,7 +176,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             public void onApiError(JournalismException e) {
                 if (!loadedFromMemory)
                     antiScroll();
-                FirebaseCrash.report(e);
+                Crashlytics.logException(e);
                 Chief.makeApiErrorAlert(getActivity(), false);
                 refreshLayout.setRefreshing(false);
             }

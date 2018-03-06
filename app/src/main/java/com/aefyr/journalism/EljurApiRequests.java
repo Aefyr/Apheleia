@@ -1,5 +1,7 @@
 package com.aefyr.journalism;
 
+import android.util.Log;
+
 import com.aefyr.apheleia.custom.ApheleiaRequest;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.DiaryEntry;
@@ -33,16 +35,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 class EljurApiRequests {
 
@@ -301,10 +302,23 @@ class EljurApiRequests {
                         if(weekDay.get("items")==null||(weekDay.get("items").isJsonArray() && weekDay.get("items").getAsJsonArray().size()==0))
                             break LESSONS;
 
-                        JsonObject jLessons = weekDay.getAsJsonObject("items");
+                        JsonArray jLessons;
+                        if(weekDay.get("items").isJsonArray()){
+                            jLessons = weekDay.get("items").getAsJsonArray();
+                        }else {
+                            jLessons = new JsonArray();
+                            JsonObject jLessonsObj = weekDay.get("items").getAsJsonObject();
+
+                            for (Map.Entry<String, JsonElement> jLessonKey : jLessonsObj.entrySet()) {
+                                jLessons.add(jLessonKey.getValue());
+                            }
+                        }
+
+
                         lessons = new ArrayList<>(jLessons.size());
-                        for (Map.Entry<String, JsonElement> entry2 : jLessons.entrySet()) {
-                            JsonObject lessonObj = entry2.getValue().getAsJsonObject();
+
+                        for (JsonElement jLessonEl: jLessons) {
+                            JsonObject lessonObj = jLessonEl.getAsJsonObject();
 
                             Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num", "0"), Utility.getStringFromJsonSafe(lessonObj, "name", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "room", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "teacher", "Неизвестно"));
 

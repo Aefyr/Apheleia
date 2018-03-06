@@ -54,6 +54,9 @@
     <string name="unupported_role">Apheleia only supports students and parents accounts</string>
     <string name="token_expired">Your access token is no longer valid, you need to sign in again</string>
     <string name="first_launch_warn"><b>Analytics and Privacy Policy Notice:</b>\nApheleia uses Google Analytics to anonymously collect app usage data and report errors. None of you personal data is sent. This data is used to make Apheleia better.</string>
+    <string name="eljur_connection_error">Connection Error</string>
+    <string name="eljur_connection_error_desc">Unable to reach entered domain, are you sure you\'ve entered it correctly and you have network connection?</string>
+
 
     <!-- Re:Initialization and periods helper-->
     <string name="check_periods_failed">Failed to update weeks/periods info. Error was reported</string>

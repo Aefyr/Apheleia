@@ -30,8 +30,8 @@ import com.aefyr.journalism.objects.minor.Attachment;
 import com.aefyr.journalism.objects.minor.MessageInfo;
 import com.aefyr.journalism.objects.minor.MessagePerson;
 import com.android.volley.Request;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.Serializable;
 
@@ -218,7 +218,7 @@ public class MessageViewActivity extends AppCompatActivity {
             @Override
             public void onApiError(JournalismException e) {
                 loadingDialog.dismiss();
-                FirebaseCrash.report(e);
+                Crashlytics.logException(e);
                 Chief.makeApiErrorAlert(MessageViewActivity.this, true);
             }
         });

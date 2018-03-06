@@ -10,7 +10,7 @@ import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.PeriodsInfo;
 import com.aefyr.journalism.objects.minor.ActualPeriod;
 import com.aefyr.journalism.objects.minor.Week;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -106,7 +106,7 @@ public class PeriodsHelper {
             @Override
             public void onApiError(JournalismException e) {
                 Chief.makeAToast(c, c.getString(R.string.check_periods_failed));
-                FirebaseCrash.report(e);
+                Crashlytics.logException(e);
             }
         });
     }

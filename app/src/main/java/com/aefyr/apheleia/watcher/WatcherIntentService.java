@@ -20,7 +20,7 @@ import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MessagesList;
 import com.aefyr.journalism.objects.minor.ShortMessage;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 
@@ -65,7 +65,7 @@ public class WatcherIntentService extends IntentService {
 
             @Override
             public void onApiError(JournalismException e) {
-                FirebaseCrash.report(e);
+                Crashlytics.logException(e);
             }
         });
     }

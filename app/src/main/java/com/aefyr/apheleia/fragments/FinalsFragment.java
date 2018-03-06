@@ -32,8 +32,8 @@ import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.Finals;
 import com.android.volley.Request;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.Serializable;
 
@@ -144,7 +144,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
             @Override
             public void onApiError(JournalismException e) {
-                FirebaseCrash.report(e);
+                Crashlytics.logException(e);
                 Chief.makeApiErrorAlert(getActivity(), false);
                 refreshLayout.setRefreshing(false);
             }

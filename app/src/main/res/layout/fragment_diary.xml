@@ -8,7 +8,7 @@
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/quickDayPickBar">
+        android:layout_above="@+id/quickDayPickContainer">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -35,21 +35,25 @@
 
     </com.aefyr.apheleia.custom.SwipeRefreshWithEmptySupport>
 
-
-
-    <LinearLayout
-        android:id="@+id/quickDayPickBar"
+    <HorizontalScrollView
+        android:id="@+id/quickDayPickContainer"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/rect_with_top_shadow"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingTop="4dp"
-        android:visibility="gone">
+        android:fillViewport="true"
+        android:overScrollMode="ifContentScrolls"
+        android:scrollbars="none">
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/quickDayPickBar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/rect_with_top_shadow"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="4dp" />
 
+    </HorizontalScrollView>
 
 </RelativeLayout>

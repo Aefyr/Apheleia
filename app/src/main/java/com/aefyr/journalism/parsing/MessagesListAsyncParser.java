@@ -65,7 +65,7 @@ public class MessagesListAsyncParser {
                 if (folder == MessagesList.Folder.INBOX) {
                     JsonObject sender = message.getAsJsonObject("user_from");
                     try {
-                        shortMessages.add(MinorObjectsFactory.createInboxShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(), MinorObjectsFactory.createMessagePerson(sender.get("name").getAsString(), sender.get("firstname").getAsString(), sender.get("middlename").getAsString(), sender.get("lastname").getAsString()), message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
+                        shortMessages.add(MinorObjectsFactory.createInboxShortMessage(Utility.getStringFromJsonSafe(message, "id", "0"), Utility.getStringFromJsonSafe(message, "subject", "Без темы"), Utility.getStringFromJsonSafe(message, "short_text", ""), Utility.getStringFromJsonSafe(message, "date", "1997-01-01 00:00:01"), MinorObjectsFactory.createMessagePerson(Utility.getStringFromJsonSafe(sender, "name", "Имя неизвестно"), Utility.getStringFromJsonSafe(sender, "firstname", ""), Utility.getStringFromJsonSafe(sender, "middlename", ""), Utility.getStringFromJsonSafe(sender, "lastname", "")), message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
                     } catch (JournalismException e) {
                         return new AsyncParserTaskResult<MessagesList>(e);
                     }
@@ -81,10 +81,10 @@ public class MessagesListAsyncParser {
                     for (JsonElement receiverEl : jReceivers) {
 
                         JsonObject receiver = receiverEl.getAsJsonObject();
-                        receivers.add(MinorObjectsFactory.createMessagePerson(receiver.get("name").getAsString(), receiver.get("firstname").getAsString(), receiver.get("middlename").getAsString(), receiver.get("lastname").getAsString()));
+                        receivers.add(MinorObjectsFactory.createMessagePerson(Utility.getStringFromJsonSafe(receiver, "name", "Имя неизвестно"), Utility.getStringFromJsonSafe(receiver, "firstname", ""), Utility.getStringFromJsonSafe(receiver, "middlename", ""), Utility.getStringFromJsonSafe(receiver, "lastname", "")));
                     }
                     try {
-                        shortMessages.add(MinorObjectsFactory.createSentShortMessage(message.get("id").getAsString(), message.get("subject").getAsString(), message.get("short_text").getAsString(), message.get("date").getAsString(), receivers, message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
+                        shortMessages.add(MinorObjectsFactory.createSentShortMessage(Utility.getStringFromJsonSafe(message, "id", "0"), Utility.getStringFromJsonSafe(message, "subject", "Без темы"), Utility.getStringFromJsonSafe(message, "short_text", ""), Utility.getStringFromJsonSafe(message, "date", "1997-01-01 00:00:01"), receivers, message.get("unread").getAsBoolean(), message.get("with_files").getAsBoolean(), message.get("with_resources").getAsBoolean()));
                     } catch (JournalismException e) {
                         return new AsyncParserTaskResult<MessagesList>(e);
                     }

@@ -123,5 +123,7 @@
     <string name="system_notification">Сообщение от разработчика</string>
     <string name="sys_notification_delay">Через 5 секунд</string>
     <string name="send_confirmation">Отправить сообщение?</string>
+    <string name="eljur_connection_error">Не удалось подключится к ЭлЖуру</string>
+    <string name="eljur_connection_error_desc">Пожалуйста проверьте, правильно ли вы ввели адрес вашей школы на ЭлЖур, а также наличие у вас интернет-подключения</string>
 
 </resources>

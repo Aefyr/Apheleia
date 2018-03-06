@@ -2,14 +2,11 @@ package com.aefyr.journalism;
 
 import android.util.Pair;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 class EljurApiRequest {
 
@@ -71,7 +68,7 @@ class EljurApiRequest {
                 httpRequest.append(param.first).append("=").append(URLEncoder.encode(param.second, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
-                FirebaseCrash.report(e);
+                Crashlytics.logException(e);
             }
         }
 
