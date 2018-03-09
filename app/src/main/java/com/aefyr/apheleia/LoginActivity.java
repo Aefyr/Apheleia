@@ -197,7 +197,8 @@ public class LoginActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
     private void showAlert(String title, CharSequence message) {
-        new AlertDialog.Builder(this).setTitle(title).setMessage(message).setPositiveButton(getString(R.string.ok), null).create().show();
+        if(!isFinishing())
+            new AlertDialog.Builder(this).setTitle(title).setMessage(message).setPositiveButton(getString(R.string.ok), null).create().show();
     }
 
     private void loggedIn() {

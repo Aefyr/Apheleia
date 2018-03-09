@@ -17,12 +17,8 @@ public class Utility {
             return new JsonParser().parse(rawResponse).getAsJsonObject().getAsJsonObject("response").getAsJsonObject("result");
         } catch (Exception e) {
             e.printStackTrace();
-            try {
-                Crashlytics.log(e.getMessage());
-                Crashlytics.logException(new JournalismException("Unable to get response Json object"));
-            }catch (IllegalStateException e1){
-                Log.wtf("Journalism", "Unable to report an exception that has occurred during Json parsing to Firebase");
-            }
+            Crashlytics.log(e.getMessage());
+            Crashlytics.logException(new JournalismException("Unable to get response Json object"));
 
             return null;
         }
