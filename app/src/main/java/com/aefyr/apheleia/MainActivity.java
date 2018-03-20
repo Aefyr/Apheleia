@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity
 
             checkPeriods(false);
         }else {
+            currentApheleiaFragment = savedInstanceState.getString("currentFragment", FRAGMENT_DIARY);
             currentFragment = fragmentManager.findFragmentByTag(currentApheleiaFragment);
             if(!lidlIsTabletMode()){
                 switch (currentApheleiaFragment){
@@ -600,6 +601,12 @@ public class MainActivity extends AppCompatActivity
                 NotificationsHelper.showDevAlert(MainActivity.this, intent.getStringExtra("message"));
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("currentFragment", currentApheleiaFragment);
     }
 
     @Override
