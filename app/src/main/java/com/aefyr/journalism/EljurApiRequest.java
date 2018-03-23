@@ -8,19 +8,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-class EljurApiRequest {
+public class EljurApiRequest {
 
     //Methods
-    final static String GET_RULES = "getrules";
-    final static String GET_PERIODS = "getperiods";
-    final static String GET_DIARY = "getdiary";
-    final static String GET_MARKS = "getmarks";
-    final static String GET_SCHEDULE = "getschedule";
-    final static String GET_MESSAGES = "getmessages";
-    final static String GET_MESSAGE_INFO = "getmessageinfo";
-    final static String GET_MESSAGE_RECEIVERS = "getmessagereceivers";
-    final static String SEND_MESSAGE = "sendmessage";
-    final static String GET_FINALS = "getfinalassessments";
+    public final static String GET_RULES = "getrules";
+    public final static String GET_PERIODS = "getperiods";
+    public final static String GET_DIARY = "getdiary";
+    public final static String GET_MARKS = "getmarks";
+    public final static String GET_SCHEDULE = "getschedule";
+    public final static String GET_MESSAGES = "getmessages";
+    public final static String GET_MESSAGE_INFO = "getmessageinfo";
+    public final static String GET_MESSAGE_RECEIVERS = "getmessagereceivers";
+    public final static String SEND_MESSAGE = "sendmessage";
+    public final static String GET_FINALS = "getfinalassessments";
     public final static String GET_FEED = "getupdates";
 
     static final String HTTPS = "https://";
@@ -31,13 +31,13 @@ class EljurApiRequest {
     private String method;
     private ArrayList<Pair<String, String>> parameters;
 
-    EljurApiRequest(EljurPersona persona, String method) {
+    public EljurApiRequest(EljurPersona persona, String method) {
         this.persona = persona;
         this.method = method;
         parameters = new ArrayList<>(4);
     }
 
-    EljurApiRequest addParameter(String name, String value) {
+    public EljurApiRequest addParameter(String name, String value) {
         parameters.add(new Pair<String, String>(name, value));
         return this;
     }
@@ -56,7 +56,7 @@ class EljurApiRequest {
         return httpRequest.toString();
     }*/
 
-    String getRequestURL(){
+    public String getRequestURL(){
         StringBuilder httpRequest = new StringBuilder(HTTPS).append(persona.schoolDomain).append(ELJUR).append(method).append("?");
 
         for(int i = 0; i<parameters.size(); i++){

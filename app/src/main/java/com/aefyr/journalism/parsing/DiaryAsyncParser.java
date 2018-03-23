@@ -1,7 +1,5 @@
 package com.aefyr.journalism.parsing;
 
-import android.util.Log;
-
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.Utility;
 import com.aefyr.journalism.exceptions.JournalismException;
@@ -155,12 +153,16 @@ public class DiaryAsyncParser {
                                 if (mark.get("value").getAsString().equals(""))
                                     continue;
 
+                                String markWeight = null;
+                                if(mark.get("weight")!=null)
+                                    markWeight = mark.get("weight").getAsString();
+
                                 if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
-                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("comment").getAsString()));
+                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("comment").getAsString()));
                                 else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
-                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("lesson_comment").getAsString()));
+                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("lesson_comment").getAsString()));
                                 else
-                                    marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString()));
+                                    marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString(), markWeight));
                             }
                             MinorObjectsHelper.addMarksToLesson(lesson, marks);
                         }
@@ -231,12 +233,16 @@ public class DiaryAsyncParser {
                                 if (mark.get("value").getAsString().equals(""))
                                     continue;
 
+                                String markWeight = null;
+                                if(mark.get("weight")!=null)
+                                    markWeight = mark.get("weight").getAsString();
+
                                 if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
-                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("comment").getAsString()));
+                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("comment").getAsString()));
                                 else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
-                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), mark.get("lesson_comment").getAsString()));
+                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("lesson_comment").getAsString()));
                                 else
-                                    marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString()));
+                                    marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString(), markWeight));
                             }
                             MinorObjectsHelper.addMarksToLesson(otLesson, marks);
                         }

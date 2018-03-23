@@ -74,13 +74,17 @@ public class MarkGridAsyncParser {
 
                         GridMark gridMark;
 
+                        String markWeight = null;
+                        if(mark.get("weight")!=null)
+                            markWeight = mark.get("weight").getAsString();
+
                         try {
                             if (!mark.get("lesson_comment").isJsonNull()) {
-                                gridMark = MinorObjectsFactory.createGridMarkWithComment(mark.get("value").getAsString(), mark.get("date").getAsString(), mark.get("lesson_comment").getAsString());
+                                gridMark = MinorObjectsFactory.createGridMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("date").getAsString(), mark.get("lesson_comment").getAsString());
                             } else if (mark.get("comment").getAsString().length() > 0) {
-                                gridMark = MinorObjectsFactory.createGridMarkWithComment(mark.get("value").getAsString(), mark.get("date").getAsString(), mark.get("comment").getAsString());
+                                gridMark = MinorObjectsFactory.createGridMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("date").getAsString(), mark.get("comment").getAsString());
                             } else {
-                                gridMark = MinorObjectsFactory.createGridMark(mark.get("value").getAsString(), mark.get("date").getAsString());
+                                gridMark = MinorObjectsFactory.createGridMark(mark.get("value").getAsString(), markWeight, mark.get("date").getAsString());
                             }
                         } catch (JournalismException e) {
                             return new AsyncParserTaskResult<>(e);

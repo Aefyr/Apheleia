@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingEnd="@dimen/diary_day_lesson_padding"
-    android:paddingStart="@dimen/diary_day_lesson_padding">
+    android:paddingStart="@dimen/diary_day_lesson_padding"
+    android:weightSum="2">
 
     <Button
         android:id="@+id/markButton"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
+        android:layout_weight="1"
         android:background="@drawable/mark_circle"
-        android:minHeight="36dp"
         android:minWidth="36dp"
         android:paddingBottom="0dp"
         android:paddingEnd="0dp"
@@ -20,4 +21,15 @@
         android:paddingTop="0dp"
         android:text="100"
         android:textSize="18sp" />
-</FrameLayout>
+
+    <TextView
+        android:id="@+id/markWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|bottom"
+        android:layout_weight="1"
+        android:text="x3"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:visibility="gone" />
+</LinearLayout>

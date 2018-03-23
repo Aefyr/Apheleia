@@ -12,6 +12,7 @@ public class GridMark implements Serializable {
     String value;
     String comment;
     long date;
+    String weight = null;
 
 
     void parseDate(String rawDate) throws JournalismException {
@@ -37,6 +38,14 @@ public class GridMark implements Serializable {
 
     public long getDate() {
         return date;
+    }
+
+    public boolean hasWeight(){
+        return weight!=null;
+    }
+
+    public String getWeight(){
+        return weight;
     }
 
 

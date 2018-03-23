@@ -27,5 +27,6 @@
         <Preference android:title="Override current period" android:key="debug_override_period" />
         <Preference android:title="FCM Token" android:key="debug_fcm_token"/>
         <SwitchPreference android:title="Demo Name in Nav Header" android:key="debug_fake_name" android:defaultValue="false"/>
+        <Preference android:title="Дамп Дневника" android:key="debug_dump_diary"/>
     </PreferenceCategory>
 </PreferenceScreen>

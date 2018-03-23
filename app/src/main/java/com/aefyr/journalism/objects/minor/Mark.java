@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Mark implements Serializable {
     String value;
     String comment;
+    String weight = null;
 
     public String getValue() {
         return value;
@@ -16,5 +17,13 @@ public class Mark implements Serializable {
 
     public String getComment() {
         return comment;
+    }
+
+    public boolean hasWeight(){
+        return weight!=null;
+    }
+
+    public String getWeight(){
+        return weight;
     }
 }

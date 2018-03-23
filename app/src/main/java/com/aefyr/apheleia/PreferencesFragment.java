@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.EditText;
 
+import com.aefyr.apheleia.custom.ApheleiaRequest;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Helper;
 import com.aefyr.apheleia.helpers.PeriodsHelper;
@@ -22,8 +23,14 @@ import com.aefyr.apheleia.helpers.ProfileHelper;
 import com.aefyr.apheleia.helpers.Tutorial;
 import com.aefyr.apheleia.watcher.WatcherHelper;
 import com.aefyr.journalism.EljurApiClient;
+import com.aefyr.journalism.EljurApiRequest;
 import com.aefyr.journalism.exceptions.JournalismException;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 
@@ -113,7 +120,7 @@ public class PreferencesFragment extends PreferenceFragment {
     }
 
     private void initializeDebugPrefs() {
-        if (!PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("debug_mode", false)) {
+        if (!PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("debug_mode", false)&&!Debug.debugMode) {
             getPreferenceScreen().removePreference(findPreference("debug"));
             return;
         }
@@ -121,6 +128,7 @@ public class PreferencesFragment extends PreferenceFragment {
         Preference week = findPreference("debug_override_week");
         Preference period = findPreference("debug_override_period");
         Preference fcmToken = findPreference("debug_fcm_token");
+        Preference dumpDiary = findPreference("debug_dump_diary");
 
         Preference.OnPreferenceClickListener debugListener = new Preference.OnPreferenceClickListener() {
             @Override
@@ -189,6 +197,30 @@ public class PreferencesFragment extends PreferenceFragment {
                             }
                         }).create().show();
                         return false;
+                    case "debug_dump_diary":
+                        EljurApiRequest apiRequest = new EljurApiRequest(Helper.getInstance(getActivity()).getPersona(), EljurApiRequest.GET_DIARY).addParameter("days", PeriodsHelper.getInstance(getActivity()).getCurrentWeek()).addParameter("student", ProfileHelper.getInstance(getActivity()).getCurrentStudentId()).addParameter("rings", "__yes");
+                        Request diaryRequest = new ApheleiaRequest(Request.Method.GET, apiRequest.getRequestURL(), new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(final String rawResponse) {
+
+                                final String betterResponse = new JsonParser().parse(rawResponse).toString().replaceAll("[А-Я][а-я]+ ([А-Я][а-я ]+)*[А-Я][а-я]+", "Имя Вырезано");
+                                new AlertDialog.Builder(getActivity()).setTitle("Дамп Дневника").setMessage(betterResponse).setPositiveButton("Скопировать", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ((ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("", betterResponse));
+                                        Chief.makeAToast(getActivity(), "Дамп Дневника скопирован в буфер обмена");
+                                    }
+                                }).setNegativeButton("Закрыть", null).create().show();
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Chief.makeAnAlert(getActivity(), "Ошибка сети");
+                            }
+                        });
+                        Volley.newRequestQueue(getActivity()).add(diaryRequest);
+                        return false;
                 }
 
                 return false;
@@ -198,6 +230,7 @@ public class PreferencesFragment extends PreferenceFragment {
         week.setOnPreferenceClickListener(debugListener);
         period.setOnPreferenceClickListener(debugListener);
         fcmToken.setOnPreferenceClickListener(debugListener);
+        dumpDiary.setOnPreferenceClickListener(debugListener);
     }
 
     private interface L{

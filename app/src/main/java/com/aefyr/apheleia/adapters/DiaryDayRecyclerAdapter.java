@@ -166,6 +166,12 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
                     markButton.setBackgroundColor(Color.TRANSPARENT);
                 }
 
+                if(mark.hasWeight()) {
+                    TextView markWeight = markView.findViewById(R.id.markWeight);
+                    markWeight.setVisibility(View.VISIBLE);
+                    markWeight.setText(String.format("x%s", mark.getWeight()));
+                }
+
                 holder.marksContainer.addView(markView);
             }
 

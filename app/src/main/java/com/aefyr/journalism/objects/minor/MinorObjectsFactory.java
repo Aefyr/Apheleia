@@ -37,19 +37,21 @@ public class MinorObjectsFactory {
         return attachment;
     }
 
-    public static GridMark createGridMark(String value, String rawDate) throws JournalismException {
+    public static GridMark createGridMark(String value, String weight, String rawDate) throws JournalismException {
         GridMark mark = new GridMark();
 
         mark.value = value;
+        mark.weight = weight;
         mark.parseDate(rawDate);
 
         return mark;
     }
 
-    public static GridMark createGridMarkWithComment(String value, String rawDate, String comment) throws JournalismException {
+    public static GridMark createGridMarkWithComment(String value, String weight, String rawDate, String comment) throws JournalismException {
         GridMark mark = new GridMark();
 
         mark.value = value;
+        mark.weight = weight;
         mark.comment = comment;
         mark.parseDate(rawDate);
 
@@ -80,18 +82,20 @@ public class MinorObjectsFactory {
         return lesson;
     }
 
-    public static Mark createMark(String value) {
+    public static Mark createMark(String value, String weight) {
         Mark mark = new Mark();
 
         mark.value = value;
+        mark.weight = weight;
 
         return mark;
     }
 
-    public static Mark createMarkWithComment(String value, String comment) {
+    public static Mark createMarkWithComment(String value, String weight, String comment) {
         Mark mark = new Mark();
 
         mark.value = value;
+        mark.weight = weight;
         mark.comment = comment;
 
         return mark;

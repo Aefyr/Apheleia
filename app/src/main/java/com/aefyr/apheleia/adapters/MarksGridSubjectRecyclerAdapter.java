@@ -63,7 +63,14 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
             holder.mark.setBackgroundResource(R.drawable.mark_circle);
         } else {
             holder.mark.setOnClickListener(null);
-            holder.mark.setBackgroundColor(Color.TRANSPARENT);
+            holder.mark.setBackgroundColor(Color.TRANSPARENT); // forsenCD Clap
+        }
+
+        if(mark.hasWeight()){
+            holder.markWeight.setText(String.format("x%s", mark.getWeight()));
+            holder.markWeight.setVisibility(View.VISIBLE);
+        }else {
+            holder.markWeight.setVisibility(View.GONE);
         }
     }
 
@@ -88,11 +95,13 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
 
         private TextView date;
         private Button mark;
+        private TextView markWeight;
 
         MarksGridSubjectViewHolder(View itemView) {
             super(itemView);
             date = (TextView) itemView.findViewById(R.id.gridMarkDate);
             mark = (Button) itemView.findViewById(R.id.gridMarkButton);
+            markWeight = itemView.findViewById(R.id.markWeight);
         }
     }
 }

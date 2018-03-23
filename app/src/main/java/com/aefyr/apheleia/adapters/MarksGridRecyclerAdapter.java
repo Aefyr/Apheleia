@@ -84,7 +84,7 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
             subjectRecyclerAdapter = new MarksGridSubjectRecyclerAdapter(null, inflater);
             subjectRecyclerAdapter.setHasStableIds(true);
 
-            int itemsCount = (int) (Utility.displayWidthPx(itemView.getResources()) / Utility.dpToPx(46, itemView.getResources()));
+            int itemsCount = (int) (Utility.displayWidthPx(itemView.getResources()) / Utility.dpToPx(64, itemView.getResources()));
             if ((Utility.displayWidthDp(itemView.getResources()) >= 720))
                 itemsCount /= 3;
 

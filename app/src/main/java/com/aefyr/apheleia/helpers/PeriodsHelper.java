@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.aefyr.apheleia.Debug;
 import com.aefyr.apheleia.R;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.exceptions.JournalismException;
@@ -47,7 +48,7 @@ public class PeriodsHelper {
         preferences = PreferenceManager.getDefaultSharedPreferences(c);
         profileHelper = ProfileHelper.getInstance(c);
 
-        debugMode = preferences.getBoolean("debug_mode", false);
+        debugMode = preferences.getBoolean("debug_mode", false) || Debug.debugMode;
     }
 
     public static PeriodsHelper getInstance(Context c) {
