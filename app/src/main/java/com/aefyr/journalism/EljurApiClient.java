@@ -19,7 +19,6 @@ import com.aefyr.journalism.objects.minor.MessageReceiver;
 import com.aefyr.journalism.objects.minor.ShortMessage;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;

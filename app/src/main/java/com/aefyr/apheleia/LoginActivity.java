@@ -98,6 +98,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupLoginSystem() {
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
 
         domainET.setFilters(new InputFilter[]{new InputFilter() {
             @Override
@@ -204,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
     private void loggedIn() {
         helper.setLoggedIn(true);
         Bundle b = new Bundle();
-        b.putString(FirebaseConstants.SCHOOL_DOMAIN, helper.getDomain());
+        b.putString(FirebaseConstants.SCHOOL_DOMAIN, helper.getDomain().toLowerCase());
         FirebaseAnalytics.getInstance(this).logEvent(FirebaseConstants.LOGIN, b);
 
         Intent intent = new Intent(this, MainActivity.class);

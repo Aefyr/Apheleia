@@ -1,7 +1,6 @@
 package com.aefyr.apheleia.adapters;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;

@@ -21,7 +21,6 @@ import com.aefyr.apheleia.LoginActivity;
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.R;
 import com.aefyr.apheleia.adapters.MarksGridRecyclerAdapter;
-import com.aefyr.apheleia.custom.PreloadLayoutManager;
 import com.aefyr.apheleia.helpers.AnalyticsHelper;
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.ConnectionHelper;

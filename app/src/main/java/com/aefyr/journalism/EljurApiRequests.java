@@ -1,7 +1,5 @@
 package com.aefyr.journalism;
 
-import android.util.Log;
-
 import com.aefyr.apheleia.custom.ApheleiaRequest;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.DiaryEntry;

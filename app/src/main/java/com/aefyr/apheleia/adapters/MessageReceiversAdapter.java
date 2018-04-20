@@ -2,7 +2,6 @@ package com.aefyr.apheleia.adapters;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;

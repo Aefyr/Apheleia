@@ -8,7 +8,7 @@ import com.aefyr.journalism.EljurApiClient;
  * Created by Aefyr on 16.08.2017.
  */
 
-abstract class AsyncParserBase<T> extends AsyncTask<AsyncParserParams<T>, Void, AsyncParserTaskResult<T>> {
+abstract class AsyncParserBase<T> extends AsyncTask<Void, Void, AsyncParserTaskResult<T>> {
 
     private EljurApiClient.JournalismListener<T> listener;
 

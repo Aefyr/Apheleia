@@ -33,22 +33,23 @@ public class MessageInfoAsyncParser {
     public static final int ALL_RECEIVERS = -1;
 
     public void parseMessage(String rawMessage, MessagesList.Folder folder, int parsedReceiversCount, EljurApiClient.JournalismListener<MessageInfo> listener) {
-        new MessageInfoParseTask(parsedReceiversCount).execute(new AsyncParserParams<MessageInfo>(rawMessage, folder == MessagesList.Folder.INBOX ? "i" : "s", listener));
+        new MessageInfoParseTask(rawMessage, parsedReceiversCount, folder, listener).execute();
     }
 
     private class MessageInfoParseTask extends AsyncParserBase<MessageInfo> {
-        int parsedReceiversCount;
+        private String rawResponse;
+        private int parsedReceiversCount;
+        private MessagesList.Folder folder;
 
-        public MessageInfoParseTask(int parsedReceiversCount){
+        MessageInfoParseTask(String rawResponse, int parsedReceiversCount, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessageInfo> listener){
+            bindJournalismListener(listener);
+            this.rawResponse = rawResponse;
             this.parsedReceiversCount = parsedReceiversCount;
+            this.folder = folder;
         }
 
         @Override
-        protected AsyncParserTaskResult<MessageInfo> doInBackground(AsyncParserParams<MessageInfo>... params) {
-            bindJournalismListener(params[0].listener);
-            String rawResponse = params[0].rawResponse;
-            MessagesList.Folder folder = params[0].journalismParam.equals("i") ? MessagesList.Folder.INBOX : MessagesList.Folder.SENT;
-
+        protected AsyncParserTaskResult<MessageInfo> doInBackground(Void... voids) {
             JsonObject message = Utility.getJsonFromResponse(rawResponse).getAsJsonObject("message");
 
             JsonArray jReceivers = message.getAsJsonArray("user_to");

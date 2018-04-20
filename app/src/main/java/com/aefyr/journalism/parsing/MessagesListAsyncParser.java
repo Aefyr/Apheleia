@@ -30,28 +30,22 @@ public class MessagesListAsyncParser {
     }
 
     public void parseMessages(String rawMessages, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessagesList> listener) {
-        new MessagesParseTask().execute(new MessagesParseTaskParams(rawMessages, folder, listener));
-    }
-
-    private class MessagesParseTaskParams extends AsyncParserParams<MessagesList> {
-        private MessagesList.Folder folder;
-
-        private MessagesParseTaskParams(String rawResponse, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessagesList> listener) {
-            super(rawResponse, null, listener);
-            this.folder = folder;
-        }
+        new MessagesParseTask(rawMessages, folder, listener).execute();
     }
 
     private class MessagesParseTask extends AsyncParserBase<MessagesList> {
+        private String rawResponse;
+        private MessagesList.Folder folder;
+
+        MessagesParseTask(String rawResponse, MessagesList.Folder folder, EljurApiClient.JournalismListener<MessagesList> listener){
+            bindJournalismListener(listener);
+            this.rawResponse = rawResponse;
+            this.folder = folder;
+        }
 
         @Override
-        protected AsyncParserTaskResult<MessagesList> doInBackground(AsyncParserParams<MessagesList>... asyncParserParamses) {
-            MessagesParseTaskParams messagesParseTaskParams = (MessagesParseTaskParams) asyncParserParamses[0];
-
-            bindJournalismListener(messagesParseTaskParams.listener);
-            String rawResponse = messagesParseTaskParams.rawResponse;
+        protected AsyncParserTaskResult<MessagesList> doInBackground(Void... voids) {
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
-            MessagesList.Folder folder = messagesParseTaskParams.folder;
 
             if (response == null || response.size() == 0 || response.get("messages") == null) {
                 return new AsyncParserTaskResult<MessagesList>(MajorObjectsFactory.createMessagesList(0, 0, new ArrayList<ShortMessage>(0), folder));

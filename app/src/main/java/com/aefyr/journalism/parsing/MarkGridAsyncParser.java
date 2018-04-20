@@ -30,17 +30,21 @@ public class MarkGridAsyncParser {
     }
 
     public void parseGrid(String rawResponse, String studentId, EljurApiClient.JournalismListener<MarksGrid> listener) {
-        new MarksParseTask().execute(new AsyncParserParams<>(rawResponse, studentId, listener));
+        new MarksParseTask(rawResponse, studentId, listener).execute();
     }
 
     private class MarksParseTask extends AsyncParserBase<MarksGrid> {
+        private String rawResponse;
+        private String studentId;
+
+        MarksParseTask(String rawResponse, String studentId, EljurApiClient.JournalismListener<MarksGrid> listener){
+            bindJournalismListener(listener);
+            this.rawResponse = rawResponse;
+            this.studentId = studentId;
+        }
 
         @Override
-        protected AsyncParserTaskResult<MarksGrid> doInBackground(AsyncParserParams<MarksGrid>... asyncParserParams) {
-            bindJournalismListener(asyncParserParams[0].listener);
-            String studentId = asyncParserParams[0].journalismParam;
-            String rawResponse = asyncParserParams[0].rawResponse;
-
+        protected AsyncParserTaskResult<MarksGrid> doInBackground(Void... voids) {
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
             if (response == null || response.size() == 0 || response.get("students") == null) {

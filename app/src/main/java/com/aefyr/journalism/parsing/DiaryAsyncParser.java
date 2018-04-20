@@ -39,17 +39,21 @@ public class DiaryAsyncParser {
     }
 
     public void parseDiary(String rawResponse, String studentId, EljurApiClient.JournalismListener<DiaryEntry> listener) {
-        new DiaryParseTask().execute(new AsyncParserParams<>(rawResponse, studentId, listener));
+        new DiaryParseTask(rawResponse, studentId, listener).execute();
     }
 
     private class DiaryParseTask extends AsyncParserBase<DiaryEntry> {
+        private String rawResponse;
+        private String studentId;
+
+        DiaryParseTask(String rawResponse, String studentId, EljurApiClient.JournalismListener<DiaryEntry> listener){
+            bindJournalismListener(listener);
+            this.rawResponse = rawResponse;
+            this.studentId = studentId;
+        }
 
         @Override
-        protected AsyncParserTaskResult<DiaryEntry> doInBackground(AsyncParserParams<DiaryEntry>... asyncParserParams) {
-            bindJournalismListener(asyncParserParams[0].listener);
-            String rawResponse = asyncParserParams[0].rawResponse;
-            String studentId = asyncParserParams[0].journalismParam;
-
+        protected AsyncParserTaskResult<DiaryEntry> doInBackground(Void... voids) {
             JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
             if (response == null || response.size() == 0 || response.get("students") == null) {

@@ -82,5 +82,8 @@ public class ShortMessage implements Serializable {
         return folder;
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ShortMessage && ((ShortMessage) obj).getId().equals(getId());
+    }
 }
