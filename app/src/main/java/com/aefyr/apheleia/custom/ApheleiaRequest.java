@@ -11,6 +11,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
@@ -41,13 +42,31 @@ public class ApheleiaRequest extends Request<String> {
         try {
             String responeS = new String(response.data, "UTF-8");
 
-            if(System.currentTimeMillis() > ejIdExpirationTime) {
-                String cookie = response.headers.get("Set-Cookie");
-                String[] cookieMeta = cookie.split(";");
-                String[] cookieData = cookieMeta[0].split("=");
-                ejId = cookieData[1];
-                ejIdExpirationTime = System.currentTimeMillis() + Long.parseLong(cookieMeta[2].split("=")[1])*1000L;
-                Log.d(TAG, "Got ejId cookie "+ejId+", expires at "+ ejIdExpirationTime);
+            PARSING_COOKIES:
+            {
+                if (System.currentTimeMillis() > ejIdExpirationTime) {
+                    String cookie = response.headers.get("Set-Cookie");
+                    if (cookie == null)
+                        break PARSING_COOKIES;
+
+                    String[]cookieMeta = cookie.split(";");
+                    if(cookieMeta.length<3)
+                        break PARSING_COOKIES;
+
+                    String[] cookieData = cookieMeta[0].split("=");
+                    if(cookieData.length<2)
+                        break PARSING_COOKIES;
+
+                    ejId = cookieData[1];
+                    try {
+                        ejIdExpirationTime = System.currentTimeMillis() + Long.parseLong(cookieMeta[2].split("=")[1]) * 1000L;
+                        Log.d(TAG, "Got ejId cookie " + ejId + ", expires at " + ejIdExpirationTime);
+                    }catch (Exception e){
+                        Log.e(TAG, "Unable to parse ejId cookie expiration time:");
+                        e.printStackTrace();
+                        Crashlytics.logException(e);
+                    }
+                }
             }
 
             Log.d(TAG, "Got response for url "+getUrl()+":\n"+responeS);
