@@ -169,10 +169,10 @@ class EljurApiRequests {
 
                 for (JsonElement periodEl : periods) {
                     JsonObject period = periodEl.getAsJsonObject();
-                    if(period.get("disabled").getAsBoolean())
+                    if(period.get("disabled") !=null && !period.get("disabled").isJsonNull() && period.get("disabled").getAsBoolean())
                         continue;
 
-                    if (period.get("ambigious").getAsBoolean()) {
+                    if (period.get("ambigious") != null && !period.get("ambigious").isJsonNull() && period.get("ambigious").getAsBoolean()) {
                         MajorObjectsHelper.addAmbigiousPeriodToPeriodsInfo(periodsInfo, MinorObjectsFactory.createAmbigiousPeriod(period.get("name").getAsString(), period.get("fullname").getAsString()));
                     } else {
                         ActualPeriod actualPeriod;

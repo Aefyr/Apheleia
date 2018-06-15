@@ -228,13 +228,13 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.action_refresh:
-
                 ((ActionListener) currentFragment).onAction(ActionListener.Action.UPDATE_REQUESTED);
                 return true;
-            case R.id.action_check_periods:
 
+            case R.id.action_check_periods:
                 checkPeriods(true);
                 return true;
+
             case R.id.action_mail_folder_switch:
 
                 if (currentApheleiaFragment.equals(FRAGMENT_MESSAGES)) {
@@ -248,18 +248,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 return false;
             case R.id.action_time_period_switcher:
-
-                switch (currentApheleiaFragment) {
-                    case FRAGMENT_DIARY:
-                        ((DiaryFragment) currentFragment).showTimePeriodSwitcherDialog();
-                        break;
-                    case FRAGMENT_MARKS:
-                        ((MarksFragment) currentFragment).showTimePeriodSwitcherDialog();
-                        break;
-                    case FRAGMENT_SCHEDULE:
-                        ((ScheduleFragment) currentFragment).showTimePeriodSwitcherDialog();
-                        break;
-                }
+                ((ActionListener)currentFragment).onAction(ActionListener.Action.DATE_PICK_REQUESTED);
                 return true;
 
         }

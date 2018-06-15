@@ -6,7 +6,7 @@ package com.aefyr.apheleia;
 
 public interface ActionListener {
     public enum Action {
-        STUDENT_SWITCHED, UPDATE_REQUESTED
+        STUDENT_SWITCHED, UPDATE_REQUESTED, DATE_PICK_REQUESTED
     }
 
     public void onAction(Action action);

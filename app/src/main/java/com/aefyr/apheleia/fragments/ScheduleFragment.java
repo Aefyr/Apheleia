@@ -401,6 +401,9 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
             case UPDATE_REQUESTED:
                 refreshSchedule();
                 break;
+            case DATE_PICK_REQUESTED:
+                showTimePeriodSwitcherDialog();
+                break;
         }
     }
 

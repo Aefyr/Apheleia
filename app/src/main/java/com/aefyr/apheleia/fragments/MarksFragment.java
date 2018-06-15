@@ -338,6 +338,9 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             case UPDATE_REQUESTED:
                 refreshMarks();
                 break;
+            case DATE_PICK_REQUESTED:
+                showTimePeriodSwitcherDialog();
+                break;
         }
     }
 

@@ -403,6 +403,9 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             case UPDATE_REQUESTED:
                 refreshDiary();
                 break;
+            case DATE_PICK_REQUESTED:
+                showTimePeriodSwitcherDialog();
+                break;
         }
     }
 
