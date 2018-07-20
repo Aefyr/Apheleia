@@ -19,7 +19,6 @@ public class Utility {
             e.printStackTrace();
             Crashlytics.log(e.getMessage());
             Crashlytics.logException(new JournalismException("Unable to get response Json object"));
-
             return null;
         }
 
@@ -28,12 +27,12 @@ public class Utility {
     public static JsonObject getRawJsonFromResponse(String rawResponse) {
         try {
             return new JsonParser().parse(rawResponse).getAsJsonObject();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             try {
                 Crashlytics.log(e.getMessage());
                 Crashlytics.logException(new JournalismException("Unable to get response Json object"));
-            }catch (IllegalStateException e1){
+            } catch (IllegalStateException e1) {
                 Log.wtf("Journalism", "Unable to report an exception that has occurred during Json parsing to Firebase");
             }
             return null;
@@ -48,13 +47,13 @@ public class Utility {
         return PersonaInfo.Gender.UNKNOWN;
     }
 
-    public static String getStringFromJsonSafe(JsonObject jsonObject, String key, String defaultValue){
+    public static String getStringFromJsonSafe(JsonObject jsonObject, String key, String defaultValue) {
         try {
             return jsonObject.get(key).getAsString();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             Crashlytics.log(e.getMessage());
-            Crashlytics.logException(new JournalismException("Unable to retrieve key \""+key+"\" from JsonObject: "+jsonObject.toString()));
+            Crashlytics.logException(new JournalismException("Unable to retrieve key \"" + key + "\" from JsonObject: " + jsonObject.toString()));
             return defaultValue;
         }
     }

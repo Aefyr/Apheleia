@@ -110,7 +110,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                     case MessagesListState.API_ERROR:
                         refreshLayout.setRefreshing(false);
                         Crashlytics.logException(messagesListState.getApiErrorInfo());
-                        Chief.makeApiErrorAlert(getActivity(), false);
+                        Chief.makeASnack(getView(), getString(R.string.error_api));
                         break;
                     case MessagesListState.TOKEN_DEAD:
                         refreshLayout.setRefreshing(false);

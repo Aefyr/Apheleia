@@ -51,10 +51,10 @@ public class MCReceiversFragment extends Fragment {
         receiversRecycler.setItemViewCacheSize(4);
 
         //TODO test this and try this with retaining state!
-        if(savedInstanceState!=null&&savedInstanceState.get("MRA_receiversData")!=null) {
+        if (savedInstanceState != null && savedInstanceState.get("MRA_receiversData") != null) {
             setReceiversInfoToAdapter(null);
             receiversAdapter.restoreStateFromBundle(savedInstanceState);
-        }else {
+        } else {
             progressDialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
             progressDialog.setMessage(getString(R.string.fetching_receivers));
             progressDialog.setCanceledOnTouchOutside(false);
@@ -130,7 +130,7 @@ public class MCReceiversFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        if (receiversGetRequest!=null&&!receiversGetRequest.hasHadResponseDelivered())
+        if (receiversGetRequest != null && !receiversGetRequest.hasHadResponseDelivered())
             receiversGetRequest.cancel();
         super.onDetach();
     }

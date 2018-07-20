@@ -33,11 +33,13 @@ public class LandscapeModeSideMenuListViewAdapter extends BaseAdapter {
 
     public interface OnSideMenuInteractionListener {
         void onApheleiaFragmentSelected(String fragment);
+
         void onSettingsClick();
+
         void onLogoutClick();
     }
 
-    public LandscapeModeSideMenuListViewAdapter(ListView listView, OnSideMenuInteractionListener listener){
+    public LandscapeModeSideMenuListViewAdapter(ListView listView, OnSideMenuInteractionListener listener) {
         this.listView = listView;
         this.listener = listener;
         this.c = listView.getContext();
@@ -45,7 +47,7 @@ public class LandscapeModeSideMenuListViewAdapter extends BaseAdapter {
         setupItems();
     }
 
-    private void setupItems(){
+    private void setupItems() {
         items = new Pair[7];
         items[0] = new Pair<>(R.drawable.ic_chrome_reader_mode_black_24dp, c.getString(R.string.diary));
         items[1] = new Pair<>(R.drawable.ic_apps_black_24dp, c.getString(R.string.marks));
@@ -58,7 +60,7 @@ public class LandscapeModeSideMenuListViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return items==null?0:items.length;
+        return items == null ? 0 : items.length;
     }
 
     @Override
@@ -74,20 +76,20 @@ public class LandscapeModeSideMenuListViewAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View v;
-        if(convertView!=null)
+        if (convertView != null)
             v = convertView;
         else
             v = inflater.inflate(R.layout.landscape_side_menu_item, parent, false);
 
-        ((TextView)v.findViewById(R.id.title)).setText(items[position].second);
-        ((ImageView)v.findViewById(R.id.icon)).setImageResource(items[position].first);
+        ((TextView) v.findViewById(R.id.title)).setText(items[position].second);
+        ((ImageView) v.findViewById(R.id.icon)).setImageResource(items[position].first);
         v.findViewById(R.id.layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(position<5) {
+                if (position < 5) {
                     select(v);
                     listener.onApheleiaFragmentSelected(fragments[position]);
-                }else if(position==5)
+                } else if (position == 5)
                     listener.onSettingsClick();
                 else
                     listener.onLogoutClick();
@@ -98,22 +100,22 @@ public class LandscapeModeSideMenuListViewAdapter extends BaseAdapter {
         return v;
     }
 
-    public void lidlSelect(String apheleiaFragment){
+    public void lidlSelect(String apheleiaFragment) {
         final int viewIndex = Utility.indexOfStringInArray(apheleiaFragment, fragments);
-        Log.d("LMSMLVA", "Selecting "+apheleiaFragment+ " with index "+viewIndex +" out of childs count: "+listView.getChildCount());
+        Log.d("LMSMLVA", "Selecting " + apheleiaFragment + " with index " + viewIndex + " out of childs count: " + listView.getChildCount());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                select(getViewByPosition(viewIndex+1, listView));
+                select(getViewByPosition(viewIndex + 1, listView));
 
             }
         }, 500);
     }
 
-    private void select(View v){
-        if(currentlySelected!=null){
-            ((TextView)currentlySelected.findViewById(R.id.title)).setTextColor(c.getResources().getColor(R.color.colorLSMText));
-            ((ImageView)currentlySelected.findViewById(R.id.icon)).setColorFilter(c.getResources().getColor(R.color.colorLSMTint));
+    private void select(View v) {
+        if (currentlySelected != null) {
+            ((TextView) currentlySelected.findViewById(R.id.title)).setTextColor(c.getResources().getColor(R.color.colorLSMText));
+            ((ImageView) currentlySelected.findViewById(R.id.icon)).setColorFilter(c.getResources().getColor(R.color.colorLSMTint));
 
             TypedValue outValue = new TypedValue();
             c.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
@@ -121,8 +123,8 @@ public class LandscapeModeSideMenuListViewAdapter extends BaseAdapter {
         }
         currentlySelected = v;
 
-        ((TextView)currentlySelected.findViewById(R.id.title)).setTextColor(c.getResources().getColor(R.color.colorPrimary));
-        ((ImageView)currentlySelected.findViewById(R.id.icon)).setColorFilter(c.getResources().getColor(R.color.colorPrimary));
+        ((TextView) currentlySelected.findViewById(R.id.title)).setTextColor(c.getResources().getColor(R.color.colorPrimary));
+        ((ImageView) currentlySelected.findViewById(R.id.icon)).setColorFilter(c.getResources().getColor(R.color.colorPrimary));
         currentlySelected.findViewById(R.id.layout).setBackgroundResource(R.drawable.landcscape_side_menu_bg_selected);
 
     }
@@ -131,7 +133,7 @@ public class LandscapeModeSideMenuListViewAdapter extends BaseAdapter {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
         final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
 
-        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+        if (pos < firstListItemPosition || pos > lastListItemPosition) {
             return listView.getAdapter().getView(pos, null, listView);
         } else {
             final int childIndex = pos - firstListItemPosition;

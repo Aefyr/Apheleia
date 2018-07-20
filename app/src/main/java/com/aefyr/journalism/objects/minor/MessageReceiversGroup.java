@@ -3,7 +3,7 @@ package com.aefyr.journalism.objects.minor;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class MessageReceiversGroup implements Serializable{
+public class MessageReceiversGroup implements Serializable {
     String name;
     String key;
     ArrayList<MessageReceiver> people;

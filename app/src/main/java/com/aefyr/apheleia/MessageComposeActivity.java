@@ -53,11 +53,11 @@ public class MessageComposeActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.composeMessageViewPager);
 
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             receiversFragment = (MCReceiversFragment) fragmentManager.getFragment(savedInstanceState, "receivers");
             messageFragment = (MCMessageFragment) fragmentManager.getFragment(savedInstanceState, "message");
-        }else {
+        } else {
             receiversFragment = new MCReceiversFragment();
             messageFragment = new MCMessageFragment();
         }
@@ -83,7 +83,7 @@ public class MessageComposeActivity extends AppCompatActivity {
             }
         });
 
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             if (replyIntent) {
                 receiversFragment.forceSetReceiver(getIntent().getStringExtra("receiver"));
                 messageFragment.setForcedMessageSubject(String.format(getString(R.string.reply_subject_prefix), getIntent().getStringExtra("subject")));
@@ -138,7 +138,7 @@ public class MessageComposeActivity extends AppCompatActivity {
                     public void onSuccess(SentMessageResponse result) {
                         AnalyticsHelper.sentMessage(FirebaseAnalytics.getInstance(MessageComposeActivity.this));
                         sendingDialog.dismiss();
-                        Chief.makeAToast(MessageComposeActivity.this, result.wasSent()?getString(R.string.message_sent):getString(R.string.sending_error));
+                        Chief.makeAToast(MessageComposeActivity.this, result.wasSent() ? getString(R.string.message_sent) : getString(R.string.sending_error));
                         finish();
                     }
 
@@ -170,7 +170,19 @@ public class MessageComposeActivity extends AppCompatActivity {
 
                     @Override
                     public void onApiError(JournalismException e) {
-                        //Apparently, this never happens
+                        AlertDialog apiErrorDialog = new AlertDialog.Builder(MessageComposeActivity.this).setMessage(getString(R.string.error_api)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                finish();
+                            }
+                        }).create();
+                        apiErrorDialog.setCanceledOnTouchOutside(false);
+                        apiErrorDialog.show();
                     }
                 });
             }

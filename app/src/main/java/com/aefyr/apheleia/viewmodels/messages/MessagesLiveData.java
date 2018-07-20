@@ -20,19 +20,19 @@ public class MessagesLiveData extends LiveData<MessagesListState> {
 
     private boolean cachedLoadRequested = true;
 
-    public MessagesLiveData(Context c){
+    public MessagesLiveData(Context c) {
         client = EljurApiClient.getInstance(c);
         helper = Helper.getInstance(c);
         messagesHelper = MessagesHelper.getInstance(c);
         setValue(new MessagesListState());
     }
 
-    void loadMessages(){
+    void loadMessages() {
         MessagesListState currentState = getValue();
         currentState.setUpdating();
         setValue(currentState);
 
-        if(cachedLoadRequested){
+        if (cachedLoadRequested) {
             messagesHelper.loadMessages(getValue().folder() == MessagesList.Folder.INBOX, new MessagesHelper.LoadMessagesTaskResultListener() {
                 @Override
                 public void onSuccess(MessagesList list) {
@@ -68,7 +68,7 @@ public class MessagesLiveData extends LiveData<MessagesListState> {
             @Override
             public void onNetworkError(boolean tokenIsWrong) {
                 MessagesListState currentState = getValue();
-                if(tokenIsWrong)
+                if (tokenIsWrong)
                     currentState.setTokenDead();
                 else
                     currentState.setNetError();
@@ -84,19 +84,19 @@ public class MessagesLiveData extends LiveData<MessagesListState> {
         });
     }
 
-    void setFolder(MessagesList.Folder folder){
+    void setFolder(MessagesList.Folder folder) {
         getValue().setFolder(folder);
         cachedLoadRequested = true;
         loadMessages();
     }
 
-    void saveMessages(){
+    void saveMessages() {
         messagesHelper.saveMessages(getValue().getData(), getValue().folder() == MessagesList.Folder.INBOX, null);
     }
 
     @Override
     protected void onActive() {
-        if(getValue().getState()==MessagesListState.NOT_READY)
+        if (getValue().getState() == MessagesListState.NOT_READY)
             loadMessages();
     }
 }

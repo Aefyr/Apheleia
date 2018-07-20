@@ -8,4 +8,8 @@ public class JournalismException extends Exception {
     public JournalismException(String message) {
         super(message);
     }
+
+    public JournalismException(Exception e) {
+        super(e);
+    }
 }

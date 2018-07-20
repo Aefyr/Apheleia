@@ -18,42 +18,42 @@ public abstract class ApheleiaDataState<T> {
     protected T data;
     protected JournalismException error;
 
-    public int getState(){
+    public int getState() {
         return state;
     }
 
-    public T getData(){
+    public T getData() {
         return data;
     }
 
-    public void setData(T data){
+    public void setData(T data) {
         this.data = data;
         state = OK;
     }
 
-    public void setDataFromCache(T data){
+    public void setDataFromCache(T data) {
         this.data = data;
         state = OK_CACHED_PRELOAD;
     }
 
-    public void setUpdating(){
+    public void setUpdating() {
         state = UPDATING;
     }
 
-    public void setNetError(){
+    public void setNetError() {
         state = NET_ERROR;
     }
 
-    public void setApiError(JournalismException e){
+    public void setApiError(JournalismException e) {
         error = e;
         state = API_ERROR;
     }
 
-    public JournalismException getApiErrorInfo(){
+    public JournalismException getApiErrorInfo() {
         return error;
     }
 
-    public void setTokenDead(){
+    public void setTokenDead() {
         state = TOKEN_DEAD;
     }
 

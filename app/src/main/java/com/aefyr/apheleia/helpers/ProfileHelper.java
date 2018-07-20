@@ -46,7 +46,7 @@ public class ProfileHelper {
     }
 
     public String getStudentName(String studentId) {
-        return demoMode?"Немцов Руслан":preferences.getString("student_name_" + studentId, "Tony Barrera");
+        return demoMode ? "Немцов Руслан" : preferences.getString("student_name_" + studentId, "Tony Barrera");
     }
 
     public void setStudentName(String name, String studentId) {
@@ -54,7 +54,7 @@ public class ProfileHelper {
     }
 
     public String getStudentClass(String studentId) {
-        return demoMode?"5В":preferences.getString("student_class_" + studentId, "999X");
+        return demoMode ? "5В" : preferences.getString("student_class_" + studentId, "999X");
     }
 
     public void setStudentClass(String clazz, String studentId) {
@@ -78,7 +78,7 @@ public class ProfileHelper {
     }
 
     public String getName() {
-        return demoMode?"Агния Немцова":preferences.getString("name", "n");
+        return demoMode ? "Агния Немцова" : preferences.getString("name", "n");
     }
 
     public void setName(String name) {

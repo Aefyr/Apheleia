@@ -52,7 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private Helper helper;
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
-            if(intent.getStringExtra("message_dup")!=null){
+            if (intent.getStringExtra("message_dup") != null) {
                 String notificationMessage = intent.getStringExtra("message_dup");
                 Log.d(TAG, "Showing notification from FCM: " + notificationMessage);
                 NotificationsHelper.showDevAlert(this, notificationMessage);
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity
         //Preparing UI
         NavigationView navigationView = null;
         LandscapeModeSideMenuListViewAdapter sideMenuListViewAdapter = null;
-        if(!lidlIsTabletMode()) {
+        if (!lidlIsTabletMode()) {
 
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close).syncState();
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
             navigationView.setNavigationItemSelectedListener(this);
 
             initializeNavHeader(navigationView.getHeaderView(0));
-        }else {
+        } else {
             ListView listView = findViewById(R.id.landscapeSideMenu);
             sideMenuListViewAdapter = new LandscapeModeSideMenuListViewAdapter(listView, new LandscapeModeSideMenuListViewAdapter.OnSideMenuInteractionListener() {
                 @Override
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity
                 }
             });
             listView.setAdapter(sideMenuListViewAdapter);
-            View header = ((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.nav_header_main, listView, false);
+            View header = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.nav_header_main, listView, false);
             listView.addHeaderView(header);
             initializeNavHeader(header);
         }
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
 
         //Dealing with instance state
-        if(savedInstanceState==null) {
+        if (savedInstanceState == null) {
             if (getIntent().getStringExtra("requested_fragment") != null) {
                 if (getIntent().getStringExtra("requested_fragment").equals("messages")) {
                     currentFragment = new MessagesFragment();
@@ -159,11 +159,11 @@ public class MainActivity extends AppCompatActivity
             }
 
             checkPeriods(false);
-        }else {
+        } else {
             currentApheleiaFragment = savedInstanceState.getString("currentFragment", FRAGMENT_DIARY);
             currentFragment = fragmentManager.findFragmentByTag(currentApheleiaFragment);
-            if(!lidlIsTabletMode()){
-                switch (currentApheleiaFragment){
+            if (!lidlIsTabletMode()) {
+                switch (currentApheleiaFragment) {
                     case FRAGMENT_DIARY:
                         navigationView.setCheckedItem(R.id.nav_diary);
                         break;
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity
                         navigationView.setCheckedItem(R.id.nav_messages);
                         break;
                 }
-            }else {
+            } else {
                 sideMenuListViewAdapter.lidlSelect(currentApheleiaFragment);
             }
         }
@@ -207,9 +207,9 @@ public class MainActivity extends AppCompatActivity
         mailFolderSwitchButton = menu.findItem(R.id.action_mail_folder_switch);
 
         mailFolderSwitchButton.setVisible(currentApheleiaFragment.equals(FRAGMENT_MESSAGES));
-        timePeriodSwitchButton.setVisible(currentApheleiaFragment.equals(FRAGMENT_DIARY)||currentApheleiaFragment.equals(FRAGMENT_MARKS)||currentApheleiaFragment.equals(FRAGMENT_SCHEDULE));
+        timePeriodSwitchButton.setVisible(currentApheleiaFragment.equals(FRAGMENT_DIARY) || currentApheleiaFragment.equals(FRAGMENT_MARKS) || currentApheleiaFragment.equals(FRAGMENT_SCHEDULE));
 
-        if(currentApheleiaFragment.equals(FRAGMENT_MESSAGES)){
+        if (currentApheleiaFragment.equals(FRAGMENT_MESSAGES)) {
             if (((MessagesFragment) currentFragment).isInboxSelected())
                 mailFolderSwitchButton.setIcon(R.drawable.ic_send_white_36dp);
             else
@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 return false;
             case R.id.action_time_period_switcher:
-                ((ActionListener)currentFragment).onAction(ActionListener.Action.DATE_PICK_REQUESTED);
+                ((ActionListener) currentFragment).onAction(ActionListener.Action.DATE_PICK_REQUESTED);
                 return true;
 
         }
@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private boolean lidlIsTabletMode(){
+    private boolean lidlIsTabletMode() {
         return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && (((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) || ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
     }
 
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity
                 public void onClick(DialogInterface dialogInterface, int i) {
                     studentPickerDialog.dismiss();
                     if (studentsIds[i].equals(profileHelper.getCurrentStudentId())) {
-                        if(drawer!=null)
+                        if (drawer != null)
                             drawer.closeDrawer(GravityCompat.START);
                         return;
                     }
@@ -421,7 +421,7 @@ public class MainActivity extends AppCompatActivity
                     profileHelper.setCurrentStudent(studentsIds[i]);
                     studentSwitched();
 
-                    if(drawer!=null)
+                    if (drawer != null)
                         drawer.closeDrawer(GravityCompat.START);
                 }
             }).setNegativeButton(getString(R.string.cancel), null).create();
@@ -444,14 +444,14 @@ public class MainActivity extends AppCompatActivity
         roleIcon.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if(debugModeCounter<7)
+                if (debugModeCounter < 7)
                     return true;
 
                 new AlertDialog.Builder(MainActivity.this).setMessage("Выберите состояние дебаг-режима\n\nНе рекомендуется трогать это меню, если вы не разработчик данной программы, так как это нарушит нормальную работу приложения :/").setNegativeButton("Выключен", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putBoolean("debug_mode", false).apply();
-                        Chief.makeAToast(MainActivity.this,  getString(R.string.quick_picker_warn));
+                        Chief.makeAToast(MainActivity.this, getString(R.string.quick_picker_warn));
                     }
                 }).setPositiveButton("Включен", new DialogInterface.OnClickListener() {
                     @Override
@@ -508,11 +508,11 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void destroyAllFragmentsExceptCurrent(){
+    private void destroyAllFragmentsExceptCurrent() {
         List<Fragment> fragments = fragmentManager.getFragments();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        for(Fragment fragment: fragments){
-            if(fragment!=currentFragment)
+        for (Fragment fragment : fragments) {
+            if (fragment != currentFragment)
                 transaction.remove(fragment);
         }
 
@@ -579,13 +579,13 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private class MessagesBroadcastReceiver extends BroadcastReceiver{
+    private class MessagesBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction()==null)
+            if (intent.getAction() == null)
                 return;
 
-            if(intent.getAction().equals(FirebaseConstants.INTENT_ACTION_GOT_FCM_MESSAGE)){
+            if (intent.getAction().equals(FirebaseConstants.INTENT_ACTION_GOT_FCM_MESSAGE)) {
                 NotificationsHelper.showDevAlert(MainActivity.this, intent.getStringExtra("message"));
             }
         }

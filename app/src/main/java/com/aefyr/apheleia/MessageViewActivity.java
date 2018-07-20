@@ -30,7 +30,6 @@ import com.aefyr.journalism.objects.minor.Attachment;
 import com.aefyr.journalism.objects.minor.MessageInfo;
 import com.aefyr.journalism.objects.minor.MessagePerson;
 import com.android.volley.Request;
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.Serializable;
@@ -79,15 +78,15 @@ public class MessageViewActivity extends AppCompatActivity {
         if (!inbox)
             replyFab.hide();
 
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             Log.d("MVA", "savedInstanceState found!");
             Serializable message = savedInstanceState.getSerializable("message");
-            if(message!=null) {
+            if (message != null) {
                 setMessage((MessageInfo) message);
                 Log.d("MVA", "Loaded message from savedInstanceState");
-            }else
+            } else
                 getMessage();
-        }else
+        } else
             getMessage();
 
     }
@@ -171,7 +170,7 @@ public class MessageViewActivity extends AppCompatActivity {
             }
         }
 
-        if(loadingDialog!=null&&loadingDialog.isShowing())
+        if (loadingDialog != null && loadingDialog.isShowing())
             loadingDialog.dismiss();
     }
 
@@ -218,8 +217,7 @@ public class MessageViewActivity extends AppCompatActivity {
             @Override
             public void onApiError(JournalismException e) {
                 loadingDialog.dismiss();
-                Crashlytics.logException(e);
-                Chief.makeApiErrorAlert(MessageViewActivity.this, true);
+                Chief.makeAnAlert(MessageViewActivity.this, getString(R.string.error_api));
             }
         });
     }
@@ -232,7 +230,7 @@ public class MessageViewActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (messageGetRequest!=null&&!messageGetRequest.hasHadResponseDelivered())
+        if (messageGetRequest != null && !messageGetRequest.hasHadResponseDelivered())
             messageGetRequest.cancel();
         super.onDestroy();
     }

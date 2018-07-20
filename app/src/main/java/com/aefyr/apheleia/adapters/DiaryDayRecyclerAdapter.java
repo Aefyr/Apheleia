@@ -158,7 +158,7 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
                     markButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if(!((Activity)inflater.getContext()).isFinishing())
+                            if (!((Activity) inflater.getContext()).isFinishing())
                                 Chief.makeAnAlert(inflater.getContext(), mark.getComment());
                         }
                     });
@@ -166,7 +166,7 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
                     markButton.setBackgroundColor(Color.TRANSPARENT);
                 }
 
-                if(mark.hasWeight()) {
+                if (mark.hasWeight()) {
                     TextView markWeight = markView.findViewById(R.id.markWeight);
                     markWeight.setVisibility(View.VISIBLE);
                     markWeight.setText(String.format("x%s", mark.getWeight()));

@@ -34,7 +34,7 @@ public class ApheleiaRequest extends Request<String> {
         super(method, url, errorListener);
         this.listener = listener;
         setRetryPolicy(new DefaultRetryPolicy(5000, 2, 1.5f));
-        Log.d(TAG, "Created request with URL: "+url);
+        Log.d(TAG, "Created request with URL: " + url);
     }
 
     @Override
@@ -49,19 +49,19 @@ public class ApheleiaRequest extends Request<String> {
                     if (cookie == null)
                         break PARSING_COOKIES;
 
-                    String[]cookieMeta = cookie.split(";");
-                    if(cookieMeta.length<3)
+                    String[] cookieMeta = cookie.split(";");
+                    if (cookieMeta.length < 3)
                         break PARSING_COOKIES;
 
                     String[] cookieData = cookieMeta[0].split("=");
-                    if(cookieData.length<2)
+                    if (cookieData.length < 2)
                         break PARSING_COOKIES;
 
                     ejId = cookieData[1];
                     try {
                         ejIdExpirationTime = System.currentTimeMillis() + Long.parseLong(cookieMeta[2].split("=")[1]) * 1000L;
                         Log.d(TAG, "Got ejId cookie " + ejId + ", expires at " + ejIdExpirationTime);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Log.e(TAG, "Unable to parse ejId cookie expiration time:");
                         e.printStackTrace();
                         Crashlytics.logException(e);
@@ -69,7 +69,7 @@ public class ApheleiaRequest extends Request<String> {
                 }
             }
 
-            Log.d(TAG, "Got response for url "+getUrl()+":\n"+responeS);
+            Log.d(TAG, "Got response for url " + getUrl() + ":\n" + responeS);
             return Response.success(responeS, HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
@@ -85,7 +85,7 @@ public class ApheleiaRequest extends Request<String> {
     @Override
     public void deliverError(VolleyError error) {
         super.deliverError(error);
-        Log.e(TAG, "Request with url "+ getUrl()+ " returned an error:\n" + error.getCause());
+        Log.e(TAG, "Request with url " + getUrl() + " returned an error:\n" + error.getCause());
     }
 
     @Override
@@ -97,8 +97,8 @@ public class ApheleiaRequest extends Request<String> {
         headers.put("Accept-Encoding", "gzip, deflate");
         headers.put("Accept-Language", "ru-ru");
 
-        if(ejId!=null)
-            headers.put("Cookie", "ej_id="+ejId);
+        if (ejId != null)
+            headers.put("Cookie", "ej_id=" + ejId);
 
         return headers;
     }

@@ -17,7 +17,6 @@ import com.aefyr.journalism.objects.major.PersonaInfo;
 import com.aefyr.journalism.objects.major.Schedule;
 import com.aefyr.journalism.objects.minor.Student;
 import com.android.volley.Request;
-import com.crashlytics.android.Crashlytics;
 
 import java.util.HashSet;
 
@@ -90,8 +89,8 @@ public class TheInitializer {
                         loadPeriods(helper.getPersona(), s.id(), new EljurApiClient.JournalismListener<PeriodsInfo>() {
                             @Override
                             public void onSuccess(PeriodsInfo periods) {
-                                if(periods == null) {
-                                    i+=3;
+                                if (periods == null) {
+                                    i += 3;
                                     publishProgress(++i);
                                     return;
                                 }
@@ -124,7 +123,6 @@ public class TheInitializer {
 
                                     @Override
                                     public void onApiError(JournalismException e) {
-                                        Crashlytics.logException(e);
                                         fail("Ошибка при инициализации. Не удалось синхронизировать дневник");
                                     }
                                 });
@@ -150,7 +148,6 @@ public class TheInitializer {
 
                                     @Override
                                     public void onApiError(JournalismException e) {
-                                        Crashlytics.logException(e);
                                         fail("Ошибка при инициализации. Не удалось синхронизировать оценки");
                                     }
                                 });
@@ -176,7 +173,6 @@ public class TheInitializer {
 
                                     @Override
                                     public void onApiError(JournalismException e) {
-                                        Crashlytics.logException(e);
                                         fail("Ошибка при инициализации. Не удалось синхронизировать расписание");
                                     }
                                 });
@@ -190,7 +186,6 @@ public class TheInitializer {
 
                             @Override
                             public void onApiError(JournalismException e) {
-                                Crashlytics.logException(e);
                                 fail("Ошибка при инициализации. Не удалось синхронизировать периоды обучения");
                             }
                         });
@@ -216,7 +211,6 @@ public class TheInitializer {
 
                             @Override
                             public void onApiError(JournalismException e) {
-                                Crashlytics.logException(e);
                                 fail("Ошибка при инициализации. Не удалось синхронизировать расписание");
                             }
                         });
@@ -251,7 +245,6 @@ public class TheInitializer {
 
                         @Override
                         public void onApiError(JournalismException e) {
-                            Crashlytics.logException(e);
                             fail("Ошибка при инициализации. Не удалось синхронизировать сообщения");
                         }
                     });
@@ -265,12 +258,12 @@ public class TheInitializer {
 
                 @Override
                 public void onApiError(JournalismException e) {
-                    Crashlytics.logException(e);
                     switch (e.getMessage()) {
                         case "unsupported role":
                             fail(c.getString(R.string.unupported_role));
                             break;
                         default:
+                            fail("Ошибка при инициализации. Не удалось синхронизировать данные профиля");
                             break;
                     }
                 }

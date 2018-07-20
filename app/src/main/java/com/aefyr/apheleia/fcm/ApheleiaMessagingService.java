@@ -16,7 +16,7 @@ public class ApheleiaMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        p.edit().putInt("mdb", (p.getInt("mdb", 0)+1)).apply();
+        p.edit().putInt("mdb", (p.getInt("mdb", 0) + 1)).apply();
         super.onMessageReceived(remoteMessage);
 
         //TODO add message action data param

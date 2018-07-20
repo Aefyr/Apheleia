@@ -27,7 +27,6 @@ import com.aefyr.apheleia.utility.Utility;
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.Token;
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class LoginActivity extends AppCompatActivity {
@@ -180,8 +179,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onApiError(JournalismException e) {
                         signIn.setEnabled(true);
                         progressDialog.hide();
-                        Crashlytics.logException(e);
-                        Chief.makeApiErrorAlert(LoginActivity.this, false);
+                        Chief.makeAnAlert(LoginActivity.this, getString(R.string.error_api));
                     }
 
                     @Override
@@ -199,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
     private void showAlert(String title, CharSequence message) {
-        if(!isFinishing())
+        if (!isFinishing())
             new AlertDialog.Builder(this).setTitle(title).setMessage(message).setPositiveButton(getString(R.string.ok), null).create().show();
     }
 

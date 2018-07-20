@@ -119,7 +119,7 @@ public class EljurApiClient {
     }
 
     //Not that easy, apparently...
-    public Request hijackFCM(EljurPersona persona, String fcmToken, JournalismListener<Boolean> listener){
-        return EljurApiRequests.hijackFCM(queue, persona, fcmToken,listener);
+    public Request hijackFCM(EljurPersona persona, String fcmToken, JournalismListener<Boolean> listener) {
+        return EljurApiRequests.hijackFCM(queue, persona, fcmToken, listener);
     }
 }

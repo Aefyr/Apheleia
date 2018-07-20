@@ -31,7 +31,6 @@ import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.Finals;
 import com.android.volley.Request;
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.Serializable;
@@ -143,8 +142,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
             @Override
             public void onApiError(JournalismException e) {
-                Crashlytics.logException(e);
-                Chief.makeApiErrorAlert(getActivity(), false);
+                Chief.makeASnack(getView(), getString(R.string.error_api));
                 refreshLayout.setRefreshing(false);
             }
         });
@@ -156,20 +154,20 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     public void studentSwitched(Bundle savedInstanceState) {
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             Log.d("AFF", "savedInstanceState found");
             currentStudent = savedInstanceState.getString("currentStudent");
             Serializable finals = savedInstanceState.getSerializable("finals");
-            if(finals!=null){
+            if (finals != null) {
                 setFinalsToAdapter((Finals) finals);
                 finalsRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
                 Log.d("AFF", "Got finals from savedInstanceState");
-            }else {
+            } else {
                 currentStudent = profileHelper.getCurrentStudentId();
                 firstLoad = true;
                 loadFinals();
             }
-        }else {
+        } else {
             currentStudent = profileHelper.getCurrentStudentId();
             firstLoad = true;
             loadFinals();
@@ -231,7 +229,7 @@ public class FinalsFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     private void updateActionBarTitle() {
-        if(!isHidden()) {
+        if (!isHidden()) {
             AnalyticsHelper.viewSection(FirebaseConstants.SECTION_FINALS, FirebaseAnalytics.getInstance(getActivity()));
             ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.finals));
         }

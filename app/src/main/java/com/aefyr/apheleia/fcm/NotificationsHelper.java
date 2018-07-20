@@ -14,7 +14,7 @@ import com.aefyr.apheleia.R;
 
 public class NotificationsHelper {
 
-    public static void showDevAlert(Context c, String message){
+    public static void showDevAlert(Context c, String message) {
         final AlertDialog dialog = new AlertDialog.Builder(c).setTitle(R.string.system_notification).setMessage(message).setPositiveButton(R.string.sys_notification_delay, null).create();
         dialog.show();
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);

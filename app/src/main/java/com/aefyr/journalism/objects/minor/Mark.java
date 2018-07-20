@@ -19,11 +19,11 @@ public class Mark implements Serializable {
         return comment;
     }
 
-    public boolean hasWeight(){
-        return weight!=null;
+    public boolean hasWeight() {
+        return weight != null;
     }
 
-    public String getWeight(){
+    public String getWeight() {
         return weight;
     }
 }

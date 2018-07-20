@@ -1,6 +1,7 @@
 package com.aefyr.apheleia.fragments;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -75,6 +76,8 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private DiaryEntry diary;
 
+    private Context c;
+
     public DiaryFragment() {
         // Required empty public constructor
     }
@@ -87,6 +90,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_diary, container, false);
+        c = inflater.getContext();
         updateActionBarTitle();
 
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
@@ -154,7 +158,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 Chief.makeASnack(getView(), getString(R.string.offline_mode));
             } else {
                 antiScroll();
-                Chief.makeAnAlert(getActivity(), getString(R.string.error_week_not_saved));
+                Chief.makeAnAlert(c, getString(R.string.error_week_not_saved));
             }
             refreshLayout.setRefreshing(false);
             return;
@@ -194,8 +198,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             public void onApiError(JournalismException e) {
                 if (!loadedFromMemory)
                     antiScroll();
-                Crashlytics.logException(e);
-                Chief.makeApiErrorAlert(getActivity(), false);
+                Chief.makeASnack(getView(), getString(R.string.error_api));
                 refreshLayout.setRefreshing(false);
             }
         });
@@ -228,7 +231,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         brokenStudent = false;
         setEmptinessTextShown(false);
 
-        if(periodsHelper.getCurrentWeek() == null){
+        if (periodsHelper.getCurrentWeek() == null) {
             brokenStudent = true;
             setDiaryEntryToAdapter(null);
             weeksPickerDialog = Utility.createBrokenStudentDialog(getActivity());
@@ -271,28 +274,28 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         requestedWeek = selectedWeek;
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             Log.d("ADF", "savedInstanceState found");
             currentStudent = savedInstanceState.getString("currentStudent");
             Serializable diary = savedInstanceState.getSerializable("diary");
-            if(diary!=null) {
+            if (diary != null) {
                 setDiaryEntryToAdapter((DiaryEntry) diary);
                 diaryRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
                 Log.d("ADF", "Got diary from savedInstanceState");
-            }else {
+            } else {
                 currentStudent = profileHelper.getCurrentStudentId();
                 firstLoad = true;
                 refreshDiary();
             }
-        }else {
+        } else {
             currentStudent = profileHelper.getCurrentStudentId();
             firstLoad = true;
             refreshDiary();
         }
     }
 
-    private void refreshDiary(){
-        if(brokenStudent) {
+    private void refreshDiary() {
+        if (brokenStudent) {
             refreshLayout.setRefreshing(false);
             return;
         }
@@ -305,7 +308,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
 
     private void initializeQuickScrolling(boolean enabled, final DiaryEntry entry) {
-        if (enabled && entry!=null) {
+        if (enabled && entry != null) {
 
             if (firstLoad) {
                 quickDayPickBar.setVisibility(View.VISIBLE);
@@ -355,11 +358,11 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         outState.putSerializable("diary", diary);
         outState.putString("currentStudent", currentStudent);
 
-        if(diaryRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+        if (diaryRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             int[] pos = new int[((StaggeredGridLayoutManager) diaryRecycler.getLayoutManager()).getSpanCount()];
             ((StaggeredGridLayoutManager) diaryRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);
             outState.putInt("scrollPosition", pos[0]);
-        }else {
+        } else {
             Log.d("ADF", "scrollPos=" + ((PreloadLayoutManager) diaryRecycler.getLayoutManager()).findFirstVisibleItemPosition());
             outState.putInt("scrollPosition", ((PreloadLayoutManager) diaryRecycler.getLayoutManager()).findFirstVisibleItemPosition());
         }
@@ -390,8 +393,8 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         setEmptinessTextShown(entry == null || entry.getDays().size() == 0);
     }
 
-    private void setEmptinessTextShown(boolean shown){
-        emptyDiary.setVisibility(shown?View.VISIBLE:View.GONE);
+    private void setEmptinessTextShown(boolean shown) {
+        emptyDiary.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -410,7 +413,7 @@ public class DiaryFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private void updateActionBarTitle() {
-        if(!isHidden()) {
+        if (!isHidden()) {
             AnalyticsHelper.viewSection(FirebaseConstants.SECTION_DIARY, FirebaseAnalytics.getInstance(getActivity()));
             ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.diary));
         }

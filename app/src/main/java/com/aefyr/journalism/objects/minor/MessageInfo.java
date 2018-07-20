@@ -35,7 +35,7 @@ public class MessageInfo implements Serializable {
         return parsedReceivers;
     }
 
-    public int receiversCount(){
+    public int receiversCount() {
         return receiversCount;
     }
 

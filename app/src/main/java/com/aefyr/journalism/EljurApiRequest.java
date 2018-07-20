@@ -56,11 +56,11 @@ public class EljurApiRequest {
         return httpRequest.toString();
     }*/
 
-    public String getRequestURL(){
+    public String getRequestURL() {
         StringBuilder httpRequest = new StringBuilder(HTTPS).append(persona.schoolDomain).append(ELJUR).append(method).append("?");
 
-        for(int i = 0; i<parameters.size(); i++){
-            if(i!=0)
+        for (int i = 0; i < parameters.size(); i++) {
+            if (i != 0)
                 httpRequest.append("&");
 
             Pair<String, String> param = parameters.get(i);
@@ -72,7 +72,7 @@ public class EljurApiRequest {
             }
         }
 
-        if(parameters.size()!=0)
+        if (parameters.size() != 0)
             httpRequest.append("&");
 
         httpRequest.append("auth_token=").append(persona.token).append("&vendor=").append(persona.schoolDomain).append(BOUND).append("&_=").append(System.currentTimeMillis());

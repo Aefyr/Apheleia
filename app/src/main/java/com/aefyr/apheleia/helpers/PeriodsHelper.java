@@ -60,12 +60,12 @@ public class PeriodsHelper {
             @Override
             public void onSuccess(PeriodsInfo result) {
                 //Forcing to reload week and periods in debug mode
-                if(debugMode) {
+                if (debugMode) {
                     listener.OnFoundLessPeriods();
                     return;
                 }
 
-                if(result == null){
+                if (result == null) {
                     listener.onNothingChanged();
                     return;
                 }
@@ -117,7 +117,7 @@ public class PeriodsHelper {
     }
 
     public Set<String> getPeriods() {
-        if(debugMode){
+        if (debugMode) {
             HashSet<String> dPeriod = new HashSet<>(1);
             dPeriod.add(getCurrentPeriod());
             return dPeriod;
@@ -154,7 +154,7 @@ public class PeriodsHelper {
     }
 
     public Set<String> getWeeks() {
-        if(debugMode){
+        if (debugMode) {
             HashSet<String> dWeek = new HashSet<>(1);
             dWeek.add(getCurrentWeek());
             return dWeek;

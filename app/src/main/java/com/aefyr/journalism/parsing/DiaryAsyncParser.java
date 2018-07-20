@@ -1,5 +1,7 @@
 package com.aefyr.journalism.parsing;
 
+import android.util.Log;
+
 import com.aefyr.journalism.EljurApiClient;
 import com.aefyr.journalism.Utility;
 import com.aefyr.journalism.exceptions.JournalismException;
@@ -15,6 +17,7 @@ import com.aefyr.journalism.objects.minor.MinorObjectsHelper;
 import com.aefyr.journalism.objects.minor.WeekDay;
 import com.aefyr.journalism.objects.utility.HometasksComparator;
 import com.aefyr.journalism.objects.utility.WeekDaysComparator;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -46,7 +49,7 @@ public class DiaryAsyncParser {
         private String rawResponse;
         private String studentId;
 
-        DiaryParseTask(String rawResponse, String studentId, EljurApiClient.JournalismListener<DiaryEntry> listener){
+        DiaryParseTask(String rawResponse, String studentId, EljurApiClient.JournalismListener<DiaryEntry> listener) {
             bindJournalismListener(listener);
             this.rawResponse = rawResponse;
             this.studentId = studentId;
@@ -54,220 +57,243 @@ public class DiaryAsyncParser {
 
         @Override
         protected AsyncParserTaskResult<DiaryEntry> doInBackground(Void... voids) {
-            JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-            if (response == null || response.size() == 0 || response.get("students") == null) {
-                return new AsyncParserTaskResult<>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
-            }
+            try {
+                JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-            JsonObject weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
+                if (response == null || response.size() == 0 || response.get("students") == null) {
+                    return new AsyncParserTaskResult<>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
+                }
 
-            ArrayList<WeekDay> weekDays = new ArrayList<>(weekDaysObj.size());
+                JsonObject weekDaysObj;
 
-            for (Map.Entry<String, JsonElement> entry : weekDaysObj.entrySet()) {
-                JsonObject weekDay = entry.getValue().getAsJsonObject();
-                if (weekDay.get("alert") != null && weekDay.get("alert").getAsString().equals("vacation")) {
+                if (response.get("students").isJsonArray()) {
+                    weekDaysObj = response.getAsJsonArray("students").get(0).getAsJsonObject().getAsJsonObject("days");
+                } else {
+                    weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
+                }
+
+                ArrayList<WeekDay> weekDays = new ArrayList<>(weekDaysObj.size());
+
+                for (Map.Entry<String, JsonElement> entry : weekDaysObj.entrySet()) {
+                    JsonObject weekDay = entry.getValue().getAsJsonObject();
+                    if (weekDay.get("alert") != null && weekDay.get("alert").getAsString().equals("vacation")) {
+                        try {
+                            weekDays.add(MinorObjectsFactory.createVacationWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString()));
+                        } catch (JournalismException e) {
+                            Log.w("Apheleia", e);
+                            Crashlytics.log("Unable to parse " + rawResponse);
+                            Crashlytics.logException(e);
+                            return new AsyncParserTaskResult<>(e);
+                        }
+                        continue;
+                    }
+
+                    ArrayList<Lesson> lessons;
+                    LESSONS:
+                    {
+                        if (weekDay.get("items") == null) {
+                            lessons = new ArrayList<>(0);
+                            break LESSONS;
+                        }
+
+                        JsonArray jLessons;
+                        if (weekDay.get("items").isJsonArray()) {
+                            jLessons = weekDay.get("items").getAsJsonArray();
+                        } else {
+                            jLessons = new JsonArray();
+                            JsonObject jLessonsObj = weekDay.get("items").getAsJsonObject();
+
+                            for (Map.Entry<String, JsonElement> jLessonKey : jLessonsObj.entrySet()) {
+                                jLessons.add(jLessonKey.getValue());
+                            }
+                        }
+
+
+                        lessons = new ArrayList<>(jLessons.size());
+
+                        for (JsonElement jLessonEl : jLessons) {
+                            JsonObject lessonObj = jLessonEl.getAsJsonObject();
+                            Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num", "0"), Utility.getStringFromJsonSafe(lessonObj, "name", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "room", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "teacher", "Неизвестно"));
+
+                            if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
+                                try {
+                                    MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
+                                } catch (JournalismException e) {
+                                    Log.w("Apheleia", e);
+                                    Crashlytics.log("Unable to parse " + rawResponse);
+                                    Crashlytics.logException(e);
+                                }
+                            }
+
+                            Homework homework = null;
+                            if (lessonObj.get("homework") != null) {
+                                homework = MinorObjectsFactory.createHomework();
+
+                                JsonObject jHomework = lessonObj.getAsJsonObject("homework");
+                                ArrayList<Hometask> hometasks = new ArrayList<>(jHomework.size());
+
+                                for (Map.Entry<String, JsonElement> jHomeworkKey : jHomework.entrySet()) {
+                                    JsonObject hometask = jHomeworkKey.getValue().getAsJsonObject();
+                                    hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
+                                }
+
+                                Collections.sort(hometasks, new HometasksComparator());
+                                MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
+                            }
+
+                            if (lessonObj.get("files") != null) {
+                                if (homework == null)
+                                    homework = MinorObjectsFactory.createHomework();
+
+                                JsonArray jAttachments = lessonObj.getAsJsonArray("files");
+                                ArrayList<Attachment> attachments = new ArrayList<>(jAttachments.size());
+
+                                for (JsonElement attachmentEl : jAttachments) {
+                                    JsonObject attachment = attachmentEl.getAsJsonObject();
+                                    attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
+                                }
+                                MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
+                                ;
+                            }
+
+                            if (homework != null) {
+                                MinorObjectsHelper.addHomeworkToLesson(lesson, homework);
+                            }
+
+                            if (lessonObj.get("assessments") != null) {
+
+                                JsonArray jMarks = lessonObj.getAsJsonArray("assessments");
+                                ArrayList<Mark> marks = new ArrayList<>(jMarks.size());
+
+                                for (JsonElement markEl : jMarks) {
+                                    JsonObject mark = markEl.getAsJsonObject();
+
+                                    //Phantom marks filter, why do they even appear tho?
+                                    if (mark.get("value").getAsString().equals(""))
+                                        continue;
+
+                                    String markWeight = null;
+                                    if (mark.get("weight") != null)
+                                        markWeight = mark.get("weight").getAsString();
+
+                                    if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
+                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("comment").getAsString()));
+                                    else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
+                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("lesson_comment").getAsString()));
+                                    else
+                                        marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString(), markWeight));
+                                }
+                                MinorObjectsHelper.addMarksToLesson(lesson, marks);
+                            }
+                            lessons.add(lesson);
+                        }
+                    }
+
+                    ArrayList<Lesson> overtimeLessons = null;
+                    if (weekDay.get("items_extday") != null) {
+
+                        JsonArray jOvertimeLessons = weekDay.getAsJsonArray("items_extday");
+                        overtimeLessons = new ArrayList<>(jOvertimeLessons.size());
+
+                        for (JsonElement otLessonEl : jOvertimeLessons) {
+                            JsonObject otLessonObj = otLessonEl.getAsJsonObject();
+                            Lesson otLesson = MinorObjectsFactory.createLesson("OT", Utility.getStringFromJsonSafe(otLessonObj, "name", "Неизвестно"), "OT", Utility.getStringFromJsonSafe(otLessonObj, "teacher", "Неизвестно"));
+
+                            if (otLessonObj.get("starttime") != null && otLessonObj.get("endtime") != null) {
+                                try {
+                                    MinorObjectsHelper.addTimesToLesson(otLesson, otLessonObj.get("starttime").getAsString(), otLessonObj.get("endtime").getAsString());
+                                } catch (JournalismException e) {
+                                    Log.w("Apheleia", e);
+                                    Crashlytics.log("Unable to parse " + rawResponse);
+                                    Crashlytics.logException(e);
+                                }
+                            }
+
+                            Homework homework = null;
+                            if (otLessonObj.get("homework") != null) {
+                                homework = MinorObjectsFactory.createHomework();
+
+                                JsonArray jHomework = otLessonObj.getAsJsonArray("homework");
+                                ArrayList<Hometask> hometasks = new ArrayList<>(jHomework.size());
+
+                                for (JsonElement homeworkEl : jHomework) {
+                                    JsonObject hometask = homeworkEl.getAsJsonObject();
+                                    hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
+                                }
+
+                                Collections.sort(hometasks, new HometasksComparator());
+                                MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
+                            }
+
+                            if (otLessonObj.get("files") != null) {
+                                if (homework == null)
+                                    homework = MinorObjectsFactory.createHomework();
+
+                                JsonArray jAttachments = otLessonObj.getAsJsonArray("files");
+                                ArrayList<Attachment> attachments = new ArrayList<>(jAttachments.size());
+
+                                for (JsonElement attachmentEl : jAttachments) {
+                                    JsonObject attachment = attachmentEl.getAsJsonObject();
+                                    attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
+                                }
+                                MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
+                            }
+
+                            if (homework != null)
+                                MinorObjectsHelper.addHomeworkToLesson(otLesson, homework);
+
+                            if (otLessonObj.get("assessments") != null) {
+
+                                JsonArray jMarks = otLessonObj.getAsJsonArray("assessments");
+                                ArrayList<Mark> marks = new ArrayList<>(jMarks.size());
+
+                                for (JsonElement markEl : jMarks) {
+                                    JsonObject mark = markEl.getAsJsonObject();
+
+                                    //Phantom marks filter, why do they even appear tho?
+                                    if (mark.get("value").getAsString().equals(""))
+                                        continue;
+
+                                    String markWeight = null;
+                                    if (mark.get("weight") != null)
+                                        markWeight = mark.get("weight").getAsString();
+
+                                    if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
+                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("comment").getAsString()));
+                                    else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
+                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("lesson_comment").getAsString()));
+                                    else
+                                        marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString(), markWeight));
+                                }
+                                MinorObjectsHelper.addMarksToLesson(otLesson, marks);
+                            }
+                            overtimeLessons.add(otLesson);
+                        }
+                    }
                     try {
-                        weekDays.add(MinorObjectsFactory.createVacationWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString()));
+                        WeekDay day = MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons);
+
+                        if (overtimeLessons != null)
+                            MinorObjectsHelper.addOvertimeLessonsToWeekDat(day, overtimeLessons);
+
+                        weekDays.add(day);
                     } catch (JournalismException e) {
-                        return new AsyncParserTaskResult<>(e);
+                        Log.w("Apheleia", e);
+                        Crashlytics.log("Unable to parse " + rawResponse);
+                        Crashlytics.logException(e);
                     }
-                    continue;
+
+
                 }
-
-                ArrayList<Lesson> lessons;
-                LESSONS:
-                {
-                    if(weekDay.get("items")==null){
-                        lessons = new ArrayList<>(0);
-                        break LESSONS;
-                    }
-
-                    JsonArray jLessons;
-                    if(weekDay.get("items").isJsonArray()){
-                        jLessons = weekDay.get("items").getAsJsonArray();
-                    }else {
-                        jLessons = new JsonArray();
-                        JsonObject jLessonsObj = weekDay.get("items").getAsJsonObject();
-
-                        for (Map.Entry<String, JsonElement> jLessonKey : jLessonsObj.entrySet()) {
-                            jLessons.add(jLessonKey.getValue());
-                        }
-                    }
-
-
-                    lessons = new ArrayList<>(jLessons.size());
-
-                    for (JsonElement jLessonEl: jLessons) {
-                        JsonObject lessonObj = jLessonEl.getAsJsonObject();
-                        Lesson lesson = MinorObjectsFactory.createLesson(Utility.getStringFromJsonSafe(lessonObj, "num", "0"), Utility.getStringFromJsonSafe(lessonObj, "name", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "room", "Неизвестно"), Utility.getStringFromJsonSafe(lessonObj, "teacher", "Неизвестно"));
-
-                        if (lessonObj.get("starttime") != null && lessonObj.get("endtime") != null) {
-                            try {
-                                MinorObjectsHelper.addTimesToLesson(lesson, lessonObj.get("starttime").getAsString(), lessonObj.get("endtime").getAsString());
-                            } catch (JournalismException e) {
-                                return new AsyncParserTaskResult<>(e);
-                            }
-                        }
-
-                        Homework homework = null;
-                        if (lessonObj.get("homework") != null) {
-                            homework = MinorObjectsFactory.createHomework();
-
-                            JsonObject jHomework = lessonObj.getAsJsonObject("homework");
-                            ArrayList<Hometask> hometasks = new ArrayList<>(jHomework.size());
-
-                            for (Map.Entry<String, JsonElement> jHomeworkKey : jHomework.entrySet()) {
-                                JsonObject hometask = jHomeworkKey.getValue().getAsJsonObject();
-                                hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
-                            }
-
-                            Collections.sort(hometasks, new HometasksComparator());
-                            MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
-                        }
-
-                        if (lessonObj.get("files") != null) {
-                            if (homework == null)
-                                homework = MinorObjectsFactory.createHomework();
-
-                            JsonArray jAttachments = lessonObj.getAsJsonArray("files");
-                            ArrayList<Attachment> attachments = new ArrayList<>(jAttachments.size());
-
-                            for (JsonElement attachmentEl : jAttachments) {
-                                JsonObject attachment = attachmentEl.getAsJsonObject();
-                                attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
-                            }
-                            MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
-                            ;
-                        }
-
-                        if (homework != null) {
-                            MinorObjectsHelper.addHomeworkToLesson(lesson, homework);
-                        }
-
-                        if (lessonObj.get("assessments") != null) {
-
-                            JsonArray jMarks = lessonObj.getAsJsonArray("assessments");
-                            ArrayList<Mark> marks = new ArrayList<>(jMarks.size());
-
-                            for (JsonElement markEl : jMarks) {
-                                JsonObject mark = markEl.getAsJsonObject();
-
-                                //Phantom marks filter, why do they even appear tho?
-                                if (mark.get("value").getAsString().equals(""))
-                                    continue;
-
-                                String markWeight = null;
-                                if(mark.get("weight")!=null)
-                                    markWeight = mark.get("weight").getAsString();
-
-                                if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
-                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("comment").getAsString()));
-                                else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
-                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("lesson_comment").getAsString()));
-                                else
-                                    marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString(), markWeight));
-                            }
-                            MinorObjectsHelper.addMarksToLesson(lesson, marks);
-                        }
-                        lessons.add(lesson);
-                    }
-                }
-
-                ArrayList<Lesson> overtimeLessons = null;
-                if (weekDay.get("items_extday") != null) {
-
-                    JsonArray jOvertimeLessons = weekDay.getAsJsonArray("items_extday");
-                    overtimeLessons = new ArrayList<>(jOvertimeLessons.size());
-
-                    for (JsonElement otLessonEl : jOvertimeLessons) {
-                        JsonObject otLessonObj = otLessonEl.getAsJsonObject();
-                        Lesson otLesson = MinorObjectsFactory.createLesson("OT", Utility.getStringFromJsonSafe(otLessonObj, "name", "Неизвестно"), "OT", Utility.getStringFromJsonSafe(otLessonObj, "teacher", "Неизвестно"));
-
-                        if (otLessonObj.get("starttime") != null && otLessonObj.get("endtime") != null) {
-                            try {
-                                MinorObjectsHelper.addTimesToLesson(otLesson, otLessonObj.get("starttime").getAsString(), otLessonObj.get("endtime").getAsString());
-                            } catch (JournalismException e) {
-                                return new AsyncParserTaskResult<>(e);
-                            }
-                        }
-
-                        Homework homework = null;
-                        if (otLessonObj.get("homework") != null) {
-                            homework = MinorObjectsFactory.createHomework();
-
-                            JsonArray jHomework = otLessonObj.getAsJsonArray("homework");
-                            ArrayList<Hometask> hometasks = new ArrayList<>(jHomework.size());
-
-                            for (JsonElement homeworkEl : jHomework) {
-                                JsonObject hometask = homeworkEl.getAsJsonObject();
-                                hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
-                            }
-
-                            Collections.sort(hometasks, new HometasksComparator());
-                            MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
-                        }
-
-                        if (otLessonObj.get("files") != null) {
-                            if (homework == null)
-                                homework = MinorObjectsFactory.createHomework();
-
-                            JsonArray jAttachments = otLessonObj.getAsJsonArray("files");
-                            ArrayList<Attachment> attachments = new ArrayList<>(jAttachments.size());
-
-                            for (JsonElement attachmentEl : jAttachments) {
-                                JsonObject attachment = attachmentEl.getAsJsonObject();
-                                attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
-                            }
-                            MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
-                        }
-
-                        if (homework != null)
-                            MinorObjectsHelper.addHomeworkToLesson(otLesson, homework);
-
-                        if (otLessonObj.get("assessments") != null) {
-
-                            JsonArray jMarks = otLessonObj.getAsJsonArray("assessments");
-                            ArrayList<Mark> marks = new ArrayList<>(jMarks.size());
-
-                            for (JsonElement markEl : jMarks) {
-                                JsonObject mark = markEl.getAsJsonObject();
-
-                                //Phantom marks filter, why do they even appear tho?
-                                if (mark.get("value").getAsString().equals(""))
-                                    continue;
-
-                                String markWeight = null;
-                                if(mark.get("weight")!=null)
-                                    markWeight = mark.get("weight").getAsString();
-
-                                if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
-                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("comment").getAsString()));
-                                else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
-                                    marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("lesson_comment").getAsString()));
-                                else
-                                    marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString(), markWeight));
-                            }
-                            MinorObjectsHelper.addMarksToLesson(otLesson, marks);
-                        }
-                        overtimeLessons.add(otLesson);
-                    }
-                }
-                try {
-                    WeekDay day = MinorObjectsFactory.createWeekDay(weekDay.get("title").getAsString(), weekDay.get("name").getAsString(), lessons);
-
-                    if (overtimeLessons != null)
-                        MinorObjectsHelper.addOvertimeLessonsToWeekDat(day, overtimeLessons);
-
-                    weekDays.add(day);
-                } catch (JournalismException e) {
-                    return new AsyncParserTaskResult<>(e);
-                }
-
-
+                Collections.sort(weekDays, new WeekDaysComparator());
+                return new AsyncParserTaskResult<>(MajorObjectsFactory.createDiaryEntry(weekDays));
+            } catch (Exception e) {
+                Log.w("Apheleia", e);
+                Crashlytics.log("Unable to parse " + rawResponse);
+                Crashlytics.logException(e);
+                return new AsyncParserTaskResult<>(new JournalismException(e));
             }
-            Collections.sort(weekDays, new WeekDaysComparator());
-            return new AsyncParserTaskResult<>(MajorObjectsFactory.createDiaryEntry(weekDays));
         }
     }
 

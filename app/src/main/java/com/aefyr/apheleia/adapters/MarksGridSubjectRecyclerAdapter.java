@@ -29,7 +29,7 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
         this.subject = subject;
         inflater = inflater2;
 
-        if(timeLord == null)
+        if (timeLord == null)
             timeLord = TimeLord.getInstance();
     }
 
@@ -54,7 +54,7 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
             holder.mark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(!((Activity)inflater.getContext()).isFinishing())
+                    if (!((Activity) inflater.getContext()).isFinishing())
                         Chief.makeAnAlert(inflater.getContext(), mark.getComment());
                 }
             });
@@ -64,10 +64,10 @@ class MarksGridSubjectRecyclerAdapter extends RecyclerView.Adapter<MarksGridSubj
             holder.mark.setBackgroundColor(Color.TRANSPARENT); // forsenCD Clap
         }
 
-        if(mark.hasWeight()){
+        if (mark.hasWeight()) {
             holder.markWeight.setText(String.format("x%s", mark.getWeight()));
             holder.markWeight.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             holder.markWeight.setVisibility(View.GONE);
         }
     }

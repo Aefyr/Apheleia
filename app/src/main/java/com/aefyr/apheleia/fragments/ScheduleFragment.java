@@ -213,15 +213,14 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
             public void onApiError(JournalismException e) {
                 if (!loadedFromMemory)
                     antiScroll();
-                Crashlytics.logException(e);
-                Chief.makeApiErrorAlert(getActivity(), false);
+                Chief.makeASnack(getView(), getString(R.string.error_api));
                 refreshLayout.setRefreshing(false);
             }
         });
     }
 
-    private void refreshSchedule(){
-        if(brokenStudent) {
+    private void refreshSchedule() {
+        if (brokenStudent) {
             refreshLayout.setRefreshing(false);
             return;
         }
@@ -236,12 +235,13 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private int requestedWeek;
     private boolean brokenStudent = false;
+
     private void studentSwitched(Bundle savedInstanceState) {
         cancelRequest();
         brokenStudent = false;
         setEmptinessTextShown(false);
 
-        if(periodsHelper.getCurrentScheduleWeek() == null){
+        if (periodsHelper.getCurrentScheduleWeek() == null) {
             brokenStudent = true;
             setScheduleToAdapter(null);
             weeksPickerDialog = Utility.createBrokenStudentDialog(getActivity());
@@ -284,20 +284,20 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         requestedWeek = selectedWeek;
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             Log.d("ASF", "savedInstanceState found");
             currentStudent = savedInstanceState.getString("currentStudent");
             Serializable schedule = savedInstanceState.getSerializable("schedule");
-            if(schedule!=null) {
+            if (schedule != null) {
                 setScheduleToAdapter((Schedule) schedule);
                 scheduleRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
                 Log.d("ASF", "Got diary from savedInstanceState");
-            }else {
+            } else {
                 currentStudent = profileHelper.getCurrentStudentId();
                 firstLoad = true;
                 refreshSchedule();
             }
-        }else {
+        } else {
             currentStudent = profileHelper.getCurrentStudentId();
             firstLoad = true;
             refreshSchedule();
@@ -310,7 +310,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
     private void initializeQuickScrolling(boolean enabled, final Schedule schedule) {
-        if (enabled && schedule!=null) {
+        if (enabled && schedule != null) {
 
             if (firstLoad) {
                 quickDayPickBar.setVisibility(View.VISIBLE);
@@ -369,11 +369,11 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         outState.putSerializable("schedule", schedule);
         outState.putString("currentStudent", currentStudent);
 
-        if(scheduleRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+        if (scheduleRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             int[] pos = new int[((StaggeredGridLayoutManager) scheduleRecycler.getLayoutManager()).getSpanCount()];
             ((StaggeredGridLayoutManager) scheduleRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);
             outState.putInt("scrollPosition", pos[0]);
-        }else {
+        } else {
             Log.d("ASF", "scrollPos=" + ((PreloadLayoutManager) scheduleRecycler.getLayoutManager()).findFirstVisibleItemPosition());
             outState.putInt("scrollPosition", ((PreloadLayoutManager) scheduleRecycler.getLayoutManager()).findFirstVisibleItemPosition());
         }
@@ -388,8 +388,8 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
         setEmptinessTextShown(schedule == null || schedule.getDays().size() == 0);
     }
 
-    private void setEmptinessTextShown(boolean shown){
-        emptySchedule.setVisibility(shown?View.VISIBLE:View.GONE);
+    private void setEmptinessTextShown(boolean shown) {
+        emptySchedule.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -408,7 +408,7 @@ public class ScheduleFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void updateActionBarTitle() {
-        if(!isHidden()) {
+        if (!isHidden()) {
             AnalyticsHelper.viewSection(FirebaseConstants.SECTION_SCHEDULE, FirebaseAnalytics.getInstance(getActivity()));
             ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.schedule));
         }

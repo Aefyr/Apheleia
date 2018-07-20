@@ -13,6 +13,6 @@ public class ApheleiaInstanceIdService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d("ApheleiaFCM", "Token updated: "+token);
+        Log.d("ApheleiaFCM", "Token updated: " + token);
     }
 }

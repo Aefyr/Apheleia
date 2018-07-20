@@ -120,7 +120,7 @@ public class PreferencesFragment extends PreferenceFragment {
     }
 
     private void initializeDebugPrefs() {
-        if (!PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("debug_mode", false)&&!Debug.debugMode) {
+        if (!PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("debug_mode", false) && !Debug.debugMode) {
             getPreferenceScreen().removePreference(findPreference("debug"));
             return;
         }
@@ -159,10 +159,10 @@ public class PreferencesFragment extends PreferenceFragment {
                     case "debug_fcm_token":
                         final String fcmTokenV = FirebaseInstanceId.getInstance().getToken();
                         int mc = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("mdb", 0);
-                        new AlertDialog.Builder(getActivity()).setTitle("FCM Token").setMessage("MC: "+mc+"\n"+fcmTokenV).setPositiveButton("Copy", new DialogInterface.OnClickListener() {
+                        new AlertDialog.Builder(getActivity()).setTitle("FCM Token").setMessage("MC: " + mc + "\n" + fcmTokenV).setPositiveButton("Copy", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ((ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("", fcmTokenV));
+                                ((ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("", fcmTokenV));
                                 Chief.makeAToast(getActivity(), "Copied FCM token to clipboard");
                             }
                         }).setNeutralButton("Hijack FCM", new DialogInterface.OnClickListener() {
@@ -171,12 +171,12 @@ public class PreferencesFragment extends PreferenceFragment {
                                 new FCMF(new L() {
                                     @Override
                                     public void onA(String t) {
-                                        if(t!=null){
-                                            Chief.makeAToast(getActivity(), "Got token for eljur: "+t);
+                                        if (t != null) {
+                                            Chief.makeAToast(getActivity(), "Got token for eljur: " + t);
                                             EljurApiClient.getInstance(getActivity()).hijackFCM(Helper.getInstance(getActivity()).getPersona(), t, new EljurApiClient.JournalismListener<Boolean>() {
                                                 @Override
                                                 public void onSuccess(Boolean result) {
-                                                    Chief.makeAToast(getActivity(), "Hijacked FCM: "+result);
+                                                    Chief.makeAToast(getActivity(), "Hijacked FCM: " + result);
                                                 }
 
                                                 @Override
@@ -189,7 +189,7 @@ public class PreferencesFragment extends PreferenceFragment {
 
                                                 }
                                             });
-                                        }else
+                                        } else
                                             Chief.makeAToast(getActivity(), "Couldn't get token for eljur");
                                     }
                                 }).execute();
@@ -207,7 +207,7 @@ public class PreferencesFragment extends PreferenceFragment {
                                 new AlertDialog.Builder(getActivity()).setTitle("Дамп Дневника").setMessage(betterResponse).setPositiveButton("Скопировать", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        ((ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("", betterResponse));
+                                        ((ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("", betterResponse));
                                         Chief.makeAToast(getActivity(), "Дамп Дневника скопирован в буфер обмена");
                                     }
                                 }).setNegativeButton("Закрыть", null).create().show();
@@ -233,12 +233,14 @@ public class PreferencesFragment extends PreferenceFragment {
         dumpDiary.setOnPreferenceClickListener(debugListener);
     }
 
-    private interface L{
+    private interface L {
         void onA(String t);
     }
-    private class  FCMF extends AsyncTask<Void, Void, String>{
+
+    private class FCMF extends AsyncTask<Void, Void, String> {
         private L l;
-        FCMF(L l){
+
+        FCMF(L l) {
             super();
             this.l = l;
         }

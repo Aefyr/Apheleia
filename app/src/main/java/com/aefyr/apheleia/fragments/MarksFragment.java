@@ -36,7 +36,6 @@ import com.aefyr.journalism.EljurPersona;
 import com.aefyr.journalism.exceptions.JournalismException;
 import com.aefyr.journalism.objects.major.MarksGrid;
 import com.android.volley.Request;
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.Serializable;
@@ -175,15 +174,14 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             public void onApiError(JournalismException e) {
                 if (!loadedFromMemory)
                     antiScroll();
-                Crashlytics.logException(e);
-                Chief.makeApiErrorAlert(getActivity(), false);
+                Chief.makeASnack(getView(), getString(R.string.error_api));
                 refreshLayout.setRefreshing(false);
             }
         });
     }
 
-    private void refreshMarks(){
-        if(brokenStudent) {
+    private void refreshMarks() {
+        if (brokenStudent) {
             refreshLayout.setRefreshing(false);
             return;
         }
@@ -217,7 +215,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         brokenStudent = false;
         setEmptinessTextShown(false);
 
-        if(periodsHelper.getCurrentPeriod() == null){
+        if (periodsHelper.getCurrentPeriod() == null) {
             brokenStudent = true;
             setGridToAdapter(null);
             periodsPickerDialog = Utility.createBrokenStudentDialog(getActivity());
@@ -250,20 +248,20 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         requestedPeriod = selectedPeriod;
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             Log.d("AMGF", "savedInstanceState found");
             currentStudent = savedInstanceState.getString("currentStudent");
             Serializable marks = savedInstanceState.getSerializable("marks");
-            if(marks!=null) {
+            if (marks != null) {
                 setGridToAdapter((MarksGrid) marks);
                 marksRecycler.scrollToPosition(savedInstanceState.getInt("scrollPosition", 0));
                 Log.d("AMGF", "Got marks from savedInstanceState");
-            }else {
+            } else {
                 currentStudent = profileHelper.getCurrentStudentId();
                 firstLoad = true;
                 refreshMarks();
             }
-        }else {
+        } else {
             currentStudent = profileHelper.getCurrentStudentId();
             firstLoad = true;
             refreshMarks();
@@ -306,11 +304,11 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         outState.putSerializable("marks", marks);
         outState.putString("currentStudent", currentStudent);
 
-        if(marksRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+        if (marksRecycler.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             int[] pos = new int[((StaggeredGridLayoutManager) marksRecycler.getLayoutManager()).getSpanCount()];
             ((StaggeredGridLayoutManager) marksRecycler.getLayoutManager()).findFirstVisibleItemPositions(pos);
             outState.putInt("scrollPosition", pos[0]);
-        }else {
+        } else {
             Log.d("AMGF", "scrollPos=" + ((LinearLayoutManager) marksRecycler.getLayoutManager()).findFirstVisibleItemPosition());
             outState.putInt("scrollPosition", ((LinearLayoutManager) marksRecycler.getLayoutManager()).findFirstVisibleItemPosition());
         }
@@ -325,8 +323,8 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         setEmptinessTextShown(grid == null || grid.getLessons().size() == 0);
     }
 
-    private void setEmptinessTextShown(boolean shown){
-        emptyMarks.setVisibility(shown?View.VISIBLE:View.GONE);
+    private void setEmptinessTextShown(boolean shown) {
+        emptyMarks.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -345,7 +343,7 @@ public class MarksFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private void updateActionBarTitle() {
-        if(!isHidden()) {
+        if (!isHidden()) {
             AnalyticsHelper.viewSection(FirebaseConstants.SECTION_MARKS, FirebaseAnalytics.getInstance(getActivity()));
             ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.marks));
         }
