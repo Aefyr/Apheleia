@@ -65,13 +65,19 @@ public class DiaryAsyncParser {
                     return new AsyncParserTaskResult<>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
                 }
 
-                JsonObject weekDaysObj;
+                JsonObject jStudent;
 
                 if (response.get("students").isJsonArray()) {
-                    weekDaysObj = response.getAsJsonArray("students").get(0).getAsJsonObject().getAsJsonObject("days");
+                    jStudent = response.getAsJsonArray("students").get(0).getAsJsonObject();
                 } else {
-                    weekDaysObj = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonObject("days");
+                    jStudent = response.getAsJsonObject("students").getAsJsonObject(studentId);
                 }
+
+                if(jStudent.get("days")==null){
+                    return new AsyncParserTaskResult<>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
+                }
+
+                JsonObject weekDaysObj = jStudent.getAsJsonObject("days");
 
                 ArrayList<WeekDay> weekDays = new ArrayList<>(weekDaysObj.size());
 

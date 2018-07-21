@@ -8,8 +8,8 @@ android {
         applicationId "com.aefyr.apheleia"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 38
-        versionName "1.1.12"
+        versionCode 39
+        versionName "1.1.13"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

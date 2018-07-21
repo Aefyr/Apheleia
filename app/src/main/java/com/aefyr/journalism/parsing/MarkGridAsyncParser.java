@@ -55,7 +55,19 @@ public class MarkGridAsyncParser {
                     return new AsyncParserTaskResult<>(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
                 }
 
-                JsonArray lessons = response.getAsJsonObject("students").getAsJsonObject(studentId).getAsJsonArray("lessons");
+                JsonObject jStudent;
+
+                if (response.get("students").isJsonArray()) {
+                    jStudent = response.getAsJsonArray("students").get(0).getAsJsonObject();
+                } else {
+                    jStudent = response.getAsJsonObject("students").getAsJsonObject(studentId);
+                }
+
+                if(jStudent.get("lessons")==null){
+                    return new AsyncParserTaskResult<>(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
+                }
+
+                JsonArray lessons = jStudent.getAsJsonArray("lessons");
 
                 ArrayList<SubjectInGrid> subjects = new ArrayList<>(lessons.size());
 

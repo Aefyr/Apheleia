@@ -604,7 +604,7 @@ class EljurApiRequests {
                     }
 
                     if (jStudent.get("items") == null) {
-                        listener.onSuccess(new Finals());
+                        listener.onSuccess(MajorObjectsFactory.createFinals(new ArrayList<FinalSubject>(0)));
                         return;
                     }
 
