@@ -88,4 +88,14 @@
         android:layout_marginBottom="8dp"
         app:srcCompat="@mipmap/icon" />
 
+    <TextView
+        android:id="@+id/privacy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/signIn"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="privacy policy notice" />
+
 </RelativeLayout>

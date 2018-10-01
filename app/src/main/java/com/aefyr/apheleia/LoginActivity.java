@@ -10,13 +10,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.aefyr.apheleia.helpers.Chief;
 import com.aefyr.apheleia.helpers.Destroyer;
@@ -46,11 +49,11 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name), BitmapFactory.decodeResource(getResources(), R.mipmap.icon), getResources().getColor(R.color.colorRecentsTab)));
 
-        SharedPreferences l = getSharedPreferences("l", 0);
+        /*SharedPreferences l = getSharedPreferences("l", 0);
         if (!l.getBoolean("start_warn_shown", false)) {
             Chief.makeWarning(this, getText(R.string.first_launch_warn)).setCancelable(false);
             l.edit().putBoolean("start_warn_shown", true).apply();
-        }
+        }*/
 
         checkReason(getIntent());
 
@@ -60,6 +63,10 @@ public class LoginActivity extends AppCompatActivity {
         passwordET = (EditText) findViewById(R.id.password);
         passwordVisibilitySwitch = (ImageButton) findViewById(R.id.passwordVisibilitySwitch);
         signIn = (Button) findViewById(R.id.signIn);
+
+        TextView privacy = findViewById(R.id.privacy);
+        privacy.setText(R.string.privacy_policy_notice);
+        privacy.setMovementMethod(LinkMovementMethod.getInstance());
 
         setupDomainHelpButton();
         setupPasswordVisibilitySwitcher();

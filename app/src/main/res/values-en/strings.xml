@@ -56,6 +56,8 @@
     <string name="first_launch_warn"><b>Analytics and Privacy Policy Notice:</b>\nApheleia uses Google Analytics and Firebase Crashlytics to anonymously collect app usage data and report errors. This data is used to make Apheleia better.</string>
     <string name="eljur_connection_error">Connection Error</string>
     <string name="eljur_connection_error_desc">Unable to reach entered domain, are you sure you\'ve entered it correctly and you have network connection?</string>
+    <string name="privacy_policy_notice">By using Apheleia, you agree with it\'s <b><a href="https://aefyr.github.io/apheleia/privacy_en.html">Privacy Policy</a></b></string>
+
 
 
     <!-- Re:Initialization and periods helper-->
@@ -141,6 +143,8 @@
     <string name="pref_watcher_desc">Checks for new messages every half a hour and notifies you if new messages have arrived</string>
     <string name="pref_watcher_via_cell_desc">Uses mobile data to check for new messages. Without this enabled, new messages checking will only be performed on WiFi</string>
     <string name="pref_quick_picker_desc">Shows a bar at the bottom where you can select a weekday to quickly scroll to</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_url">https://aefyr.github.io/apheleia/privacy_en.html</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
