@@ -51,21 +51,20 @@ public class MarkGridAsyncParser {
             try {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-                if (response == null || response.size() == 0 || response.get("students") == null) {
+                if (response == null || response.size() == 0 || response.get("students") == null || response.get("students").isJsonNull())
                     return new AsyncParserTaskResult<>(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
-                }
+
 
                 JsonObject jStudent;
 
-                if (response.get("students").isJsonArray()) {
+                if (response.get("students").isJsonArray())
                     jStudent = response.getAsJsonArray("students").get(0).getAsJsonObject();
-                } else {
+                else
                     jStudent = response.getAsJsonObject("students").getAsJsonObject(studentId);
-                }
 
-                if(jStudent.get("lessons")==null){
+                if (jStudent.get("lessons") == null)
                     return new AsyncParserTaskResult<>(MajorObjectsFactory.createMarksGrid(new ArrayList<SubjectInGrid>(0)));
-                }
+
 
                 JsonArray lessons = jStudent.getAsJsonArray("lessons");
 

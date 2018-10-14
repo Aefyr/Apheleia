@@ -61,21 +61,20 @@ public class DiaryAsyncParser {
             try {
                 JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-                if (response == null || response.size() == 0 || response.get("students") == null) {
+                if (response == null || response.size() == 0 || response.get("students") == null || response.get("students").isJsonNull())
                     return new AsyncParserTaskResult<>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
-                }
+
 
                 JsonObject jStudent;
 
-                if (response.get("students").isJsonArray()) {
+                if (response.get("students").isJsonArray())
                     jStudent = response.getAsJsonArray("students").get(0).getAsJsonObject();
-                } else {
+                else
                     jStudent = response.getAsJsonObject("students").getAsJsonObject(studentId);
-                }
 
-                if(jStudent.get("days")==null){
+                if (jStudent.get("days") == null)
                     return new AsyncParserTaskResult<>(MajorObjectsFactory.createDiaryEntry(new ArrayList<WeekDay>(0)));
-                }
+
 
                 JsonObject weekDaysObj = jStudent.getAsJsonObject("days");
 

@@ -179,7 +179,7 @@ class EljurApiRequests {
                 try {
                     JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-                    if (response == null || response.size() == 0 || response.get("students") == null || response.getAsJsonArray("students").get(0).getAsJsonObject().get("periods") == null) {
+                    if (response == null || response.size() == 0 || response.get("students") == null || response.get("students").isJsonNull() || response.getAsJsonArray("students").get(0).getAsJsonObject().get("periods") == null) {
                         listener.onSuccess(null);
                         return;
                     }
@@ -306,7 +306,7 @@ class EljurApiRequests {
                 try {
                     JsonObject response = Utility.getJsonFromResponse(rawResponse);
 
-                    if (response == null || response.size() == 0 || response.get("students") == null) {
+                    if (response == null || response.size() == 0 || response.get("students") == null || response.get("students").isJsonNull()) {
                         listener.onSuccess(MajorObjectsFactory.createSchedule(new ArrayList<WeekDay>(0)));
                         return;
                     }
@@ -595,6 +595,12 @@ class EljurApiRequests {
             public void onResponse(String rawResponse) {
                 try {
                     JsonObject response = Utility.getJsonFromResponse(rawResponse);
+
+                    if (response == null || response.size() == 0 || response.get("students") == null || response.get("students").isJsonNull()) {
+                        listener.onSuccess(MajorObjectsFactory.createFinals(new ArrayList<FinalSubject>(0)));
+                        return;
+                    }
+
 
                     JsonObject jStudent;
                     if (response.get("students").isJsonArray()) {
