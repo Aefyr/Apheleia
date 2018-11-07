@@ -25,7 +25,7 @@ public class EljurApiRequest {
 
     static final String HTTPS = "https://";
     static final String ELJUR = ".eljur.ru/apiv3/";
-    static final String BOUND = "&devkey=6ec0e964a29c22fe5542f748b5143c4e&out_format=json";
+    static final String BOUND = "&devkey=19c4bfc2705023fe080ce94ace26aec9&out_format=json";
 
     private EljurPersona persona;
     private String method;
