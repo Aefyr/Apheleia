@@ -143,6 +143,9 @@
     <string name="pref_watcher_desc">Checks for new messages every half a hour and notifies you if new messages have arrived</string>
     <string name="pref_watcher_via_cell_desc">Uses mobile data to check for new messages. Without this enabled, new messages checking will only be performed on WiFi</string>
     <string name="pref_quick_picker_desc">Shows a bar at the bottom where you can select a weekday to quickly scroll to</string>
+    <string name="pref_calculate_average">Calculate average mark</string>
+    <string name="pref_calculate_average_desc">Calculate average mark in Marks section on device instead of using the value provided by Eljur. May be inaccurate</string>
+    <string name="pref_calculate_average_warn">Update Marks section to apply changes</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_policy_url">https://aefyr.github.io/apheleia/privacy_en.html</string>
 

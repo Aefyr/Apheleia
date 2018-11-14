@@ -1,6 +1,8 @@
 package com.aefyr.apheleia.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,6 +24,7 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
     private MarksGrid grid;
     private LayoutInflater inflater;
     private static RecyclerView.RecycledViewPool marksPool;
+    private SharedPreferences mPrefs;
 
     public MarksGridRecyclerAdapter(Context c, MarksGrid grid) {
         this.grid = grid;
@@ -30,6 +33,8 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
             marksPool = new RecyclerView.RecycledViewPool();
             marksPool.setMaxRecycledViews(1337, 322);
         }
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(c);
     }
 
     public void setGrid(MarksGrid grid) {
@@ -47,7 +52,7 @@ public class MarksGridRecyclerAdapter extends RecyclerView.Adapter<MarksGridRecy
         SubjectInGrid subject = grid.getLessons().get(position);
 
         holder.subjectName.setText(subject.getName());
-        holder.subjectAverage.setText(subject.getAverageMark());
+        holder.subjectAverage.setText(mPrefs.getBoolean("calculate_average", false)?subject.getCalculatedAverageMark():subject.getAverageMark());
 
         holder.subjectRecyclerAdapter.setSubject(subject);
 

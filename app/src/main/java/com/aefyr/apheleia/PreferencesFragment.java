@@ -74,6 +74,14 @@ public class PreferencesFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+        findPreference("calculate_average").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                Chief.makeAToast(getActivity(), getString(R.string.pref_calculate_average_warn));
+                return true;
+            }
+        });
     }
 
     private void initializeWatcherPrefs() {

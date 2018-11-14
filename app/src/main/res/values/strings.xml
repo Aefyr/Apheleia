@@ -128,4 +128,7 @@
     <string name="eljur_connection_error_desc">Пожалуйста проверьте, правильно ли вы ввели адрес вашей школы на ЭлЖур, а также наличие у вас интернет-подключения</string>
     <string name="privacy_policy_url">https://aefyr.github.io/apheleia/privacy_ru.html</string>
     <string name="privacy_policy">Политика Конфиденциальности</string>
+    <string name="pref_calculate_average">Считать средний балл</string>
+    <string name="pref_calculate_average_desc">Рассчитывать средний бал в разделе Текущие оценки на устройстве вместо использования значения от ЭлЖур. Точность не гарантируется</string>
+    <string name="pref_calculate_average_warn">Обновите текущие оценки, чтобы применить изменения</string>
 </resources>

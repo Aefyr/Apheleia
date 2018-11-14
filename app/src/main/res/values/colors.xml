@@ -15,7 +15,7 @@
     <color name="colorLSMText">#263238</color>
     <color name="colorLSMSelectedBG">#eeeeee</color>
 
-    <color name="colorShadowStart">#000000</color>
+    <color name="colorShadowStart">#e0e0e0</color>
     <color name="colorShadowEnd">#00bdbdbd</color>
     <color name="colorMarkCircleHighlight">#b2ebf2</color>
 

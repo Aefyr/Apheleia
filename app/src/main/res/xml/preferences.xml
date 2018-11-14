@@ -20,6 +20,7 @@
             android:title="@string/pref_watcher_allow_cell" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/misc">
+        <SwitchPreference android:key="calculate_average" android:defaultValue="false" android:title="@string/pref_calculate_average" android:summary="@string/pref_calculate_average_desc"/>
         <Preference android:title="@string/pref_show_tut" android:key="show_tut"/>
         <Preference android:title="@string/privacy_policy">
             <intent android:action="android.intent.action.VIEW" android:data="@string/privacy_policy_url"/>

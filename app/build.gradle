@@ -8,8 +8,8 @@ android {
         applicationId "com.aefyr.apheleia"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 42
-        versionName "1.1.16"
+        versionCode 43
+        versionName "1.1.17"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -36,8 +36,8 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
-    implementation 'com.google.firebase:firebase-core:16.0.4'
-    implementation 'com.google.firebase:firebase-messaging:17.3.3'
+    implementation 'com.google.firebase:firebase-core:16.0.5'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
 
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
