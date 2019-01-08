@@ -3,7 +3,7 @@ package com.aefyr.apheleia.adapters;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;

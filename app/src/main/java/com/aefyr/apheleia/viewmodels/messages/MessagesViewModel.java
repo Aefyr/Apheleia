@@ -1,8 +1,8 @@
 package com.aefyr.apheleia.viewmodels.messages;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.annotation.NonNull;
 
 import com.aefyr.journalism.objects.major.MessagesList;
 

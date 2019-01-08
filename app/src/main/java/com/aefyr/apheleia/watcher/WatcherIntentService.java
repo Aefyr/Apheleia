@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.aefyr.apheleia.MainActivity;
 import com.aefyr.apheleia.MessageViewActivity;

@@ -1,8 +1,8 @@
 package com.aefyr.apheleia.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +93,7 @@ public class ScheduleRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             dayTitle = (TextView) itemView.findViewById(R.id.dayName);
 
             RecyclerView lessonsRecycler = (RecyclerView) itemView.findViewById(R.id.dayLessonsRecycler);
-            lessonsRecycler.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.VERTICAL, false));
+            lessonsRecycler.setLayoutManager(new LinearLayoutManager(itemView.getContext(), RecyclerView.VERTICAL, false));
             lessonsRecycler.setRecycledViewPool(lessonsPool);
 
             scheduleDayRecyclerAdapter = new ScheduleDayRecyclerAdapter(null, inflater);

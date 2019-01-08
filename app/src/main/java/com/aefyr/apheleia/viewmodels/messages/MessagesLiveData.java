@@ -1,6 +1,6 @@
 package com.aefyr.apheleia.viewmodels.messages;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import android.content.Context;
 import android.util.Log;
 

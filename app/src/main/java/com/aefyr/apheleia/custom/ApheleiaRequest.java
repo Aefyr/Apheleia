@@ -13,9 +13,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.crashlytics.android.Crashlytics;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created by Aefyr on 06.12.2017.
@@ -40,7 +45,19 @@ public class ApheleiaRequest extends Request<String> {
     @Override
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
         try {
-            String responeS = new String(response.data, "UTF-8");
+
+            //Eljur API says content is in gzip encoding in some requests when it's not
+            String responseS;
+            try (GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(response.data)); BufferedReader in = new BufferedReader(new InputStreamReader(gzipInputStream, StandardCharsets.UTF_8))){
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = in.readLine()) != null)
+                    sb.append(line);
+
+                responseS = sb.toString();
+            }catch (Exception e){
+                responseS = new String(response.data, StandardCharsets.UTF_8);
+            }
 
             PARSING_COOKIES:
             {
@@ -69,9 +86,9 @@ public class ApheleiaRequest extends Request<String> {
                 }
             }
 
-            Log.d(TAG, "Got response for url " + getUrl() + ":\n" + responeS);
-            return Response.success(responeS, HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
+            Log.d(TAG, "Got response for url " + getUrl() + ":\n" + responseS);
+            return Response.success(responseS, HttpHeaderParser.parseCacheHeaders(response));
+        } catch (Exception e) {
             return Response.error(new ParseError(e));
         }
     }
