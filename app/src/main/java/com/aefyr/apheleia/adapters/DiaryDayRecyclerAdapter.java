@@ -3,6 +3,8 @@ package com.aefyr.apheleia.adapters;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Color;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -154,12 +156,23 @@ class DiaryDayRecyclerAdapter extends RecyclerView.Adapter<DiaryDayRecyclerAdapt
                 final Button markButton = (Button) markView.findViewById(R.id.markButton);
                 markButton.setText(mark.getValue());
 
-                if (mark.hasComment()) {
+                if (mark.hasComment() || mark.hasLessonComment()) {
                     markButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (!((Activity) inflater.getContext()).isFinishing())
-                                Chief.makeAnAlert(inflater.getContext(), mark.getComment());
+                            if (!((Activity) inflater.getContext()).isFinishing()){
+                                AlertDialog.Builder builder = new AlertDialog.Builder(inflater.getContext())
+                                        .setPositiveButton(R.string.ok, null);
+
+                                if(mark.hasLessonComment())
+                                    builder.setTitle(mark.getLessonComment());
+
+                                if(mark.hasComment())
+                                    builder.setMessage(mark.getComment());
+
+                                builder.create().show();
+
+                            }
                         }
                     });
                 } else {

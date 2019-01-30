@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="64dp"
     android:orientation="vertical"
     android:padding="4dp">
 
@@ -13,9 +12,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/lessonNumber"
         android:layout_toStartOf="@+id/lessonTimes"
-        android:paddingStart="@dimen/diary_day_lesson_padding"
+        android:layout_toEndOf="@+id/lessonNumber"
+        android:padding="@dimen/diary_day_lesson_padding"
         android:text="Quantum Physics"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
@@ -23,8 +22,9 @@
         android:id="@+id/lessonTimes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:padding="@dimen/diary_day_lesson_padding"
         android:text="8:30-9:15" />
 
     <TextView
@@ -33,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:padding="@dimen/diary_day_lesson_padding"
         android:text="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:textColor="@color/colorAccent" />
@@ -41,8 +42,8 @@
         android:id="@+id/lessonInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/lessonTitle"
+        android:layout_alignParentStart="true"
         android:layout_marginTop="@dimen/diary_day_lesson_padding"
         android:padding="@dimen/diary_day_lesson_padding"
         android:text="● Watch something \n● Do something else " />
@@ -51,19 +52,17 @@
         android:id="@+id/marksContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/lessonInfo"
+        android:layout_alignParentStart="true"
         android:layout_marginTop="@dimen/diary_day_lesson_padding"
-        android:orientation="horizontal">
-    </LinearLayout>
+        android:orientation="horizontal"></LinearLayout>
 
     <LinearLayout
         android:id="@+id/attachmentsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/marksContainer"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:layout_alignParentStart="true"
+        android:orientation="vertical"></LinearLayout>
 
 </RelativeLayout>

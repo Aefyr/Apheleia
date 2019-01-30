@@ -82,25 +82,6 @@ public class MinorObjectsFactory {
         return lesson;
     }
 
-    public static Mark createMark(String value, String weight) {
-        Mark mark = new Mark();
-
-        mark.value = value;
-        mark.weight = weight;
-
-        return mark;
-    }
-
-    public static Mark createMarkWithComment(String value, String weight, String comment) {
-        Mark mark = new Mark();
-
-        mark.value = value;
-        mark.weight = weight;
-        mark.comment = comment;
-
-        return mark;
-    }
-
     public static Student createStudent(String name, String id, PersonaInfo.Gender gender, String className) {
         Student student = new Student();
 

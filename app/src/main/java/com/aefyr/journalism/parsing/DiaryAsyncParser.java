@@ -132,34 +132,36 @@ public class DiaryAsyncParser {
                             }
 
                             Homework homework = null;
-                            if (lessonObj.get("homework") != null) {
-                                homework = MinorObjectsFactory.createHomework();
-
+                            if (lessonObj.has("homework")) {
                                 JsonObject jHomework = lessonObj.getAsJsonObject("homework");
-                                ArrayList<Hometask> hometasks = new ArrayList<>(jHomework.size());
+                                if(jHomework.size() > 0){
+                                    homework = MinorObjectsFactory.createHomework();
+                                    ArrayList<Hometask> hometasks = new ArrayList<>(jHomework.size());
 
-                                for (Map.Entry<String, JsonElement> jHomeworkKey : jHomework.entrySet()) {
-                                    JsonObject hometask = jHomeworkKey.getValue().getAsJsonObject();
-                                    hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
+                                    for (Map.Entry<String, JsonElement> jHomeworkKey : jHomework.entrySet()) {
+                                        JsonObject hometask = jHomeworkKey.getValue().getAsJsonObject();
+                                        hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
+                                    }
+
+                                    Collections.sort(hometasks, new HometasksComparator());
+                                    MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
                                 }
-
-                                Collections.sort(hometasks, new HometasksComparator());
-                                MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
                             }
 
-                            if (lessonObj.get("files") != null) {
-                                if (homework == null)
-                                    homework = MinorObjectsFactory.createHomework();
-
+                            if (lessonObj.has("files")) {
                                 JsonArray jAttachments = lessonObj.getAsJsonArray("files");
-                                ArrayList<Attachment> attachments = new ArrayList<>(jAttachments.size());
+                                if(jAttachments.size() > 0){
+                                    if (homework == null)
+                                        homework = MinorObjectsFactory.createHomework();
 
-                                for (JsonElement attachmentEl : jAttachments) {
-                                    JsonObject attachment = attachmentEl.getAsJsonObject();
-                                    attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
+                                    ArrayList<Attachment> attachments = new ArrayList<>(jAttachments.size());
+
+                                    for (JsonElement attachmentEl : jAttachments) {
+                                        JsonObject attachment = attachmentEl.getAsJsonObject();
+                                        attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
+                                    }
+                                    MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);;
                                 }
-                                MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
-                                ;
                             }
 
                             if (homework != null) {
@@ -172,22 +174,13 @@ public class DiaryAsyncParser {
                                 ArrayList<Mark> marks = new ArrayList<>(jMarks.size());
 
                                 for (JsonElement markEl : jMarks) {
-                                    JsonObject mark = markEl.getAsJsonObject();
+                                    JsonObject jMark = markEl.getAsJsonObject();
 
                                     //Phantom marks filter, why do they even appear tho?
-                                    if (mark.get("value").getAsString().equals(""))
+                                    if (jMark.get("value").getAsString().equals(""))
                                         continue;
 
-                                    String markWeight = null;
-                                    if (mark.get("weight") != null)
-                                        markWeight = mark.get("weight").getAsString();
-
-                                    if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
-                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("comment").getAsString()));
-                                    else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
-                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("lesson_comment").getAsString()));
-                                    else
-                                        marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString(), markWeight));
+                                    marks.add(new Mark(jMark));
                                 }
                                 MinorObjectsHelper.addMarksToLesson(lesson, marks);
                             }
@@ -216,33 +209,36 @@ public class DiaryAsyncParser {
                             }
 
                             Homework homework = null;
-                            if (otLessonObj.get("homework") != null) {
-                                homework = MinorObjectsFactory.createHomework();
-
+                            if (otLessonObj.has("homework")) {
                                 JsonArray jHomework = otLessonObj.getAsJsonArray("homework");
-                                ArrayList<Hometask> hometasks = new ArrayList<>(jHomework.size());
+                                if(jHomework.size() > 0){
+                                    homework = MinorObjectsFactory.createHomework();
+                                    ArrayList<Hometask> hometasks = new ArrayList<>(jHomework.size());
 
-                                for (JsonElement homeworkEl : jHomework) {
-                                    JsonObject hometask = homeworkEl.getAsJsonObject();
-                                    hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
+                                    for (JsonElement homeworkEl : jHomework) {
+                                        JsonObject hometask = homeworkEl.getAsJsonObject();
+                                        hometasks.add(MinorObjectsFactory.createHometask(hometask.get("value").getAsString(), hometask.get("individual").getAsBoolean()));
+                                    }
+
+                                    Collections.sort(hometasks, new HometasksComparator());
+                                    MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
                                 }
-
-                                Collections.sort(hometasks, new HometasksComparator());
-                                MinorObjectsHelper.addHometasksToHomework(homework, hometasks);
                             }
 
-                            if (otLessonObj.get("files") != null) {
-                                if (homework == null)
-                                    homework = MinorObjectsFactory.createHomework();
-
+                            if (otLessonObj.has("files")) {
                                 JsonArray jAttachments = otLessonObj.getAsJsonArray("files");
-                                ArrayList<Attachment> attachments = new ArrayList<>(jAttachments.size());
+                                if(jAttachments.size() > 0){
+                                    if (homework == null)
+                                        homework = MinorObjectsFactory.createHomework();
 
-                                for (JsonElement attachmentEl : jAttachments) {
-                                    JsonObject attachment = attachmentEl.getAsJsonObject();
-                                    attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
+                                    ArrayList<Attachment> attachments = new ArrayList<>(jAttachments.size());
+
+                                    for (JsonElement attachmentEl : jAttachments) {
+                                        JsonObject attachment = attachmentEl.getAsJsonObject();
+                                        attachments.add(MinorObjectsFactory.createAttacment(Utility.getStringFromJsonSafe(attachment, "filename", "Без имени"), Utility.getStringFromJsonSafe(attachment, "link", "https://eljur.ru/404")));
+                                    }
+                                    MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);;
                                 }
-                                MinorObjectsHelper.addAttachmentsToHomework(homework, attachments);
                             }
 
                             if (homework != null)
@@ -254,22 +250,13 @@ public class DiaryAsyncParser {
                                 ArrayList<Mark> marks = new ArrayList<>(jMarks.size());
 
                                 for (JsonElement markEl : jMarks) {
-                                    JsonObject mark = markEl.getAsJsonObject();
+                                    JsonObject jMark = markEl.getAsJsonObject();
 
                                     //Phantom marks filter, why do they even appear tho?
-                                    if (mark.get("value").getAsString().equals(""))
+                                    if (jMark.get("value").getAsString().equals(""))
                                         continue;
 
-                                    String markWeight = null;
-                                    if (mark.get("weight") != null)
-                                        markWeight = mark.get("weight").getAsString();
-
-                                    if (mark.get("comment") != null && mark.get("comment").getAsString().length() > 0)
-                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("comment").getAsString()));
-                                    else if (mark.get("lesson_comment") != null && mark.get("lesson_comment").getAsString().length() > 0)
-                                        marks.add(MinorObjectsFactory.createMarkWithComment(mark.get("value").getAsString(), markWeight, mark.get("lesson_comment").getAsString()));
-                                    else
-                                        marks.add(MinorObjectsFactory.createMark(mark.get("value").getAsString(), markWeight));
+                                    marks.add(new Mark(jMark));
                                 }
                                 MinorObjectsHelper.addMarksToLesson(otLesson, marks);
                             }
